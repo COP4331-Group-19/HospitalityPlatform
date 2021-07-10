@@ -12,6 +12,7 @@ import {
   NavMenu,
   NavBtn,
   NavBtnLink,
+  NavBtnLinkGuest,
   NavBtnLinkAdmin,
   NavBtnLinkEmployee,
 } from "./NavbarElements";
