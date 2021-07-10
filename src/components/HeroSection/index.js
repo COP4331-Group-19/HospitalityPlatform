@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "../ButtonElements";
-
+import Picture from "../../images/hotel.jpg";
 import Video from "../../videos/video.mp4";
 import {
   HeroContainer,
@@ -12,6 +12,7 @@ import {
   HeroBtnWrapper,
   ArrowForward,
   ArrowRight,
+  PictureBg,
 } from "./HeroElements";
 
 function HeroSection() {
@@ -23,7 +24,15 @@ function HeroSection() {
   return (
     <HeroContainer id="home">
       <HeroBg>
-        <VideoBg playsInline autoPlay loop muted src={Video} type="video/mp4" />
+        <PictureBg
+          playsInline
+          autoPlay
+          loop
+          muted
+          src={Picture}
+          type="hotel/jpg"
+        />
+        {/* <VideoBg playsInline autoPlay loop muted src={Video} type="video/mp4" /> */}
       </HeroBg>
       <HeroContent>
         <HeroH1>Hotel Knightro</HeroH1>
