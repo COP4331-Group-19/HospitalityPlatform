@@ -100,9 +100,8 @@ const Navbar = ({ toggle }) => {
             <NavBtn>
               <NavBtnLink to="/signin">Sign In</NavBtnLink>
               <NavBtnLinkAdmin to="/admin">AdminPage</NavBtnLinkAdmin>
-              <NavBtnLinkEmployee to="/employee">
-                EmployeePage
-              </NavBtnLinkEmployee>
+              <NavBtnLinkEmployee to="/employee">EmployeePage</NavBtnLinkEmployee>
+              <NavBtnLinkGuest to="/GuestPage">Guest</NavBtnLinkGuest>
             </NavBtn>
           </NavbarContainer>
         </Nav>
