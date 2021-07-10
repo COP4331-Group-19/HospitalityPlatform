@@ -167,8 +167,8 @@ app.use('api/hotel', async(req, res, next) => {
         
         var error = '';
 
-        const db = client.db();
-        const results = await db.collection('Hotel').find({}).toArray();
+        const db = db_client.db();
+        const results = await db.collection('Hotel_Detail').find({}).toArray();
 
         var N = '';
         var C = '';
