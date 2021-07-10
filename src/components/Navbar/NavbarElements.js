@@ -1,5 +1,6 @@
 import { Link as LinkS } from "react-scroll";
 import { Link as LinkR } from "react-router-dom";
+import { Link as LinkG } from "react-router-dom";
 import { Link as LinkA } from "react-router-dom";
 import { Link as LinkE } from "react-router-dom";
 import styled from "styled-components";
