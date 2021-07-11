@@ -63,7 +63,7 @@ global.backwardsAccountGen = (apiObj) => {
     if (apiObj.checkout) tmp.CheckOutDate = apiObj.checkout;
     if (apiObj.room) tmp.RoomNumber = apiObj.room;
     if (apiObj.username) tmp.Login = apiObj.username;
-    if (apiObj.password) tmp.Password = "(bcrypt hash)";
+    if (apiObj.password) tmp.Password = apiObj.password;
     if (apiObj.first_name) tmp.FirstName = apiObj.first_name;
     if (apiObj.last_name) tmp.LastName = apiObj.last_name;
     if (apiObj.email) tmp.Email = apiObj.email;

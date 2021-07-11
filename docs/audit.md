@@ -1,12 +1,18 @@
 # API Audit
 
+All documented endpoints have been reviewed for compliance against documentation on SwaggerHub.
+    In some cases, implementation will vary slightly from docs,
+        but this has been approved ahead of time if marked Compliant in this document.
+
 ## GET `/account/`
 Owner: Jeffrey (reassigned)
 - Compliant!
+- Created `backwardsAccountGen(apiObj)` to assist; may be useful elsewhere.
 
 ## PATCH `/account/`
 Owner: Jeffrey (reassigned)
-- Missing.
+- Compliant!
+    - Please note that plain-text password storage is now deprecated and will result in reduced session lifetimes.
 
 ## POST `/account/login/`
 Owner: Jeffrey (reassigned)
@@ -14,11 +20,12 @@ Owner: Jeffrey (reassigned)
 
 ## GET `/account/all/`
 Owner: Kartik
-- Missing.
+- ⚠ Missing.
 
 ## POST `/account/create/`
 Owner: Chris (originally)
-- Work in progress.
+- Changed password behavior, who can create accounts.
+- Compliant!
 
 ## GET `/hotel/`
 Owner: Kartik
@@ -28,7 +35,7 @@ Owner: Kartik
 
 ## PATCH `/hotel/`
 Owner: Kartik
-- Missing.
+- ⚠ Missing.
 
 ## GET `/room/:room_id`
 Owner: Johnny (on behalf of Chris)
@@ -36,19 +43,19 @@ Owner: Johnny (on behalf of Chris)
 
 ## POST `/room/:room_id`
 Owner: Chris
-- Missing.
+- Pending audit.
 
 ## PATCH `/room/:room_id`
 Owner: Chris
-- Missing.
+- Pending audit.
 
 ## DELETE `/room/:room_id`
 Owner: Chris
-- Missing.
+- Pending audit.
 
 ## GET `/floor/:floor_number`
 Owner: Chris
-- Missing.
+- Pending audit.
 
 ## POST `/inventory/`
 Owner: Jeffrey
@@ -64,8 +71,8 @@ Owner: Jeffrey
 - Compliant!
 
 ## GET `/room/`
-Owner: Jeffrey
-- Missing!
+Owner: Johnny
+- ⚠ Missing!
 
 ## GET `/inventory/`
 Owner: Johnny
@@ -73,20 +80,20 @@ Owner: Johnny
 
 ## GET `/inventory/:inventory_id/:quantity`
 Owner: Johnny
-- Missing!
+- ⚠ Missing!
 
 ## GET `/inventory/:inventory_id`
 Owner: Jeffrey (on behalf of Johnny)
 - Returned a single-item array. **Resolved.**
 
 ## GET `/orders/unclaimed/`
-Assigned to Johnny.
+📌 Assigned to Johnny.
 
 ## GET `/orders/my/`
-Assigned to Johnny.
+📌 Assigned to Johnny.
 
 ## GET `/orders/claim/:order_id`
-Assigned to Kartik.
+📌 Assigned to Kartik.
 
 ## GET `/orders/claim/:fulfill`
-Assigned to Kartik.
+📌 Assigned to Kartik.
