@@ -1,10 +1,30 @@
 const jwt = require('jsonwebtoken');
 const authn = require('./authn');
+const bcrypt = require("bcrypt");
 
 exports.setApp = function (app, db_client) {
 
 // Account Endpoints
-// Login 
+// Register
+app.post("/api/account/create", async (req, res, next) => {
+    const {username, first_name, last_name, email, phone, role, checkin, checkout, room} = req.body;
+    const db = db_client.db();
+    const results = await
+        // search if username already exists
+        db.collection('Accounts').find({Login:username}).toArray();
+        console.log(results);
+    if (results.length > 0) {
+        return res.status(400).json(errGen(400, "Username Taken"));
+    }
+    else {
+        let newUser = {AccountType: role, Login: username, Password: hashPassword(""), FirstName: first_name, LastName: last_name,
+        Email: email, PhoneNumber: phone, RoomNumber: room, CheckInDate: checkin, CheckOutDate: checkout};
+        let createAction = await db.collection('Accounts').insertOne(newUser);
+
+        return res.status(200).json(accountGen(createAction.ops[0]));
+    }
+})
+// Login
 app.post("/api/account/login", async (req, res, next) => {
     // grab login and password from request
     const {username, password} = req.body;
@@ -34,6 +54,65 @@ app.post("/api/account/login", async (req, res, next) => {
 })
 
 // Admin Endpoints
+// Get room information by room Number
+app.get("/api/room/:room_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
+  const {room_id} = req.body;
+  const db = db_client.db();
+  const results = await
+      // search if username already exists
+      db.collection('Room').find({RoomID: room_id}).toArray();
+      console.log(results);
+  if (results.length > 0) {
+    db.collection('Room').deleteOne({RoomID: room_id});
+
+    return res.status(200).json(errGen(200, "Success!"));
+  }
+  else
+    return res.status(404).json(errGen(404, "Room Not Found"));
+})
+// Create room with given room number, if it does not yet exist
+app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
+  const {room_id, occupant, orders, floor} = req.body;
+  const db = db_client.db();
+  const results = await
+      // search if username already exists
+      db.collection('Room').find({RoomID:room_id}).toArray();
+      console.log(results);
+  if (results.length > 0) {
+      return res.status(400).json(errGen(400, "Room Occupied"));
+  }
+  else {
+      let newRoom = {RoomID: room_id, Occupant: occupant, Orders: orders, Floor: floor};
+      let createAction = await db.collection('Room').insertOne(newRoom);
+
+      return res.status(200).json(roomGen(createAction.ops[0]));
+  }
+})
+// Edit a preexisting room
+app.patch("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
+
+})
+// Delete a room
+app.delete("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
+  const {room_id} = req.body;
+  const db = db_client.db();
+  const results = await
+      // search if username already exists
+      db.collection('Room').find({RoomID: room_id}).toArray();
+      console.log(results);
+  if (results.length > 0) {
+    db.collection('Room').deleteOne({RoomID: room_id});
+
+    return res.status(200).json(errGen(200, "Success!"));
+  }
+  else
+    return res.status(404).json(errGen(404, "Room Not Found"));
+})
+// Get all rooms on a given floor
+app.get("/api/floor/:floor_number", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
+
+})
+
 // List all Items from Inventory
 app.get("/api/inventory", authn.isAuthorized, async (req, res, next) => {
     const db = db_client.db();
@@ -45,7 +124,7 @@ app.get("/api/inventory", authn.isAuthorized, async (req, res, next) => {
     }
     return res.status(200).json(formatted);
 })
-// Add Item to Inventory 
+// Add Item to Inventory
 app.post("/api/inventory", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
     // Admin guard: authn.isAdmin. Requires isAuthorized to be called FIRST; Order matters a lot here!
     // Can be replaced with isStaff to check if an endpoint is available for staff and admin (not guest).
@@ -92,7 +171,7 @@ app.delete("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isAdmin], 
         return res.status(500).json(errGen(500, err));
     });
 });
-// 
+//
 app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
     // Get inventory ID and validate it is, indeed, a number.
     let inventory_id = req.params.inventory_id;
@@ -127,17 +206,17 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
 
 // Guest Endpoints
 // Get Current Room Information
-app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) => 
-{  
+app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) =>
+{
     let room_id = req.params.room_id
     const db = db_client.db()
-    const results = await 
+    const results = await
         db.collection('Room').find({RoomID:room_id}).toArray()
     let formatted = []
     formatted[0] = roomGen(results[0])
     return res.status(200).json(formatted)
 });
-    
+
 // Orders an inventory item to a user's room
 
 // Get information on a specific inventory entry
@@ -152,7 +231,7 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
         return res.status(400, "Invalid item ID.");
     }
     const db = db_client.db()
-    const results = await 
+    const results = await
         db.collection('Inventory').find({Item_ID:inventory_id}).toArray()
     if (results.length > 0) {
         let formatted = []
@@ -162,9 +241,9 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
     else
         res.status(404).json(errGen(404,"Asset not found"))
 });
-    
+
 app.use('api/hotel', async(req, res, next) => {
-        
+
         var error = '';
 
         const db = db_client.db();
@@ -189,17 +268,17 @@ app.use('api/hotel', async(req, res, next) => {
     });
 
 // bcrypt hash password function for POST/api/createAcc
-// const hashPassword = async (password, saltRounds = 10) => {
-//     try {
-//         const salt = await bcrypt.genSalt(saltRounds)
-//         // hash password
-//         return await bcrypt.hash(password, salt)
-//     } catch (err) {
-//         console.log(err)
-//     }
-//     // return null if error
-//     return null
-// }
+const hashPassword = async (password, saltRounds = 10) => {
+    try {
+        const salt = await bcrypt.genSalt(saltRounds)
+        // hash password
+        return await bcrypt.hash(password, salt)
+    } catch (err) {
+        console.log(err)
+    }
+    // return null if error
+    return null
+}
 
 
 }

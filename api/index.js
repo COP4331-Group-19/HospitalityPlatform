@@ -8,7 +8,7 @@ app.use(express.json());
 
 // const request = require("request");
 const async = require("async");
-// const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -41,7 +41,7 @@ global.accountGen = (dbObj) => {
         "user_id": dbObj.UserID,
         "role": dbObj.AccountType.toLowerCase(),
         "checkin": dbObj.CheckInDate,
-        "checkout": dbObj.CheckoutDate,
+        "checkout": dbObj.CheckOutDate,
         "room": dbObj.RoomNumber,
         "username": dbObj.Login,
         "password": "**********",
