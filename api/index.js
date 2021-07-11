@@ -3,7 +3,10 @@ var express = require('express'),
     app = express(),
     port = process.env.PORT || 8080;
 var path = require('path');
+var cookieParser = require('cookie-parser');
+
 app.use(express.json());
+app.use(cookieParser());
 
 
 // const request = require("request");
@@ -102,6 +105,24 @@ global.errGen = (errCode, str) => {
         "err_code": errCode,
         "description": desc
     }
+}
+
+// Incrementing user IDs.
+// Originally from below link but probably doesn't resemble it at all after fixes:
+// https://stackoverflow.com/questions/49500551/insert-a-document-while-auto-incrementing-a-sequence-field-in-mongodb
+global.getNextSequence = async (db, counterName) => {
+    let query = await db.collection('counters').findOneAndUpdate(
+        {
+            _id: counterName
+        },
+        {
+            "$inc": {seq: 1},
+        }
+    ).catch(err => {
+        console.error(err);
+        throw err;
+    });
+    return query.value.seq;
 }
 
 let api = require('./api.js');

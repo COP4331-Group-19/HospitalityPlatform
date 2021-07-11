@@ -4,7 +4,7 @@ const authn = require('./authn');
 exports.setApp = function (app, db_client) {
 
 // Account Endpoints
-// Login 
+// Login
 app.post("/api/account/login", async (req, res, next) => {
     // grab login and password from request
     const {username, password} = req.body;
@@ -23,7 +23,8 @@ app.post("/api/account/login", async (req, res, next) => {
         let ret = { UserID:id, AccountType:acc, FirstName:fn, LastName:ln, error:''}
         // Actually, this endpoint should return a JWT, not information on the user. So let's generate that.
         // And note how we are embedding in both the username and the role. This makes things a bit easier later on.
-        const token = jwt.sign({'username': username, 'role': acc.toLowerCase()}, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({'username': username, 'role': acc.toLowerCase(), 'id': id}, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.cookie('session', 'Bearer ' + token, {expire: 3600000 + Date.now()});
         return res.status(200).json({
             // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
             "token": "Bearer " + token
@@ -45,7 +46,7 @@ app.get("/api/inventory", authn.isAuthorized, async (req, res, next) => {
     }
     return res.status(200).json(formatted);
 })
-// Add Item to Inventory 
+// Add Item to Inventory
 app.post("/api/inventory", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
     // Admin guard: authn.isAdmin. Requires isAuthorized to be called FIRST; Order matters a lot here!
     // Can be replaced with isStaff to check if an endpoint is available for staff and admin (not guest).
@@ -56,15 +57,18 @@ app.post("/api/inventory", [authn.isAuthorized, authn.isAdmin], async (req, res,
     if (!img) img = "";
     if (!quantity) quantity = -1;
 
+    const db = db_client.db();
+
     // What will end up in the DB, sans item ID.
     const obj = {
+        // The await is VERY important.
+        "Item_ID": await getNextSequence(db, "userid"),
         "Name": name,
         "Description": description,
         "IMG": img,
         "Quantity": quantity
     };
 
-    const db = db_client.db();
     // Insert, format, and then return.
     db.collection('Inventory').insertOne(obj).then((out) => {
         const results = out.ops[0];
@@ -92,7 +96,7 @@ app.delete("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isAdmin], 
         return res.status(500).json(errGen(500, err));
     });
 });
-// 
+//
 app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
     // Get inventory ID and validate it is, indeed, a number.
     let inventory_id = req.params.inventory_id;
@@ -118,26 +122,34 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
 
     db_client.db().collection('Inventory').findOneAndUpdate({Item_ID: inventory_id}, {$set: newObj})
         .then((out) => {
+            // crappy union
+            if (newObj.Quantity) out.value.Quantity = newObj.Quantity;
+            if (newObj.Name) out.value.Name = newObj.Name;
+            if (newObj.Description) out.value.Description = newObj.Description;
+            if (newObj.IMG) out.value.IMG = newObj.IMG;
+
             return res.status(200).json(inventoryGen(out.value));
             })
         .catch((err) => {
-            return res.status(500).json(errGen(500, err));
+            if (err.toString() === "TypeError: Cannot read property 'Item_ID' of null")
+                return res.status(500).json(errGen(500, "Entity does not exist."));
+            return res.status(500).json(errGen(500, err.toString()));
     });
 });
 
 // Guest Endpoints
 // Get Current Room Information
-app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) => 
-{  
+app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) =>
+{
     let room_id = req.params.room_id
-    const db = db_client.db()
-    const results = await 
+    const db = db_client.db();
+    const results = await
         db.collection('Room').find({RoomID:room_id}).toArray()
     let formatted = []
     formatted[0] = roomGen(results[0])
     return res.status(200).json(formatted)
 });
-    
+
 // Orders an inventory item to a user's room
 
 // Get information on a specific inventory entry
@@ -152,40 +164,33 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
         return res.status(400, "Invalid item ID.");
     }
     const db = db_client.db()
-    const results = await 
-        db.collection('Inventory').find({Item_ID:inventory_id}).toArray()
+    const results = await
+        db.collection('Inventory').find({Item_ID:inventory_id}).toArray();
     if (results.length > 0) {
-        let formatted = []
-        formatted[0] = inventoryGen(results[0])
-        return res.status(200).json(formatted)
+        let formatted = inventoryGen(results[0]);
+        return res.status(200).json(formatted);
     }
     else
-        res.status(404).json(errGen(404,"Asset not found"))
+        return res.status(404).json(errGen(404,"Asset not found"))
 });
-    
-app.use('api/hotel', async(req, res, next) => {
-        
+
+app.use('/api/hotel', async(req, res, next) => {
+
         var error = '';
 
         const db = db_client.db();
         const results = await db.collection('Hotel_Detail').find({}).toArray();
 
-        var N = '';
-        var C = '';
-        var B = '';
-        var D = '';
-        var ret;
-
-        if(results.length > 0){
-            N = results[0].Name;
-            C = results[0].Color;
-            B = results[0].Background;
-            D = results[0].Description;
-        }else{
-            ret = {error: 'Where the Beep is the Hotel'}
+        if (results.length > 0) {
+            return res.status(200).json({
+                "name": results[0].Name,
+                "color": results[0].Color,
+                "bkgd": results[0].Background,
+                "desc": results[0].Description
+            })
+        } else {
+            return res.status(500).json(errGen(500, "Hotel is AWOL."));
         }
-
-        res.status(200).json(ret);
     });
 
 // bcrypt hash password function for POST/api/createAcc
