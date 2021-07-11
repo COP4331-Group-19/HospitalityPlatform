@@ -23,8 +23,9 @@ app.post("/api/account/login", async (req, res, next) => {
         let ret = { UserID:id, AccountType:acc, FirstName:fn, LastName:ln, error:''}
         // Actually, this endpoint should return a JWT, not information on the user. So let's generate that.
         // And note how we are embedding in both the username and the role. This makes things a bit easier later on.
-        const token = jwt.sign({'username': username, 'role': acc.toLowerCase(), 'id': id}, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.cookie('session', 'Bearer ' + token, {expire: 3600000 + Date.now()});
+        const lifetime = 10800000;
+        const token = jwt.sign({'username': username, 'role': acc.toLowerCase(), 'id': id}, process.env.JWT_SECRET, { expiresIn: lifetime });
+        res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
         return res.status(200).json({
             // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
             "token": "Bearer " + token
@@ -33,6 +34,47 @@ app.post("/api/account/login", async (req, res, next) => {
     else
         return res.status(401).json(errGen(401));
 })
+
+// Get account data.
+app.get("/api/account/", authn.isAuthorized, async (req, res, next) => {
+    const db = db_client.db();
+    console.log(req.user.username)
+    const results = await
+        db.collection('Accounts').find({Login: req.user.username}).toArray();
+    let accountData = accountGen(results[0]);
+    // We don't want to return the password lol
+    delete accountData.password;
+    return res.status(200).json(accountData);
+});
+
+app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
+    const db = db_client.db();
+
+    const body = req.body;
+
+    // A user should not change these properties (even if priv'd):
+    delete body.user_id;
+    delete body.role;
+    delete body.checkin;
+    delete body.checkout;
+    delete body.room;
+
+    if (body.password) {
+        // Change password.
+        body.password = hashPassword(body.password);
+    }
+
+    let databaseIfy = backwardsAccountGen(body);
+
+    await db_client.db().collection('Accounts').findOneAndUpdate({Login: req.user.username}, {$set: databaseIfy});
+    // Note: this is not as runtime-efficient as the inventory PATCH, just because of the extra DB call.
+    // However, it's a lot more readable, so consider the trade-offs there.
+    const results = await db.collection('Accounts').find({Login: req.user.username}).toArray();
+    let accountData = accountGen(results[0]);
+    // We don't want to return the password lol
+    delete accountData.password;
+    return res.status(200).json(accountData);
+});
 
 // Admin Endpoints
 // List all Items from Inventory
@@ -62,7 +104,7 @@ app.post("/api/inventory", [authn.isAuthorized, authn.isAdmin], async (req, res,
     // What will end up in the DB, sans item ID.
     const obj = {
         // The await is VERY important.
-        "Item_ID": await getNextSequence(db, "userid"),
+        "Item_ID": await getNextSequence(db, "itemid"),
         "Name": name,
         "Description": description,
         "IMG": img,
@@ -120,6 +162,7 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
         if (img) newObj.IMG = img;
     }
 
+    // This is a good candidate for refactoring. See PATCH /account/ for a good(???) example.
     db_client.db().collection('Inventory').findOneAndUpdate({Item_ID: inventory_id}, {$set: newObj})
         .then((out) => {
             // crappy union
@@ -141,7 +184,7 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
 // Get Current Room Information
 app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) =>
 {
-    let room_id = req.params.room_id
+    let room_id = req.params.room_id;
     const db = db_client.db();
     const results = await
         db.collection('Room').find({RoomID:room_id}).toArray()

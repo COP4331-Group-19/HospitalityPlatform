@@ -2,7 +2,7 @@
 
 ## GET `/account/`
 Owner: Jeffrey (reassigned)
-- Missing.
+- Compliant!
 
 ## PATCH `/account/`
 Owner: Jeffrey (reassigned)

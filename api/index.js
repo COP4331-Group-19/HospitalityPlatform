@@ -34,7 +34,9 @@ if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 40) {
     const MongoClient = require('mongodb').MongoClient;
     const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.qaihg.mongodb.net/HotelManagement?retryWrites=true&w=majority`;
     const db_client = new MongoClient(uri, { useNewUrlParser: true });
-    db_client.connect();
+    db_client.connect().then((client) => {
+        console.log("[HospitalityPlatform] MongoDB connected!");
+    });
 
 console.log(`[HospitalityPlatform] Server running on port ${port}`);
 
@@ -53,6 +55,21 @@ global.accountGen = (dbObj) => {
         "email": dbObj.Email,
         "phone": dbObj.PhoneNumber
     }
+}
+global.backwardsAccountGen = (apiObj) => {
+    let tmp = {};
+    if (apiObj.user_id) tmp.UserID = apiObj.user_id;
+    if (apiObj.checkin) tmp.CheckInDate = apiObj.checkin;
+    if (apiObj.checkout) tmp.CheckOutDate = apiObj.checkout;
+    if (apiObj.room) tmp.RoomNumber = apiObj.room;
+    if (apiObj.username) tmp.Login = apiObj.username;
+    if (apiObj.password) tmp.Password = "(bcrypt hash)";
+    if (apiObj.first_name) tmp.FirstName = apiObj.first_name;
+    if (apiObj.last_name) tmp.LastName = apiObj.last_name;
+    if (apiObj.email) tmp.Email = apiObj.email;
+    if (apiObj.phone) tmp.PhoneNumber = apiObj.phone;
+    if (apiObj.role) tmp.AccountType = apiObj.role.toLowerCase();
+    return tmp;
 }
 global.inventoryGen = (dbObj) => {
     return {
