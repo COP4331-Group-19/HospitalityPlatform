@@ -162,35 +162,35 @@ app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
 // Admin Endpoints
 // Get room information by room Number
 app.get("/api/room/:room_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
-    const {room_id} = req.body;
-    const db = db_client.db();
-    const results = await
-        // search if username already exists
-        db.collection('Room').find({RoomID: room_id}).toArray();
-    console.log(results);
-    if (results.length > 0) {
-        db.collection('Room').deleteOne({RoomID: room_id});
-
-        return res.status(200).json(errGen(200, "Success!"));
-    } else
-        return res.status(404).json(errGen(404, "Room Not Found"));
+  const db = db_client.db();
+  const results = await
+      // search if username already exists
+      db.collection('Room').find({RoomID: req.params.room_id}).toArray();
+      console.log(results);
+  if (results.length > 0) {
+    let roomData = roomGen(results[0]);
+    return res.status(200).json(roomData);
+  }
+  else
+    return res.status(404).json(errGen(404, "Room Not Found"));
 })
 // Create room with given room number, if it does not yet exist
 app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
-    const {room_id, occupant, orders, floor} = req.body;
-    const db = db_client.db();
-    const results = await
-        // search if username already exists
-        db.collection('Room').find({RoomID: room_id}).toArray();
-    console.log(results);
-    if (results.length > 0) {
-        return res.status(400).json(errGen(400, "Room Occupied"));
-    } else {
-        let newRoom = {RoomID: room_id, Occupant: occupant, Orders: orders, Floor: floor};
-        let createAction = await db.collection('Room').insertOne(newRoom);
+  const {room_id, floor} = req.body;
+  const db = db_client.db();
+  const results = await
+      // search if username already exists
+      db.collection('Room').find({RoomID:room_id}).toArray();
+      console.log(results);
+  if (results.length > 0) {
+      return res.status(400).json(errGen(400, "Room Occupied"));
+  }
+  else {
+      let newRoom = {RoomID: room_id, Floor: floor};
+      let createAction = await db.collection('Room').insertOne(newRoom);
 
-        return res.status(200).json(roomGen(createAction.ops[0]));
-    }
+      return res.status(200).json(roomGen(createAction.ops[0]));
+  }
 })
 // Edit a preexisting room
 app.patch("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
@@ -198,22 +198,34 @@ app.patch("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req,
 })
 // Delete a room
 app.delete("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
-    const {room_id} = req.body;
-    const db = db_client.db();
-    const results = await
-        // search if username already exists
-        db.collection('Room').find({RoomID: room_id}).toArray();
-    console.log(results);
-    if (results.length > 0) {
-        db.collection('Room').deleteOne({RoomID: room_id});
+  const db = db_client.db();
+  const results = await
+      // search if username already exists
+      db.collection('Room').find({RoomID: req.params.room_id}).toArray();
+      console.log(results);
+  if (results.length > 0) {
+    db.collection('Room').deleteOne({RoomID: req.params.room_id});
 
-        return res.status(200).json(errGen(200, "Success!"));
-    } else
-        return res.status(404).json(errGen(404, "Room Not Found"));
+    return res.status(200).json(errGen(200));
+  }
+  else
+    return res.status(404).json(errGen(404, "Room Not Found"));
 })
 // Get all rooms on a given floor
 app.get("/api/floor/:floor_number", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
-
+  const db = db_client.db();
+  const results = await
+      // search if username already exists
+      db.collection('Room').find({Floor: Number(req.params.floor_number)}).toArray();
+      console.log(results);
+  if (results.length > 0) {
+    let floorData = [];
+    for (let i = 0; i < results.length; i++)
+    floorData[i] = roomGen(results[i]);
+    return res.status(200).json(floorData);
+  }
+  else
+    return res.status(404).json(errGen(404, "No Rooms on this Floor"));
 })
 
 // List all Items from Inventory
