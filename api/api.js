@@ -5,54 +5,97 @@ const bcrypt = require("bcrypt");
 exports.setApp = function (app, db_client) {
 
 // Account Endpoints
-// Register
-app.post("/api/account/create", async (req, res, next) => {
+// Register                      v only admin can create reservations!
+app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
     const {username, first_name, last_name, email, phone, role, checkin, checkout, room} = req.body;
     const db = db_client.db();
     const results = await
         // search if username already exists
-        db.collection('Accounts').find({Login:username}).toArray();
-        console.log(results);
+        db.collection('Accounts').find({Login: username}).toArray();
+    console.log(results);
     if (results.length > 0) {
         return res.status(400).json(errGen(400, "Username Taken"));
-    }
-    else {
-        let newUser = {AccountType: role, Login: username, Password: hashPassword(""), FirstName: first_name, LastName: last_name,
-        Email: email, PhoneNumber: phone, RoomNumber: room, CheckInDate: checkin, CheckOutDate: checkout};
+    } else {
+        let newUser = {
+            AccountType: role,
+            Login: username,
+            // Use plain-text mode to make sure session lifetimes are shortened.
+            // As soon as the password is changed, users should re-log.
+            Password: "",
+            FirstName: first_name,
+            LastName: last_name,
+            Email: email,
+            PhoneNumber: phone,
+            RoomNumber: room,
+            CheckInDate: checkin,
+            CheckOutDate: checkout
+        };
         let createAction = await db.collection('Accounts').insertOne(newUser);
 
         return res.status(200).json(accountGen(createAction.ops[0]));
     }
 })
+
 // Login
 app.post("/api/account/login", async (req, res, next) => {
     // grab login and password from request
     const {username, password} = req.body;
+    let lifetime = 10800000;
+    let is_plaintext_mode = false;
+
     const db = db_client.db();
     // Once createAccount has been implemented, we should instead search for
     //      only the login and verify the password with bcrypt.
     const results = await
-        db.collection('Accounts').find({Login:username, Password:password}).toArray();
+        db.collection('Accounts').find({Login: username}).toArray();
+
     if (results.length > 0) {
-        // It's generally considered best practice to use let instead of var.
-        // var has some oddities; let is considered more stable.
+        // Substantially neuter the token lifetime if logging in via "plain-text mode"
+        if (results[0].Password !== "$" && results[0].Password.length !== 60) {
+            lifetime = 600000;
+            is_plaintext_mode = true;
+        }
+
         let acc = results[0].AccountType;
         let id = results[0].UserID;
-        let fn = results[0].FirstName;
-        let ln = results[0].LastName;
-        let ret = { UserID:id, AccountType:acc, FirstName:fn, LastName:ln, error:''}
-        // Actually, this endpoint should return a JWT, not information on the user. So let's generate that.
-        // And note how we are embedding in both the username and the role. This makes things a bit easier later on.
-        const lifetime = 10800000;
-        const token = jwt.sign({'username': username, 'role': acc.toLowerCase(), 'id': id}, process.env.JWT_SECRET, { expiresIn: lifetime });
-        res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
-        return res.status(200).json({
-            // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
-            "token": "Bearer " + token
-        });
-    }
-    else
-        return res.status(401).json(errGen(401));
+
+        if (is_plaintext_mode) {
+            // CRY!
+            if (results[0].Password === password) {
+                const token = jwt.sign({
+                    'username': username,
+                    'role': acc.toLowerCase(),
+                    'id': id
+                }, process.env.JWT_SECRET, {expiresIn: lifetime});
+                res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
+                return res.status(200).json({
+                    // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
+                    "token": "Bearer " + token,
+                    "notice": "Please change your password immediately using PATCH /account/"
+                });
+            } else {
+                return res.status(401).json(errGen(401));
+            }
+        } else {
+            bcrypt.compare(password, results[0].Password, (err, result) => {
+                // If hash works, let it through
+                if (result) {
+                    const token = jwt.sign({
+                        'username': username,
+                        'role': acc.toLowerCase(),
+                        'id': id
+                    }, process.env.JWT_SECRET, {expiresIn: lifetime});
+                    res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
+                    return res.status(200).json({
+                        // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
+                        "token": "Bearer " + token
+                    });
+                } else {
+                    return res.status(401).json(errGen(401));
+                }
+            });
+        }
+    } else return res.status(401).json(errGen(401));
 })
 
 // Get account data.
@@ -81,7 +124,7 @@ app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
 
     if (body.password) {
         // Change password.
-        body.password = hashPassword(body.password);
+        body.password = await hashPassword(body.password);
     }
 
     let databaseIfy = backwardsAccountGen(body);
@@ -214,7 +257,7 @@ app.delete("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isAdmin], 
         inventory_id = Number(inventory_id);
         if (isNaN(inventory_id))
             return res.status(400).json(errGen(400, "Invalid item ID."));
-    } catch(err) {
+    } catch (err) {
         // If we can't cast a number
         return res.status(400, "Invalid item ID.");
     }
@@ -234,7 +277,7 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
         inventory_id = Number(inventory_id);
         if (isNaN(inventory_id))
             return res.status(400).json(errGen(400, "Invalid item ID."));
-    } catch(err) {
+    } catch (err) {
         // If we can't cast a number
         return res.status(400, "Invalid item ID.");
     }
@@ -260,22 +303,21 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
             if (newObj.IMG) out.value.IMG = newObj.IMG;
 
             return res.status(200).json(inventoryGen(out.value));
-            })
+        })
         .catch((err) => {
             if (err.toString() === "TypeError: Cannot read property 'Item_ID' of null")
                 return res.status(500).json(errGen(500, "Entity does not exist."));
             return res.status(500).json(errGen(500, err.toString()));
-    });
+        });
 });
 
 // Guest Endpoints
 // Get Current Room Information
-app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) =>
-{
+app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) => {
     let room_id = req.params.room_id;
     const db = db_client.db();
     const results = await
-        db.collection('Room').find({RoomID:room_id}).toArray()
+        db.collection('Room').find({RoomID: room_id}).toArray()
     let formatted = []
     formatted[0] = roomGen(results[0])
     return res.status(200).json(formatted)
@@ -290,52 +332,50 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
         inventory_id = Number(inventory_id);
         if (isNaN(inventory_id))
             return res.status(400).json(errGen(400, "Invalid item ID."));
-    } catch(err) {
+    } catch (err) {
         // If we can't cast a number
         return res.status(400, "Invalid item ID.");
     }
     const db = db_client.db()
     const results = await
-        db.collection('Inventory').find({Item_ID:inventory_id}).toArray();
+        db.collection('Inventory').find({Item_ID: inventory_id}).toArray();
     if (results.length > 0) {
         let formatted = inventoryGen(results[0]);
         return res.status(200).json(formatted);
-    }
-    else
-        return res.status(404).json(errGen(404,"Asset not found"))
+    } else
+        return res.status(404).json(errGen(404, "Asset not found"))
 });
 
-app.use('/api/hotel', async(req, res, next) => {
+// Yeah, everyone can see this (regardless of authn state)
+app.use('/api/hotel', async (req, res, next) => {
+    var error = '';
 
-        var error = '';
+    const db = db_client.db();
+    const results = await db.collection('Hotel_Detail').find({}).toArray();
 
-        const db = db_client.db();
-        const results = await db.collection('Hotel_Detail').find({}).toArray();
-
-        if (results.length > 0) {
-            return res.status(200).json({
-                "name": results[0].Name,
-                "color": results[0].Color,
-                "bkgd": results[0].Background,
-                "desc": results[0].Description
-            })
-        } else {
-            return res.status(500).json(errGen(500, "Hotel is AWOL."));
-        }
-    });
+    if (results.length > 0) {
+        return res.status(200).json({
+            "name": results[0].Name,
+            "color": results[0].Color,
+            "bkgd": results[0].Background,
+            "desc": results[0].Description
+        })
+    } else {
+        return res.status(500).json(errGen(500, "Hotel is AWOL."));
+    }
+});
 
 // bcrypt hash password function for POST/api/createAcc
 const hashPassword = async (password, saltRounds = 10) => {
     try {
-        const salt = await bcrypt.genSalt(saltRounds)
+        const salt = await bcrypt.genSalt(saltRounds);
         // hash password
         return await bcrypt.hash(password, salt)
     } catch (err) {
-        console.log(err)
+        console.log(err);
     }
     // return null if error
     return null
 }
-
 
 }
