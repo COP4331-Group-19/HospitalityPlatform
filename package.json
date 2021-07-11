@@ -19,11 +19,15 @@
   "homepage": "https://github.com/COP4331-Group-19/HospitalityPlatform#readme",
   "dependencies": {
     "async": "^3.2.0",
+    "axios": "^0.21.1",
+    "bcrypt": "^5.0.1",
     "cookie-parser": "^1.4.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "form-data": "^4.0.0",
+    "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.9",
-    "bcrypt": "^5.0.1"
+    "twilio": "^3.65.0"
   }
 }

@@ -13,6 +13,8 @@ app.use(cookieParser());
 const async = require("async");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
+const axios = require('axios');
+const FormData = require('form-data');
 dotenv.config();
 
 if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD || !process.env.JWT_SECRET) {
@@ -24,6 +26,9 @@ if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD || !process.env.JWT_SEC
     } catch(err) {
         console.debug(`[DEBUG] DB_PASSWORD=(null)`);
     }
+}
+if (process.env.TWILIO_SID && process.env.TWILIO_TOKEN) {
+    global.twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 }
 // security guard
 if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 40) {
@@ -140,6 +145,27 @@ global.getNextSequence = async (db, counterName) => {
         throw err;
     });
     return query.value.seq;
+}
+
+global.createShortlink = (long_url) => {
+    const host = "https://o.divi.sh/";
+    if (process.env.SHORTLINK_KEY) {
+        // Theoretically possible, but statistically unlikely, to be a duplicate.
+        let short_url = `hosp_${Buffer.from(String(Math.floor(Math.random() * 999999999)).replace(/=/g, "")).toString('base64')}`;
+
+        const formData = new FormData();
+        formData.append("long", long_url);
+        formData.append("short", short_url);
+
+        axios.post(host + process.env.SHORTLINK_KEY, formData, { headers: formData.getHeaders() }).then(response => {
+        }).catch(function (error) {
+            console.error(error);
+        });
+
+        return `${host}${short_url}`;
+    } else {
+        return `${host}/undefined`;
+    }
 }
 
 let api = require('./api.js');
