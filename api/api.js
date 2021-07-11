@@ -35,6 +35,7 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
         return res.status(200).json(accountGen(createAction.ops[0]));
     }
 })
+
 // Login
 app.post("/api/account/login", async (req, res, next) => {
     // grab login and password from request
@@ -333,8 +334,8 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
         return res.status(404).json(errGen(404, "Asset not found"))
 });
 
+// Yeah, everyone can see this (regardless of authn state)
 app.use('/api/hotel', async (req, res, next) => {
-
     var error = '';
 
     const db = db_client.db();

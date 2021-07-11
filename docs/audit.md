@@ -43,19 +43,19 @@ Owner: Johnny (on behalf of Chris)
 
 ## POST `/room/:room_id`
 Owner: Chris
-- Pending audit.
+- 🔃 Pending audit.
 
 ## PATCH `/room/:room_id`
 Owner: Chris
-- Pending audit.
+- 🔃 Pending audit.
 
 ## DELETE `/room/:room_id`
 Owner: Chris
-- Pending audit.
+- 🔃 Pending audit.
 
 ## GET `/floor/:floor_number`
 Owner: Chris
-- Pending audit.
+- 🔃 Pending audit.
 
 ## POST `/inventory/`
 Owner: Jeffrey
