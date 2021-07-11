@@ -56,33 +56,6 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
     }
 })
 
-app.get("/api/twilio_test", async (req, res, next) => {
-    const db = db_client.db();
-    let msg = "oof";
-    if (global.twilio) {
-        // Create shortlink via Senko
-        let url;
-        if (process.env.SHORTLINK_KEY) {
-            url = createShortlink("https://shuga.co/");
-        } else {
-            url = "https://example.com/"
-        }
-        const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
-        let message = `Hello, Jeffrey! You are almost ready to stay at ${hotelInfo[0].Name}! Please visit ${url} to create your account.`;
-        console.log(message);
-        // global.twilio.messages
-        //     .create({
-        //         body: message,
-        //         from: '+14073052775',
-        //         to: '+17278080302'
-        //     })
-        //     .then(message => {
-        //         msg = message;
-        //     });
-    }
-    return res.status(200).json(errGen(200, msg))
-})
-
 // Login
 app.post("/api/account/login", async (req, res, next) => {
     // grab login and password from request
