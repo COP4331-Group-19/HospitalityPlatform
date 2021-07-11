@@ -43,7 +43,9 @@ app.post("/api/account/login", async (req, res, next) => {
         let ret = { UserID:id, AccountType:acc, FirstName:fn, LastName:ln, error:''}
         // Actually, this endpoint should return a JWT, not information on the user. So let's generate that.
         // And note how we are embedding in both the username and the role. This makes things a bit easier later on.
-        const token = jwt.sign({'username': username, 'role': acc.toLowerCase()}, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const lifetime = 10800000;
+        const token = jwt.sign({'username': username, 'role': acc.toLowerCase(), 'id': id}, process.env.JWT_SECRET, { expiresIn: lifetime });
+        res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
         return res.status(200).json({
             // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
             "token": "Bearer " + token
@@ -52,6 +54,47 @@ app.post("/api/account/login", async (req, res, next) => {
     else
         return res.status(401).json(errGen(401));
 })
+
+// Get account data.
+app.get("/api/account/", authn.isAuthorized, async (req, res, next) => {
+    const db = db_client.db();
+    console.log(req.user.username)
+    const results = await
+        db.collection('Accounts').find({Login: req.user.username}).toArray();
+    let accountData = accountGen(results[0]);
+    // We don't want to return the password lol
+    delete accountData.password;
+    return res.status(200).json(accountData);
+});
+
+app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
+    const db = db_client.db();
+
+    const body = req.body;
+
+    // A user should not change these properties (even if priv'd):
+    delete body.user_id;
+    delete body.role;
+    delete body.checkin;
+    delete body.checkout;
+    delete body.room;
+
+    if (body.password) {
+        // Change password.
+        body.password = hashPassword(body.password);
+    }
+
+    let databaseIfy = backwardsAccountGen(body);
+
+    await db_client.db().collection('Accounts').findOneAndUpdate({Login: req.user.username}, {$set: databaseIfy});
+    // Note: this is not as runtime-efficient as the inventory PATCH, just because of the extra DB call.
+    // However, it's a lot more readable, so consider the trade-offs there.
+    const results = await db.collection('Accounts').find({Login: req.user.username}).toArray();
+    let accountData = accountGen(results[0]);
+    // We don't want to return the password lol
+    delete accountData.password;
+    return res.status(200).json(accountData);
+});
 
 // Admin Endpoints
 // Get room information by room Number
@@ -135,15 +178,18 @@ app.post("/api/inventory", [authn.isAuthorized, authn.isAdmin], async (req, res,
     if (!img) img = "";
     if (!quantity) quantity = -1;
 
+    const db = db_client.db();
+
     // What will end up in the DB, sans item ID.
     const obj = {
+        // The await is VERY important.
+        "Item_ID": await getNextSequence(db, "itemid"),
         "Name": name,
         "Description": description,
         "IMG": img,
         "Quantity": quantity
     };
 
-    const db = db_client.db();
     // Insert, format, and then return.
     db.collection('Inventory').insertOne(obj).then((out) => {
         const results = out.ops[0];
@@ -195,12 +241,21 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
         if (img) newObj.IMG = img;
     }
 
+    // This is a good candidate for refactoring. See PATCH /account/ for a good(???) example.
     db_client.db().collection('Inventory').findOneAndUpdate({Item_ID: inventory_id}, {$set: newObj})
         .then((out) => {
+            // crappy union
+            if (newObj.Quantity) out.value.Quantity = newObj.Quantity;
+            if (newObj.Name) out.value.Name = newObj.Name;
+            if (newObj.Description) out.value.Description = newObj.Description;
+            if (newObj.IMG) out.value.IMG = newObj.IMG;
+
             return res.status(200).json(inventoryGen(out.value));
             })
         .catch((err) => {
-            return res.status(500).json(errGen(500, err));
+            if (err.toString() === "TypeError: Cannot read property 'Item_ID' of null")
+                return res.status(500).json(errGen(500, "Entity does not exist."));
+            return res.status(500).json(errGen(500, err.toString()));
     });
 });
 
@@ -208,8 +263,8 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
 // Get Current Room Information
 app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) =>
 {
-    let room_id = req.params.room_id
-    const db = db_client.db()
+    let room_id = req.params.room_id;
+    const db = db_client.db();
     const results = await
         db.collection('Room').find({RoomID:room_id}).toArray()
     let formatted = []
@@ -232,39 +287,32 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
     }
     const db = db_client.db()
     const results = await
-        db.collection('Inventory').find({Item_ID:inventory_id}).toArray()
+        db.collection('Inventory').find({Item_ID:inventory_id}).toArray();
     if (results.length > 0) {
-        let formatted = []
-        formatted[0] = inventoryGen(results[0])
-        return res.status(200).json(formatted)
+        let formatted = inventoryGen(results[0]);
+        return res.status(200).json(formatted);
     }
     else
-        res.status(404).json(errGen(404,"Asset not found"))
+        return res.status(404).json(errGen(404,"Asset not found"))
 });
 
-app.use('api/hotel', async(req, res, next) => {
+app.use('/api/hotel', async(req, res, next) => {
 
         var error = '';
 
         const db = db_client.db();
         const results = await db.collection('Hotel_Detail').find({}).toArray();
 
-        var N = '';
-        var C = '';
-        var B = '';
-        var D = '';
-        var ret;
-
-        if(results.length > 0){
-            N = results[0].Name;
-            C = results[0].Color;
-            B = results[0].Background;
-            D = results[0].Description;
-        }else{
-            ret = {error: 'Where the Beep is the Hotel'}
+        if (results.length > 0) {
+            return res.status(200).json({
+                "name": results[0].Name,
+                "color": results[0].Color,
+                "bkgd": results[0].Background,
+                "desc": results[0].Description
+            })
+        } else {
+            return res.status(500).json(errGen(500, "Hotel is AWOL."));
         }
-
-        res.status(200).json(ret);
     });
 
 // bcrypt hash password function for POST/api/createAcc

@@ -9,7 +9,7 @@ module.exports.isAuthorized  = (req, res, next) => {
     const bearer = req.headers.authorization.replace("Bearer ", "");
 
     jwt.verify(bearer, process.env.JWT_SECRET, (err, user) => {
-        if (err) return res.status(403).json(errGen(403));
+        if (err) return res.status(403).json(errGen(403, "Session expired."));
         req.user = user;
         return next();
     });
