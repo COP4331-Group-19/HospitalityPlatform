@@ -7,7 +7,7 @@ exports.setApp = function (app, db_client) {
 // Account Endpoints
 // Register                      v only admin can create reservations!
 app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
-    const {username, first_name, last_name, email, phone, role, checkin, checkout, room} = req.body;
+    const {username, first_name, last_name, email, phone, role, checkin, checkout, room, password} = req.body;
     const db = db_client.db();
     const results = await
         // search if username already exists
@@ -22,19 +22,23 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
     if (results.length > 0) {
         return res.status(400).json(errGen(400, "Username, Email, or Phone Number Taken"));
     } else {
+        let setPasswd = "";
+        if (password && password.trim() !== "") {
+            setPasswd = await hashPassword(password);
+        }
         let newUser = {
-            AccountType: role,
+            AccountType: role ? role : "Guest",
             Login: username,
             // Use plain-text mode to make sure session lifetimes are shortened.
             // As soon as the password is changed, users should re-log.
-            Password: "",
+            Password: setPasswd,
             FirstName: first_name,
-            LastName: last_name,
+            LastName: last_name ? last_name : "",
             Email: email,
             PhoneNumber: phone,
-            RoomNumber: room,
-            CheckInDate: checkin,
-            CheckOutDate: checkout,
+            RoomNumber: room ? room : "",
+            CheckInDate: checkin ? checkin : -1,
+            CheckOutDate: checkout ? checkout : -1,
             UserID: await getNextSequence(db, "userid")
         };
         let createAction = await db.collection('Accounts').insertOne(newUser);
@@ -42,19 +46,30 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
         // Send SMS to get user to create account.
         if (global.twilio) {
             const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
-            // Create shortlink via Senko
-            let url = `${INSTANCE_URL}/register?username=${username}`;
-            if (process.env.SHORTLINK_KEY) {
-                url = createShortlink(url);
+            if (setPasswd !== "") {
+                let message = `Hello, ${first_name}! Your account at ${hotelInfo[0].Name} has been created! Visit ${INSTANCE_URL} to get started.`;
+                global.twilio.messages
+                    .create({
+                        body: message,
+                        from: '+14073052775',
+                        to: '+1' + phone
+                    });
+            } else {
+                const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
+                // Create shortlink via Senko
+                let url = `${INSTANCE_URL}/register?username=${username}`;
+                if (process.env.SHORTLINK_KEY) {
+                    url = createShortlink(url);
+                }
+                // Send the link
+                let message = `Hello, ${first_name}! You are almost ready to stay at ${hotelInfo[0].Name}! Please visit ${url} to create your account.`;
+                global.twilio.messages
+                    .create({
+                        body: message,
+                        from: '+14073052775',
+                        to: '+1' + phone
+                    });
             }
-            // Send the link
-            let message = `Hello, ${first_name}! You are almost ready to stay at ${hotelInfo[0].Name}! Please visit ${url} to create your account.`;
-            global.twilio.messages
-                .create({
-                    body: message,
-                    from: '+14073052775',
-                    to: '+1' + phone
-                });
         }
         let user_data_api_compliant = accountGen(createAction.ops[0]);
         delete user_data_api_compliant.password;
@@ -105,7 +120,8 @@ app.post("/api/account/login", async (req, res, next) => {
                     'username': username,
                     'role': acc.toLowerCase(),
                     'id': id,
-                    'login-ref': "first_access"
+                    'login-ref': "first_access",
+                    'created': Date.now()
                 }, process.env.JWT_SECRET, {expiresIn: lifetime});
                 res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
                 return res.status(200).json({
@@ -124,7 +140,8 @@ app.post("/api/account/login", async (req, res, next) => {
                         'username': username,
                         'role': acc.toLowerCase(),
                         'id': id,
-                        'login-ref': "password"
+                        'login-ref': "password",
+                        'created': Date.now()
                     }, process.env.JWT_SECRET, {expiresIn: lifetime});
                     res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
                     return res.status(200).json({
@@ -173,7 +190,8 @@ app.get("/api/account/letmein/:phone", async (req, res, next) => {
             'username': accountData.username,
             'role': accountData.role,
             'id': accountData.user_id,
-            'login-ref': "password_reset"
+            'login-ref': "password_reset",
+            'created': Date.now()
         }, process.env.JWT_SECRET, {expiresIn: lifetime});
 
         let url = `${INSTANCE_URL}/resetPassword?token=${token}`;

@@ -25,7 +25,8 @@ Owner: Jeffrey (on behalf of Kartik)
 ## POST `/account/create/`
 Owner: Chris (originally)
 - Changed password behavior, who can create accounts.
-- Added ID increment code!
+- Added ID increment code, default values.
+- Allow defining a pre-set password (optional)
 - Compliant!
 
 ## GET `/hotel/`
