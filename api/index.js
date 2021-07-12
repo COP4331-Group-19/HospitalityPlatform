@@ -35,6 +35,8 @@ if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 40) {
     console.error("[WARNING] The JWT secret defined is not secure enough! If the secret is guessable, you might as well not have passwords! Remedy this ASAP.");
 }
 
+global.INSTANCE_URL = "https://hospitalityplatform.herokuapp.com";
+
 // Note: make sure you authenticate correctly!
     const MongoClient = require('mongodb').MongoClient;
     const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.qaihg.mongodb.net/HotelManagement?retryWrites=true&w=majority`;

@@ -36,11 +36,9 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
         if (global.twilio) {
             const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
             // Create shortlink via Senko
-            let url;
+            let url = `${INSTANCE_URL}/register?username=${username}`;
             if (process.env.SHORTLINK_KEY) {
-                url = createShortlink("https://hospitalityplatform.herokuapp.com/register?username=" + username);
-            } else {
-                url = "https://example.com/"
+                url = createShortlink(url);
             }
             // Send the link
             let message = `Hello, ${first_name}! You are almost ready to stay at ${hotelInfo[0].Name}! Please visit ${url} to create your account.`;
@@ -85,7 +83,8 @@ app.post("/api/account/login", async (req, res, next) => {
                 const token = jwt.sign({
                     'username': username,
                     'role': acc.toLowerCase(),
-                    'id': id
+                    'id': id,
+                    'login-ref': "first_access"
                 }, process.env.JWT_SECRET, {expiresIn: lifetime});
                 res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
                 return res.status(200).json({
@@ -103,7 +102,8 @@ app.post("/api/account/login", async (req, res, next) => {
                     const token = jwt.sign({
                         'username': username,
                         'role': acc.toLowerCase(),
-                        'id': id
+                        'id': id,
+                        'login-ref': "password"
                     }, process.env.JWT_SECRET, {expiresIn: lifetime});
                     res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
                     return res.status(200).json({
@@ -121,13 +121,60 @@ app.post("/api/account/login", async (req, res, next) => {
 // Get account data.
 app.get("/api/account/", authn.isAuthorized, async (req, res, next) => {
     const db = db_client.db();
-    console.log(req.user.username)
     const results = await
         db.collection('Accounts').find({Login: req.user.username}).toArray();
     let accountData = accountGen(results[0]);
     // We don't want to return the password lol
     delete accountData.password;
     return res.status(200).json(accountData);
+});
+
+// Get account data.
+app.get("/api/account/letmein/:phone", async (req, res, next) => {
+    // Send SMS to get user to create account.
+    if (global.twilio) {
+        const db = db_client.db();
+        const results = await
+            db.collection('Accounts').find({PhoneNumber: req.params.phone}).toArray();
+
+        // If the phone number exists, silently fail.
+        if (results.length <= 0)
+            return res.status(200).json(errGen(200, "We have sent the phone number on file a password reset request."));
+        else
+            // If it does work, we NEED to send it at the SAME TIME as the failure, or else a hacker can use this to test for accounts.
+            res.status(200).json(errGen(200, "We have sent the phone number on file a password reset request."));
+
+        let accountData = accountGen(results[0]);
+
+        // Create JWT that will last a half-hour.
+        let lifetime = 1800000;
+        const token = jwt.sign({
+            'username': accountData.username,
+            'role': accountData.role,
+            'id': accountData.user_id,
+            'login-ref': "password_reset"
+        }, process.env.JWT_SECRET, {expiresIn: lifetime});
+
+        let url = `${INSTANCE_URL}/resetPassword?token=${token}`;
+        if (process.env.SHORTLINK_KEY) {
+            url = createShortlink(url);
+        }
+
+
+        const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
+
+        // Send the link
+        let message = `Hello, ${accountData.first_name}! We have received a password request for your account at ${hotelInfo[0].Name}. `
+            + `Visit ${url} in the next thirty minutes to reset it, or do nothing and your password will not be changed.`;
+        global.twilio.messages
+            .create({
+                body: message,
+                from: '+14073052775',
+                to: '+1' + accountData.phone
+            });
+    } else {
+        return res.status(501).json("This server is not configured to allow password resets.");
+    }
 });
 
 app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
