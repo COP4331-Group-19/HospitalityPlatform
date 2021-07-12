@@ -35,8 +35,6 @@ if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 40) {
     console.error("[WARNING] The JWT secret defined is not secure enough! If the secret is guessable, you might as well not have passwords! Remedy this ASAP.");
 }
 
-global.INSTANCE_URL = "https://hospitalityplatform.herokuapp.com";
-
 // Note: make sure you authenticate correctly!
     const MongoClient = require('mongodb').MongoClient;
     const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.qaihg.mongodb.net/HotelManagement?retryWrites=true&w=majority`;
@@ -89,12 +87,12 @@ global.inventoryGen = (dbObj) => {
 }
 global.orderGen = (dbObj) => {
     return {
-        "order_id": dbObj.OrderID,
-        "room_id": dbObj.RoomID,
-        "staff": dbObj.Staff,
-        "item_id": dbObj.ItemID,
-        "quantity": dbObj.Quantity,
-        "guest": dbObj.Guest
+        "Order_ID": dbObj.Order_ID,
+        "Room_ID": dbObj.Room_ID,
+        "Staff": dbObj.Staff,
+        "Item_ID": dbObj.Item_ID,
+        "Quantity": dbObj.Quantity,
+        "Guest": dbObj.Guest
     }
 }
 global.roomGen = (dbObj) => {
@@ -104,10 +102,9 @@ global.roomGen = (dbObj) => {
         "floor": dbObj.Floor,
         "orders": []
     }
-    if (dbObj.Orders)
-        for (let i = 0; i < dbObj.Orders.length; i++) {
-            apiObj.orders[i] = orderGen(dbObj.Orders[i]);
-        }
+    for (let i = 0; i < dbObj.Orders.length; i++) {
+        apiObj.orders[i] = orderGen(dbObj.Orders[i]);
+    }
     return apiObj;
 }
 
