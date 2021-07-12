@@ -11,7 +11,7 @@ const AccountSettingComponent = (props) => {
       {/* <AccountSettingIcon src={Icon1} /> */}
       <AccountSettingH2>{props.settingTitle}</AccountSettingH2>
       <AccountSettingH2>
-        {props.hidden ? hideText(props.value) : value}
+        {/* {props.hidden ? hideText(props.value) : value} */}
       </AccountSettingH2>
     </AccountSettingCard>
   );
