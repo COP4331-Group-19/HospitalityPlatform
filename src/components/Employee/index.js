@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import EmployeeCardComponent from "./EmployeeCardComponent";
+import AccountSettingComponent from "./AccountSettingComponent";
 import NavbarEmployee from "../Navbar/NavbarEmployee";
 import Icon1 from "../../images/svg-1.svg";
 import Icon2 from "../../images/svg-3.svg";
@@ -9,6 +10,7 @@ import Icon3 from "../../images/svg-5.svg";
 // import CardGroup from "../react-bootstrap/CardGroup";
 
 import {
+  AccountSettingWrapper,
   EmployeeContainer,
   EmployeeH1,
   EmployeeWrapper,
@@ -56,6 +58,10 @@ const Employee = () => {
         <EmployeeCardComponent />
         <EmployeeCardComponent />
       </EmployeeWrapper>
+      <EmployeeH1>Account Settings</EmployeeH1>
+      <AccountSettingWrapper>
+        <AccountSettingComponent settingTitle="FirstName" />
+      </AccountSettingWrapper>
       {/*Setting container*/}
       {/* AccountSettingComponent settingTitle="FirstName" value="Angel*/}
       {/* AccountSettingComponent settingTitle="Password hidden={true}*/}
