@@ -104,9 +104,10 @@ global.roomGen = (dbObj) => {
         "floor": dbObj.Floor,
         "orders": []
     }
-    for (let i = 0; i < dbObj.Orders.length; i++) {
-        apiObj.orders[i] = orderGen(dbObj.Orders[i]);
-    }
+    if (dbObj.Orders)
+        for (let i = 0; i < dbObj.Orders.length; i++) {
+            apiObj.orders[i] = orderGen(dbObj.Orders[i]);
+        }
     return apiObj;
 }
 

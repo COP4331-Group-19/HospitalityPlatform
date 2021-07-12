@@ -34,7 +34,8 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
             PhoneNumber: phone,
             RoomNumber: room,
             CheckInDate: checkin,
-            CheckOutDate: checkout
+            CheckOutDate: checkout,
+            UserID: await getNextSequence(db, "userid")
         };
         let createAction = await db.collection('Accounts').insertOne(newUser);
 
@@ -55,8 +56,9 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
                     to: '+1' + phone
                 });
         }
-
-        return res.status(200).json(accountGen(createAction.ops[0]));
+        let user_data_api_compliant = accountGen(createAction.ops[0]);
+        delete user_data_api_compliant.password;
+        return res.status(200).json(user_data_api_compliant);
     }
 })
 
@@ -229,7 +231,8 @@ app.get("/api/room/:room_id", [authn.isAuthorized, authn.isStaff], async (req, r
 })
 // Create room with given room number, if it does not yet exist
 app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
-  const {room_id, floor} = req.body;
+  const { floor } = req.body;
+  const room_id = req.params.room_id;
   const db = db_client.db();
   const results = await
       // search if username already exists
@@ -239,7 +242,12 @@ app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, 
       return res.status(400).json(errGen(400, "Room Occupied"));
   }
   else {
-      let newRoom = {RoomID: room_id, Floor: floor};
+      let newRoom = {
+          RoomID: room_id,
+          Floor: floor,
+          Orders: [],
+          Occupant: -1
+      };
       let createAction = await db.collection('Room').insertOne(newRoom);
 
       return res.status(200).json(roomGen(createAction.ops[0]));

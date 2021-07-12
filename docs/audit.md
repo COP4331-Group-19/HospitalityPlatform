@@ -25,6 +25,7 @@ Owner: Kartik
 ## POST `/account/create/`
 Owner: Chris (originally)
 - Changed password behavior, who can create accounts.
+- Added ID increment code!
 - Compliant!
 
 ## GET `/hotel/`
@@ -38,24 +39,25 @@ Owner: Kartik
 - ⚠ Missing.
 
 ## GET `/room/:room_id`
-Owner: Johnny (on behalf of Chris)
+Owner: Chris
 - Compliant!
 
 ## POST `/room/:room_id`
 Owner: Chris
-- 🔃 Pending audit.
+- Fixed a bug where not giving a new room orders crashes the process in roomGen (might've been me, oops!)
+- Set some things to null value.
 
 ## PATCH `/room/:room_id`
 Owner: Chris
-- 🔃 Pending audit.
+- 🔃 WIP.
 
 ## DELETE `/room/:room_id`
 Owner: Chris
-- 🔃 Pending audit.
+- Compliant!
 
 ## GET `/floor/:floor_number`
 Owner: Chris
-- 🔃 Pending audit.
+- Compliant!
 
 ## POST `/inventory/`
 Owner: Jeffrey
@@ -72,7 +74,8 @@ Owner: Jeffrey
 
 ## GET `/room/`
 Owner: Johnny
-- ⚠ Missing!
+- Implemented `/room/:room_id` by mistake, and then Chris did too.
+- Needs to only return active user's assigned room.
 
 ## GET `/inventory/`
 Owner: Johnny
