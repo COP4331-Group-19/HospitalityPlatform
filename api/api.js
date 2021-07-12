@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const authn = require('./authn');
 const bcrypt = require("bcrypt");
+const { get } = require('http');
 
 exports.setApp = function (app, db_client) {
 
@@ -364,7 +365,18 @@ app.get("/api/inventory", authn.isAuthorized, async (req, res, next) => {
 
 // Get Current Room Information
 app.get("/api/room", authn.isAuthorized, async(req, res, next) => {
-    // finding solution on how to get authorized
+    let username = req.user.username;
+    const db = db_client.db();
+    const results = await
+        db.collection('Accounts').find({Login: username}).toArray();
+    let formatted = accountGen(results[0]);
+    let getRoomNum = formatted.room;
+    if (getRoomNum === "")
+        return res.status(404).json(errGen(404, "Asset not found"))
+    const roomResult = await
+        db.collection('Room').find({RoomID: getRoomNum}).toArray();
+    let room = roomGen(roomResult[0]);
+    return res.status(200).json(room)
 })
 
 // Orders an inventory item to a user's room
