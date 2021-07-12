@@ -19,8 +19,8 @@ Owner: Jeffrey (reassigned)
 - Compliant!
 
 ## GET `/account/all/`
-Owner: Kartik
-- ⚠ Missing.
+Owner: Jeffrey (on behalf of Kartik)
+- Compliant!
 
 ## POST `/account/create/`
 Owner: Chris (originally)

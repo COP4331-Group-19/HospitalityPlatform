@@ -62,6 +62,19 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
     }
 })
 
+// List all accounts.
+app.get("/api/account/all", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
+    const db = db_client.db();
+    const results = await
+        db.collection('Accounts').find({}).toArray();
+    let formatted = []
+    for (let i = 0; i < results.length; i++) {
+        formatted[i] = accountGen(results[i]);
+        delete formatted[i].password;
+    }
+    return res.status(200).json(formatted);
+})
+
 // Login
 app.post("/api/account/login", async (req, res, next) => {
     // grab login and password from request
