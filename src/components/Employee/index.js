@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import EmployeeCardComponent from "./EmployeeCardComponent";
 import NavbarEmployee from "../Navbar/NavbarEmployee";
 import Icon1 from "../../images/svg-1.svg";
 import Icon2 from "../../images/svg-3.svg";
@@ -32,31 +33,32 @@ const Employee = () => {
     <EmployeeContainer id="Employee">
       <FormWrap>
         <FormContent>
-          <Form action="#">
+          <Form>
+            <label>hello</label>
             <FormLittle action="#">
               <EmployeeH3>221B</EmployeeH3>
             </FormLittle>
+            <div>
+              <h4>test</h4>
+            </div>
           </Form>
         </FormContent>
       </FormWrap>
       <EmployeeH1>Our Employee</EmployeeH1>
       <EmployeeWrapper>
-        <EmployeeCard>
-          {/* <EmployeeIcon src={Icon1} /> */}
-          <EmployeeH2>Example1</EmployeeH2>
-          <EmployeeP>Example1</EmployeeP>
-        </EmployeeCard>
-        <EmployeeCard>
-          {/* <EmployeeIcon src={Icon2} /> */}
-          <EmployeeH2>Example2</EmployeeH2>
-          <EmployeeP>Example2</EmployeeP>
-        </EmployeeCard>
-        <EmployeeCard>
-          {/* <EmployeeIcon src={Icon3} /> */}
-          <EmployeeH2>Example3</EmployeeH2>
-          <EmployeeP>Example3</EmployeeP>
-        </EmployeeCard>
+        <EmployeeCardComponent
+          items={"blankets"}
+          description={"this is a description"}
+        />
+        <EmployeeCardComponent />
+        <EmployeeCardComponent />
+        <EmployeeCardComponent />
+        <EmployeeCardComponent />
+        <EmployeeCardComponent />
       </EmployeeWrapper>
+      {/*Setting container*/}
+      {/* AccountSettingComponent settingTitle="FirstName" value="Angel*/}
+      {/* AccountSettingComponent settingTitle="Password hidden={true}*/}
     </EmployeeContainer>
   );
 };
