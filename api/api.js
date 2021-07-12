@@ -11,10 +11,16 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
     const db = db_client.db();
     const results = await
         // search if username already exists
-        db.collection('Accounts').find({Login: username}).toArray();
+        db.collection('Accounts').find({
+            $or: [
+                { Login: username },
+                { Email: email },
+                { PhoneNumber: phone }
+            ]
+        }).toArray();
     console.log(results);
     if (results.length > 0) {
-        return res.status(400).json(errGen(400, "Username Taken"));
+        return res.status(400).json(errGen(400, "Username, Email, or Phone Number Taken"));
     } else {
         let newUser = {
             AccountType: role,
