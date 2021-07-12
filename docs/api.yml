@@ -513,7 +513,7 @@ paths:
           schema:
             type: integer
       operationId: get_orders_fulfill_by_order_id
-      summary: Claim an order by its order ID.
+      summary: Fulfill an order by its order ID.
       responses:
         '200':
           content:

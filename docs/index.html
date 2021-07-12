@@ -7990,7 +7990,7 @@ except ApiException as e:
                       <article id="api-Staff-getOrdersFulfillByOrderId-0" data-group="User" data-name="getOrdersFulfillByOrderId" data-version="0">
                         <div class="pull-left">
                           <h1>getOrdersFulfillByOrderId</h1>
-                          <p>Claim an order by its order ID.</p>
+                          <p>Fulfill an order by its order ID.</p>
                         </div>
                         <div class="pull-right"></div>
                         <div class="clearfix"></div>
@@ -8079,7 +8079,7 @@ Integer *orderId = 56; // The order ID to mark as fulfilled.
 
 StaffApi *apiInstance = [[StaffApi alloc] init];
 
-// Claim an order by its order ID.
+// Fulfill an order by its order ID.
 [apiInstance getOrdersFulfillByOrderIdWith:orderId
               completionHandler: ^(Error200 output, NSError* error) {
                             if (output) {
@@ -8134,7 +8134,7 @@ namespace Example
 
             try
             {
-                // Claim an order by its order ID.
+                // Fulfill an order by its order ID.
                 Error200 result = apiInstance.getOrdersFulfillByOrderId(orderId);
                 Debug.WriteLine(result);
             }
@@ -8196,7 +8196,7 @@ api_instance = swagger_client.StaffApi()
 orderId = 56 # Integer | The order ID to mark as fulfilled.
 
 try: 
-    # Claim an order by its order ID.
+    # Fulfill an order by its order ID.
     api_response = api_instance.get_orders_fulfill_by_order_id(orderId)
     pprint(api_response)
 except ApiException as e:
