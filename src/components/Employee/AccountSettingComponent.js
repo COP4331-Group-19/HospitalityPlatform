@@ -1,5 +1,9 @@
 import React from "react";
-import { AccountSettingCard, AccountSettingH2 } from "./EmployeeElements";
+import {
+  AccountSettingCard,
+  AccountSettingH2,
+  AccountP,
+} from "./EmployeeElements";
 
 const AccountSettingComponent = (props) => {
   const hideText = (text) => {
@@ -10,6 +14,7 @@ const AccountSettingComponent = (props) => {
     <AccountSettingCard>
       {/* <AccountSettingIcon src={Icon1} /> */}
       <AccountSettingH2>{props.settingTitle}</AccountSettingH2>
+      <AccountP>{props.description}</AccountP>
       <AccountSettingH2>
         {/* {props.hidden ? hideText(props.value) : value} */}
       </AccountSettingH2>
