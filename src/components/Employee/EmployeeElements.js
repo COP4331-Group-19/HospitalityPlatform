@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const AccountSettingCard = styled.div`
-  background: #fff;
+  background: #2c2c2c;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -9,7 +9,6 @@ export const AccountSettingCard = styled.div`
   border-radius: 10px;
   max-height: 340px;
   padding: 30px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease-in-out;
 
   &:hover {
@@ -18,8 +17,36 @@ export const AccountSettingCard = styled.div`
     cursor: pointer;
   }
 `;
+export const AccountSettingWrapper = styled.div`
+  max-width: 1000px;
+  margin: 100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  grid-gap: 200px;
+  padding: 0 50px;
+
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+`;
+export const AccountSettingH2 = styled.h2`
+  font-size: 1.5rem;
+  color: #6d7275;
+  margin-bottom: 10px;
+`;
+export const AccountP = styled.p`
+  font-size: 1rem;
+  color: white;
+  text-align: center;
+`;
+
 export const EmployeeContainer = styled.div`
-  height: 1000px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -37,7 +64,7 @@ export const EmployeeContainer = styled.div`
 
 export const EmployeeWrapper = styled.div`
   max-width: 1000px;
-  margin: 0 auto;
+  margin: 100px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
@@ -55,7 +82,7 @@ export const EmployeeWrapper = styled.div`
 `;
 
 export const EmployeeCard = styled.div`
-  background: #fff;
+  background: #3d3d3d;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -82,7 +109,8 @@ export const EmployeeIcon = styled.img`
 export const EmployeeH1 = styled.h1`
   font-size: 2.5rem;
   color: #fff;
-  margin-bottom: 200px;
+  margin-top: 30px;
+  margin-bottom: -60px;
   display: flex;
   justify-content: center;
   align-items: left;
@@ -94,16 +122,25 @@ export const EmployeeH1 = styled.h1`
 
 export const EmployeeH2 = styled.h2`
   font-size: 1rem;
+  color: white;
   margin-bottom: 10px;
 `;
 export const EmployeeH3 = styled.h3`
   font-size: 1.5rem;
   color: white;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   margin-left: -25px;
+  display: flex;
+  justify-content: center;
+  align-items: left;
+
+  @media screen and (max-width: 480px) {
+    font-size: 2rem;
+  }
 `;
 export const EmployeeP = styled.p`
   font-size: 1rem;
+  color: white;
   text-align: center;
 `;
 export const FormWrap = styled.div`
@@ -134,7 +171,7 @@ export const Form = styled.form`
   z-index: 1;
   display: grid;
   margin: 0 auto;
-  margin-top: 30px;
+  margin-top: 150px;
   padding: 50px 250px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -149,9 +186,9 @@ export const FormLittle = styled.form`
   width: 50%;
   z-index: 2;
   display: grid;
-  margin-top: -10px;
-  margin-left: -130px;
-  padding: 20px 40px;
+  margin-top: -30px;
+  margin-left: -190px;
+  padding: 20px 50px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 
