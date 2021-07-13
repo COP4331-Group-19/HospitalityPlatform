@@ -12,7 +12,7 @@ export const Container = styled.div`
   overflow: hidden;
   background: linear-gradient(
     108deg,
-    rgba(194, 1, 20, 1) 0%,
+    rgba(20, 204, 164, 1) 0%,
     rgba(8, 15, 15, 1) 90%
   );
 `;
@@ -91,7 +91,7 @@ export const FormInput = styled.input`
 `;
 
 export const FormButton = styled.button`
-  background: #c20114;
+  background: #14cca4;
   padding: 16px 0;
   border: none;
   border-radius: 4px;
@@ -102,7 +102,7 @@ export const FormButton = styled.button`
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
-    color: #c20114;
+    color: #14cca4;
   }
 `;
 export const Text = styled.span`
