@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import EmployeeCardComponent from "./EmployeeCardComponent";
 import AccountSettingComponent from "./AccountSettingComponent";
 import NavbarEmployee from "../Navbar/NavbarEmployee";
@@ -36,13 +37,10 @@ const Employee = () => {
       <FormWrap>
         <FormContent>
           <Form>
-            <label>hello</label>
+            <EmployeeH3>hello</EmployeeH3>
             <FormLittle action="#">
-              <EmployeeH3>221B</EmployeeH3>
+              <EmployeeH3>Room 221B</EmployeeH3>
             </FormLittle>
-            <div>
-              <h4>test</h4>
-            </div>
           </Form>
         </FormContent>
       </FormWrap>
@@ -59,8 +57,17 @@ const Employee = () => {
         <EmployeeCardComponent />
       </EmployeeWrapper>
       <EmployeeH1>Account Settings</EmployeeH1>
+      {/* <Link to="/signin">Edit</Link> */}
       <AccountSettingWrapper>
-        <AccountSettingComponent settingTitle="FirstName" />
+        <AccountSettingComponent
+          settingTitle="FirstName"
+          description="this is a description"
+        />
+        <AccountSettingComponent settingTitle="LastName" />
+        <AccountSettingComponent settingTitle="PhoneNumber" />
+        <AccountSettingComponent settingTitle="Email" />
+        <AccountSettingComponent settingTitle="Username" />
+        <AccountSettingComponent settingTitle="Password" />
       </AccountSettingWrapper>
       {/*Setting container*/}
       {/* AccountSettingComponent settingTitle="FirstName" value="Angel*/}
