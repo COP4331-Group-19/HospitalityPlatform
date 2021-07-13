@@ -101,7 +101,7 @@ const Navbar = ({ toggle }) => {
               <NavBtnLink to="/signin">Sign In</NavBtnLink>
               <NavBtnLinkAdmin to="/admin">AdminPage</NavBtnLinkAdmin>
               <NavBtnLinkEmployee to="/employee">EmployeePage</NavBtnLinkEmployee>
-              <NavBtnLinkGuest to="/GuestPage">Guest</NavBtnLinkGuest>
+              <NavBtnLinkGuest to="/aboutguest">Guest</NavBtnLinkGuest>
             </NavBtn>
           </NavbarContainer>
         </Nav>
