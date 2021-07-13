@@ -1,6 +1,12 @@
 import React from "react";
+// import Icon1 from "../../images/svg-1.svg";
 
-import { EmployeeCard, EmployeeH2, EmployeeP } from "./EmployeeElements";
+import {
+  EmployeeCard,
+  EmployeeH2,
+  EmployeeP,
+  // EmployeeIcon,
+} from "./EmployeeElements";
 
 const EmployeeCardComponent = (props) => {
   return (
