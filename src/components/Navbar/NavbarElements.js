@@ -1,8 +1,8 @@
 import { Link as LinkS } from "react-scroll";
 import { Link as LinkR } from "react-router-dom";
-import { Link as LinkG } from "react-router-dom";
 import { Link as LinkA } from "react-router-dom";
 import { Link as LinkE } from "react-router-dom";
+import { Link as LinkG } from "react-router-dom";
 import styled from "styled-components";
 
 export const Nav = styled.nav`
@@ -76,6 +76,7 @@ export const MobileIcon = styled.div`
 
 export const NavMenu = styled.ul`
   display: flex;
+  color: white;
   align-items: center;
   list-style: none;
   text-align: center;
@@ -87,7 +88,7 @@ export const NavMenu = styled.ul`
 `;
 
 export const NavItem = styled.li`
-  height: 80px;
+  height: 100px;
 `;
 
 export const NavBtn = styled.nav`
@@ -109,13 +110,13 @@ export const NavLinks = styled(LinkS)`
   cursor: pointer;
 
   &.active {
-    border-bottom: 3px solid #c20114;
+    border-bottom: 3px solid #14cca4;
   }
 `;
 
 export const NavBtnLink = styled(LinkR)`
   border-radius: 50px;
-  background: #c20114;
+  background: #14cca4;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -129,12 +130,12 @@ export const NavBtnLink = styled(LinkR)`
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
-    color: #c20114;
+    color: #14cca4;
   }
 `;
 export const NavBtnLinkAdmin = styled(LinkA)`
   border-radius: 50px;
-  background: #c20114;
+  background: #14cca4;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -154,7 +155,7 @@ export const NavBtnLinkAdmin = styled(LinkA)`
 
 export const NavBtnLinkEmployee = styled(LinkE)`
   border-radius: 50px;
-  background: #c20114;
+  background: #14cca4;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -171,10 +172,9 @@ export const NavBtnLinkEmployee = styled(LinkE)`
     color: #c20114;
   }
 `;
-
 export const NavBtnLinkGuest = styled(LinkG)`
   border-radius: 50px;
-  background: #c20114;
+  background: #14cca4;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -184,7 +184,6 @@ export const NavBtnLinkGuest = styled(LinkG)`
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
-
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
