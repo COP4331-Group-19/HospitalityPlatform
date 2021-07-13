@@ -7,6 +7,9 @@ import SigninPage from "./pages/signin";
 import AdminPage from "./pages/admin";
 import EmployeePage from "./pages/employee";
 import GuestPage from './pages/guestpage';
+import AboutGuestPage from './pages/aboutguest';
+import MyProfileGuestPage from './pages/myprofileguest';
+import PasswordResetPage from './pages/resetpassword';
 
 function App() {
   return (
@@ -16,7 +19,10 @@ function App() {
         <Route path="/signin" component={SigninPage} exact />
         <Route path="/admin" component={AdminPage} exact />
         <Route path="/employee" component={EmployeePage} exact />
-        <Route path='/guestpage' component={GuestPage} exact />
+        <Route path='/resetpassword' component={PasswordResetPage} exact />
+        <Route path="/guest" component={GuestPage} exact />
+        <Route path="/aboutguest" component={AboutGuestPage} exact />
+        <Route path="/myprofileguest" component={MyProfileGuestPage} exact />
       </Switch>
     </Router>
   );
