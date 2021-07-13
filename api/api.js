@@ -370,9 +370,11 @@ app.get("/api/room", authn.isAuthorized, async(req, res, next) => {
     const results = await
         db.collection('Accounts').find({Login: username}).toArray();
     let formatted = accountGen(results[0]);
+    if (formatted.role !== "guest")
+        return res.status(405).json(errGen(405, "Feature can be only used as guests"))
     let getRoomNum = formatted.room;
-    if (getRoomNum === "")
-        return res.status(404).json(errGen(404, "Asset not found"))
+    if (getRoomNum === "") 
+        return res.status(404).json(errGen(404, "Asset not found")) 
     const roomResult = await
         db.collection('Room').find({RoomID: getRoomNum}).toArray();
     let room = roomGen(roomResult[0]);
@@ -434,7 +436,33 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
 
 
 // ======================Staff Endpoints===========================
-
+// Get Active orders from logged in user's orders
+app.get("/api/orders/my", [authn.isAuthorized,authn.isStaff], async(req, res, next) => {
+    const db = db_client.db();
+    const results = await
+        db.collection('Order').find({Order_ID: {$gt: -1}}).toArray();
+    if (results.length < 1) 
+       return res.status(406).json(errGen(406, "No active orders"));
+    let formatted = [];
+    for (let i = 0; i < results.length; i++) {
+        formatted[i] = orderGen(results[i]);
+    }
+    return res.status(200).json(formatted);
+})
+// Get list of unclaimed orders 
+app.get("/api/orders/unclaimed", [authn.isAuthorized, authn.isStaff], async(req, res, next) => {
+    let unclaim = -1;
+    const db = db_client.db();
+    const results = await
+        db.collection('Order').find({Order_ID: unclaim}).toArray();
+    if (results.length < 1) 
+       return res.status(406).json(errGen(406, "No unclaimed orders"));
+    let formatted = [];
+    for (let i = 0; i < results.length; i++) {
+        formatted[i] = orderGen(results[i]);
+    }
+    return res.status(200).json(formatted);
+})
 // ==================End of Staff Endpoints========================
 
 
