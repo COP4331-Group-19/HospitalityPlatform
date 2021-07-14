@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Link } from "react-router-dom";
 import {
   Container,
@@ -15,6 +16,13 @@ import {
 
 const SignIn = () => {
   const [message, setMessage] = useState("");
+
+  //required files
+  var bp = require("../Path.js");
+
+  //variables used to login
+  var LoginName;
+  var LoginPassword;
 
   // doLogin just a login function
   const doLogin = async (event) => {
@@ -103,4 +111,3 @@ const SignIn = () => {
 };
 
 export default SignIn;
-
