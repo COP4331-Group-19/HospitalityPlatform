@@ -6,7 +6,7 @@ import Home from "./pages";
 import SigninPage from "./pages/signin";
 import AdminPage from "./pages/admin";
 import EmployeePage from "./pages/employee";
-import GuestPage from './pages/guestpage';
+import GuestPage from './pages/guest';
 import AboutGuestPage from './pages/aboutguest';
 import MyProfileGuestPage from './pages/myprofileguest';
 import PasswordResetPage from './pages/resetpassword';
