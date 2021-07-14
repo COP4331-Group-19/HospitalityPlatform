@@ -463,6 +463,27 @@ app.get("/api/orders/unclaimed", [authn.isAuthorized, authn.isStaff], async(req,
     }
     return res.status(200).json(formatted);
 })
+// Claim an order by its order ID
+    app.get("/api/orders/claim/:order_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
+      var order_id = req.body;
+      const db = db_client.db();
+      var user = req.user;
+      await db.collection('Order').findOneAndUpdate({Order_ID:order_id}, {$set:{Staff:user}});
+      const results = await db.collection('Order').findOneAndUpdate({Order_ID:order_id}).toArray();
+      let order = orderGen(results[0]);
+      return res.status(200).json(order);
+    });
+    // Fulfill an order by its order ID
+    app.get("/api/orders/fulfill/:order_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
+      var order_id = req.body;
+      const db = db_client.db();
+      await db.collection('Order').findOneAndDelete({Order_ID:order_id});
+      const result = await db.collection('Order').find({Order_ID:order_id}).toArray();
+      if(result.length < 1){
+        return res.status(200).json({error:''});
+      }
+      return res.status(200).json({error:'Might Not be Deleted'});
+    });
 // ==================End of Staff Endpoints========================
 
 
