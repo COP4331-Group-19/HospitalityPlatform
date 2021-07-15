@@ -105,6 +105,8 @@ export const FormButton = styled.button`
     color: #14cca4;
   }
 `;
+
+
 export const Text = styled.span`
   text-align: center;
   margin-top: 24px;

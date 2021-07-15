@@ -13,6 +13,8 @@ app.use(cookieParser());
 const async = require("async");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
+const axios = require('axios');
+const FormData = require('form-data');
 dotenv.config();
 
 if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD || !process.env.JWT_SECRET) {
@@ -24,6 +26,9 @@ if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD || !process.env.JWT_SEC
     } catch(err) {
         console.debug(`[DEBUG] DB_PASSWORD=(null)`);
     }
+}
+if (process.env.TWILIO_SID && process.env.TWILIO_TOKEN) {
+    global.twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 }
 // security guard
 if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 40) {
@@ -82,12 +87,12 @@ global.inventoryGen = (dbObj) => {
 }
 global.orderGen = (dbObj) => {
     return {
-        "order_id": dbObj.OrderID,
-        "room_id": dbObj.RoomID,
-        "staff": dbObj.Staff,
-        "item_id": dbObj.ItemID,
-        "quantity": dbObj.Quantity,
-        "guest": dbObj.Guest
+        "Order_ID": dbObj.Order_ID,
+        "Room_ID": dbObj.Room_ID,
+        "Staff": dbObj.Staff,
+        "Item_ID": dbObj.Item_ID,
+        "Quantity": dbObj.Quantity,
+        "Guest": dbObj.Guest
     }
 }
 global.roomGen = (dbObj) => {
@@ -97,9 +102,10 @@ global.roomGen = (dbObj) => {
         "floor": dbObj.Floor,
         "orders": []
     }
-    for (let i = 0; i < dbObj.Orders.length; i++) {
-        apiObj.orders[i] = orderGen(dbObj.Orders[i]);
-    }
+    if (dbObj.Orders)
+        for (let i = 0; i < dbObj.Orders.length; i++) {
+            apiObj.orders[i] = orderGen(dbObj.Orders[i]);
+        }
     return apiObj;
 }
 
@@ -124,6 +130,8 @@ global.errGen = (errCode, str) => {
     }
 }
 
+global.INSTANCE_URL = "https://hospitalityplatform.herokuapp.com";
+
 // Incrementing user IDs.
 // Originally from below link but probably doesn't resemble it at all after fixes:
 // https://stackoverflow.com/questions/49500551/insert-a-document-while-auto-incrementing-a-sequence-field-in-mongodb
@@ -140,6 +148,27 @@ global.getNextSequence = async (db, counterName) => {
         throw err;
     });
     return query.value.seq;
+}
+
+global.createShortlink = (long_url) => {
+    const host = "https://o.divi.sh/";
+    if (process.env.SHORTLINK_KEY) {
+        // Theoretically possible, but statistically unlikely, to be a duplicate.
+        let short_url = `hosp_${Buffer.from(String(Math.floor(Math.random() * 999999999)).replace(/=/g, "")).toString('base64')}`;
+
+        const formData = new FormData();
+        formData.append("long", long_url);
+        formData.append("short", short_url);
+
+        axios.post(host + process.env.SHORTLINK_KEY, formData, { headers: formData.getHeaders() }).then(response => {
+        }).catch(function (error) {
+            console.error(error);
+        });
+
+        return `${host}${short_url}`;
+    } else {
+        return `${host}/undefined`;
+    }
 }
 
 let api = require('./api.js');

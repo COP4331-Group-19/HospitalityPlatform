@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "../ButtonElements";
 import Picture from "../../images/hotel.jpg";
-import Video from "../../videos/video.mp4";
+// import Video from "../../videos/video.mp4";
 import {
   HeroContainer,
   HeroBg,

@@ -1,39 +1,95 @@
 const jwt = require('jsonwebtoken');
 const authn = require('./authn');
 const bcrypt = require("bcrypt");
+const { get } = require('http');
 
 exports.setApp = function (app, db_client) {
 
-// Account Endpoints
+// ======================Account Endpoints=========================
 // Register                      v only admin can create reservations!
 app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
-    const {username, first_name, last_name, email, phone, role, checkin, checkout, room} = req.body;
+    const {username, first_name, last_name, email, phone, role, checkin, checkout, room, password} = req.body;
     const db = db_client.db();
     const results = await
         // search if username already exists
-        db.collection('Accounts').find({Login: username}).toArray();
+        db.collection('Accounts').find({
+            $or: [
+                { Login: username },
+                { Email: email },
+                { PhoneNumber: phone }
+            ]
+        }).toArray();
     console.log(results);
     if (results.length > 0) {
-        return res.status(400).json(errGen(400, "Username Taken"));
+        return res.status(400).json(errGen(400, "Username, Email, or Phone Number Taken"));
     } else {
+        let setPasswd = "";
+        if (password && password.trim() !== "") {
+            setPasswd = await hashPassword(password);
+        }
         let newUser = {
-            AccountType: role,
+            AccountType: role ? role : "Guest",
             Login: username,
             // Use plain-text mode to make sure session lifetimes are shortened.
             // As soon as the password is changed, users should re-log.
-            Password: "",
+            Password: setPasswd,
             FirstName: first_name,
-            LastName: last_name,
+            LastName: last_name ? last_name : "",
             Email: email,
             PhoneNumber: phone,
-            RoomNumber: room,
-            CheckInDate: checkin,
-            CheckOutDate: checkout
+            RoomNumber: room ? room : "",
+            CheckInDate: checkin ? checkin : -1,
+            CheckOutDate: checkout ? checkout : -1,
+            UserID: await getNextSequence(db, "userid")
         };
         let createAction = await db.collection('Accounts').insertOne(newUser);
 
-        return res.status(200).json(accountGen(createAction.ops[0]));
+        // Send SMS to get user to create account.
+        if (global.twilio) {
+            const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
+            if (setPasswd !== "") {
+                let message = `Hello, ${first_name}! Your account at ${hotelInfo[0].Name} has been created! Visit ${INSTANCE_URL} to get started.`;
+                global.twilio.messages
+                    .create({
+                        body: message,
+                        from: '+14073052775',
+                        to: '+1' + phone
+                    });
+            } else {
+                const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
+                // Create shortlink via Senko
+                let url = `${INSTANCE_URL}/register?username=${username}`;
+                if (process.env.SHORTLINK_KEY) {
+                    url = createShortlink(url);
+                }
+            }
+            // Send the link
+            let message = `Hello, ${first_name}! You are almost ready to stay at ${hotelInfo[0].Name}! Please visit ${url} to create your account.`;
+            global.twilio.messages
+                .create({
+                    body: message,
+                    from: '+14073052775',
+                    to: '+1' + phone
+                });
+        }
+
+        let user_data_api_compliant = accountGen(createAction.ops[0]);
+        delete user_data_api_compliant.password;
+        return res.status(200).json(user_data_api_compliant);
     }
+})
+
+// List all accounts.
+app.get("/api/account/all", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
+    const db = db_client.db();
+    const results = await
+        db.collection('Accounts').find({}).toArray();
+    let formatted = []
+    for (let i = 0; i < results.length; i++) {
+        formatted[i] = accountGen(results[i]);
+        delete formatted[i].password;
+    }
+    return res.status(200).json(formatted);
 })
 
 // Login
@@ -62,17 +118,21 @@ app.post("/api/account/login", async (req, res, next) => {
         if (is_plaintext_mode) {
             // CRY!
             if (results[0].Password === password) {
+                let accountData = accountGen(results[0]);
+                delete accountData['password'];
+                // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
                 const token = jwt.sign({
                     'username': username,
                     'role': acc.toLowerCase(),
-                    'id': id
+                    'id': id,
+                    'login-ref': "first_access",
+                    'created': Date.now()
                 }, process.env.JWT_SECRET, {expiresIn: lifetime});
                 res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
-                return res.status(200).json({
-                    // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
-                    "token": "Bearer " + token,
-                    "notice": "Please change your password immediately using PATCH /account/"
-                });
+                accountData['token'] = "Bearer " + token;
+                accountData['notice'] = "Please change your password immediately using PATCH /account/";
+                return res.status(200).json(accountData);
+
             } else {
                 return res.status(401).json(errGen(401));
             }
@@ -80,16 +140,18 @@ app.post("/api/account/login", async (req, res, next) => {
             bcrypt.compare(password, results[0].Password, (err, result) => {
                 // If hash works, let it through
                 if (result) {
+                    let accountData = accountGen(results[0]);
+                    delete accountData['password'];
                     const token = jwt.sign({
                         'username': username,
                         'role': acc.toLowerCase(),
-                        'id': id
+                        'id': id,
+                        'login-ref': "password",
+                        'created': Date.now()
                     }, process.env.JWT_SECRET, {expiresIn: lifetime});
                     res.cookie('session', 'Bearer ' + token, {expire: lifetime + Date.now()});
-                    return res.status(200).json({
-                        // https://www.digitalocean.com/community/tutorials/nodejs-jwt-expressjs
-                        "token": "Bearer " + token
-                    });
+                    accountData['token'] = "Bearer " + token;
+                    return res.status(200).json(accountData);
                 } else {
                     return res.status(401).json(errGen(401));
                 }
@@ -98,10 +160,59 @@ app.post("/api/account/login", async (req, res, next) => {
     } else return res.status(401).json(errGen(401));
 })
 
+// Password reset.
+app.get("/api/account/letmein/:phone", async (req, res, next) => {
+    // Send SMS to get user to create account.
+    if (global.twilio) {
+        const db = db_client.db();
+        const results = await
+            db.collection('Accounts').find({PhoneNumber: req.params.phone}).toArray();
+
+        // If the phone number exists, silently fail.
+        if (results.length <= 0)
+            return res.status(200).json(errGen(200, "We have sent the phone number on file a password reset request."));
+        else
+            // If it does work, we NEED to send it at the SAME TIME as the failure, or else a hacker can use this to test for accounts.
+            res.status(200).json(errGen(200, "We have sent the phone number on file a password reset request."));
+
+        let accountData = accountGen(results[0]);
+
+        // Create JWT that will last a half-hour.
+        let lifetime = 1800000;
+        const token = jwt.sign({
+            'username': accountData.username,
+            'role': accountData.role,
+            'id': accountData.user_id,
+            'login-ref': "password_reset",
+            'created': Date.now()
+        }, process.env.JWT_SECRET, {expiresIn: lifetime});
+
+        let url = `${INSTANCE_URL}/resetPassword?token=${token}`;
+        if (process.env.SHORTLINK_KEY) {
+            url = createShortlink(url);
+        }
+
+        const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
+
+        // Send the link
+        let message = `Hello, ${accountData.first_name}! We have received a password request for your account at ${hotelInfo[0].Name}. `
+            + `Visit ${url} in the next thirty minutes to reset it, or do nothing and your password will not be changed.`;
+        global.twilio.messages
+            .create({
+                body: message,
+                from: '+14073052775',
+                to: '+1' + accountData.phone
+            });
+    } else {
+        return res.status(501).json("This server is not configured to allow password resets.");
+    }
+});
+
+
+
 // Get account data.
 app.get("/api/account/", authn.isAuthorized, async (req, res, next) => {
     const db = db_client.db();
-    console.log(req.user.username)
     const results = await
         db.collection('Accounts').find({Login: req.user.username}).toArray();
     let accountData = accountGen(results[0]);
@@ -138,8 +249,10 @@ app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
     delete accountData.password;
     return res.status(200).json(accountData);
 });
+// ==================End of Account Endpoints======================
 
-// Admin Endpoints
+
+// ======================Admin Endpoints===========================
 // Get room information by room Number
 app.get("/api/room/:room_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
   const db = db_client.db();
@@ -154,9 +267,11 @@ app.get("/api/room/:room_id", [authn.isAuthorized, authn.isStaff], async (req, r
   else
     return res.status(404).json(errGen(404, "Room Not Found"));
 })
+
 // Create room with given room number, if it does not yet exist
 app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
-  const {room_id, floor} = req.body;
+  const { floor } = req.body;
+  const room_id = req.params.room_id;
   const db = db_client.db();
   const results = await
       // search if room exists
@@ -166,12 +281,18 @@ app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, 
       return res.status(400).json(errGen(400, "Room Occupied"));
   }
   else {
-      let newRoom = {RoomID: room_id, Floor: floor};
+      let newRoom = {
+          RoomID: room_id,
+          Floor: floor,
+          Orders: [],
+          Occupant: -1
+      };
       let createAction = await db.collection('Room').insertOne(newRoom);
 
       return res.status(200).json(roomGen(createAction.ops[0]));
   }
 })
+
 // Edit a preexisting room
 app.patch("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
   /*const db = db_client.db();
@@ -190,6 +311,7 @@ app.patch("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req,
   }*/
 
 })
+
 // Delete a room
 app.delete("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
   const db = db_client.db();
@@ -205,6 +327,7 @@ app.delete("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req
   else
     return res.status(404).json(errGen(404, "Room Not Found"));
 })
+
 // Get all rooms on a given floor
 app.get("/api/floor/:floor_number", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
   const db = db_client.db();
@@ -222,17 +345,6 @@ app.get("/api/floor/:floor_number", [authn.isAuthorized, authn.isStaff], async (
     return res.status(404).json(errGen(404, "No Rooms on this Floor"));
 })
 
-// List all Items from Inventory
-app.get("/api/inventory", authn.isAuthorized, async (req, res, next) => {
-    const db = db_client.db();
-    const results = await
-        db.collection('Inventory').find({}).toArray();
-    let formatted = []
-    for (let i = 0; i < results.length; i++) {
-        formatted[i] = inventoryGen(results[i]);
-    }
-    return res.status(200).json(formatted);
-})
 // Add Item to Inventory
 app.post("/api/inventory", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
     // Admin guard: authn.isAdmin. Requires isAuthorized to be called FIRST; Order matters a lot here!
@@ -264,6 +376,7 @@ app.post("/api/inventory", [authn.isAuthorized, authn.isAdmin], async (req, res,
         return res.status(500).json(errGen(500, err));
     });
 })
+
 // Delete Item from Inventory
 app.delete("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
     let inventory_id = req.params.inventory_id;
@@ -283,6 +396,7 @@ app.delete("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isAdmin], 
         return res.status(500).json(errGen(500, err));
     });
 });
+
 //
 app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
     // Get inventory ID and validate it is, indeed, a number.
@@ -325,19 +439,88 @@ app.patch("/api/inventory/:inventory_id", [authn.isAuthorized, authn.isStaff], a
         });
 });
 
-// Guest Endpoints
-// Get Current Room Information
-app.get("/api/room/:room_id", authn.isAuthorized, async (req, res, next) => {
-    let room_id = req.params.room_id;
+// Get Hotel's metadata
+app.use('/api/hotel', async (req, res, next) => {
+    var error = '';
+
+    const db = db_client.db();
+    const results = await db.collection('Hotel_Detail').find({}).toArray();
+
+    if (results.length > 0) {
+        return res.status(200).json({
+            "name": results[0].Name,
+            "color": results[0].Color,
+            "bkgd": results[0].Background,
+            "desc": results[0].Description
+        })
+    } else {
+        return res.status(500).json(errGen(500, "Hotel is AWOL."));
+    }
+});
+// ==================End of Admin Endpoints========================
+
+
+// ======================Guest Endpoints===========================
+// List all Items from Inventory
+app.get("/api/inventory", authn.isAuthorized, async (req, res, next) => {
     const db = db_client.db();
     const results = await
-        db.collection('Room').find({RoomID: room_id}).toArray()
+        db.collection('Inventory').find({}).toArray();
     let formatted = []
-    formatted[0] = roomGen(results[0])
-    return res.status(200).json(formatted)
-});
+    for (let i = 0; i < results.length; i++) {
+        formatted[i] = inventoryGen(results[i]);
+    }
+    return res.status(200).json(formatted);
+})
+
+// Get Current Room Information
+app.get("/api/room", authn.isAuthorized, async(req, res, next) => {
+    let username = req.user.username;
+    const db = db_client.db();
+    const results = await
+        db.collection('Accounts').find({Login: username}).toArray();
+    let formatted = accountGen(results[0]);
+    if (formatted.role !== "guest")
+        return res.status(405).json(errGen(405, "Feature can be only used as guests"))
+    let getRoomNum = formatted.room;
+    if (getRoomNum === "")
+        return res.status(404).json(errGen(404, "Asset not found"))
+    const roomResult = await
+        db.collection('Room').find({RoomID: getRoomNum}).toArray();
+    let room = roomGen(roomResult[0]);
+    return res.status(200).json(room)
+})
 
 // Orders an inventory item to a user's room
+app.get("/api/inventory/:inventory_id/:quantity", authn.isAuthorized, async(req, res, next) => {
+    let inventory_id = req.params.inventory_id;
+    let quantity = req.params.quantity;
+    try {
+        inventory_id = Number(inventory_id);
+        if (isNaN(inventory_id))
+            return res.status(400).json(errGen(400, "Invalid item ID."));
+    } catch (err) {
+        // If we can't cast a number
+        return res.status(400, "Invalid item ID.");
+    }
+    // check there exist the inventory_id by checking if results return more than 0
+    // then, we check if we have enough in quantity for the item
+    // if request > db.quantity return json with message warning not enough
+    const db = db_client.db();
+    const results = await
+        db.collection('Order').find({Item_ID: inventory_id}).toArray();
+    if (results.length > 0) {
+        let itemData = orderGen(results[0])
+        if (itemData.Quantity < quantity)
+            // return json or error message?
+            return res.status(406).json(errGen(406, "Not enough in quantity"))
+        else
+            return res.status(200).json(itemData)
+    }
+    else
+        return res.status(404).json(errGen(404, "Asset not found"))
+
+})
 
 // Get information on a specific inventory entry
 app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, next) => {
@@ -359,25 +542,61 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
     } else
         return res.status(404).json(errGen(404, "Asset not found"))
 });
+// ==================End of Guest Endpoints========================
 
-// Yeah, everyone can see this (regardless of authn state)
-app.use('/api/hotel', async (req, res, next) => {
-    var error = '';
 
+// ======================Staff Endpoints===========================
+// Get Active orders from logged in user's orders
+app.get("/api/orders/my", [authn.isAuthorized,authn.isStaff], async(req, res, next) => {
     const db = db_client.db();
-    const results = await db.collection('Hotel_Detail').find({}).toArray();
-
-    if (results.length > 0) {
-        return res.status(200).json({
-            "name": results[0].Name,
-            "color": results[0].Color,
-            "bkgd": results[0].Background,
-            "desc": results[0].Description
-        })
-    } else {
-        return res.status(500).json(errGen(500, "Hotel is AWOL."));
+    const results = await
+        db.collection('Order').find({Order_ID: {$gt: -1}}).toArray();
+    if (results.length < 1)
+       return res.status(406).json(errGen(406, "No active orders"));
+    let formatted = [];
+    for (let i = 0; i < results.length; i++) {
+        formatted[i] = orderGen(results[i]);
     }
-});
+    return res.status(200).json(formatted);
+})
+// Get list of unclaimed orders
+app.get("/api/orders/unclaimed", [authn.isAuthorized, authn.isStaff], async(req, res, next) => {
+    let unclaim = -1;
+    const db = db_client.db();
+    const results = await
+        db.collection('Order').find({Order_ID: unclaim}).toArray();
+    if (results.length < 1)
+       return res.status(406).json(errGen(406, "No unclaimed orders"));
+    let formatted = [];
+    for (let i = 0; i < results.length; i++) {
+        formatted[i] = orderGen(results[i]);
+    }
+    return res.status(200).json(formatted);
+})
+// Claim an order by its order ID
+    app.get("/api/orders/claim/:order_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
+      var order_id = req.body;
+      const db = db_client.db();
+      var user = req.user;
+      await db.collection('Order').findOneAndUpdate({Order_ID:order_id}, {$set:{Staff:user}});
+      const results = await db.collection('Order').findOneAndUpdate({Order_ID:order_id}).toArray();
+      let order = orderGen(results[0]);
+      return res.status(200).json(order);
+    });
+    // Fulfill an order by its order ID
+    app.get("/api/orders/fulfill/:order_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
+      var order_id = req.body;
+      const db = db_client.db();
+      await db.collection('Order').findOneAndDelete({Order_ID:order_id});
+      const result = await db.collection('Order').find({Order_ID:order_id}).toArray();
+      if(result.length < 1){
+        return res.status(200).json({error:''});
+      }
+      return res.status(200).json({error:'Might Not be Deleted'});
+    });
+// ==================End of Staff Endpoints========================
+
+
 
 // bcrypt hash password function for POST/api/createAcc
 const hashPassword = async (password, saltRounds = 10) => {

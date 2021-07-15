@@ -6,7 +6,7 @@ import { Link as LinkG } from "react-router-dom";
 import styled from "styled-components";
 
 export const Nav = styled.nav`
-  background: ${({ scrollNav }) => (scrollNav ? "#080F0F" : "transparent")};
+  background: #14cca4;
   height: 80px;
   margin-top: -80px;
   display: flex;
@@ -16,29 +16,27 @@ export const Nav = styled.nav`
   position: sticky;
   top: 0;
   z-index: 10;
-
   @media screen and (max-width: 960px) {
     transition: 0.8s all ease;
   }
 `;
-export const Navbar = styled.nav`
-  background: #080f0f;
+export const NavbarGuest = styled.nav`
+  background: #14cca4;
   height: 80px;
   margin-top: -80px;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: left;
   font-size: 1rem;
   position: sticky;
   top: 0;
   z-index: 10;
-
   @media screen and (max-width: 960px) {
     transition: 0.8s all ease;
   }
 `;
 
-export const NavbarContainer = styled.div`
+export const NavbarGuestContainer = styled.div`
   display: flex;
   justify-content: space-between;
   height: 80px;
@@ -48,7 +46,7 @@ export const NavbarContainer = styled.div`
   max-width: 1100px;
 `;
 
-export const NavLogo = styled(LinkR)`
+export const NavGuestLogo = styled(LinkR)`
   color: #fff;
   justify-self: flex-start;
   cursor: pointer;
@@ -62,7 +60,6 @@ export const NavLogo = styled(LinkR)`
 
 export const MobileIcon = styled.div`
   display: none;
-
   @media screen and (max-width: 768px) {
     display: block;
     position: absolute;
@@ -74,33 +71,30 @@ export const MobileIcon = styled.div`
   }
 `;
 
-export const NavMenu = styled.ul`
+export const NavGuestMenu = styled.ul`
   display: flex;
-  color: white;
   align-items: center;
   list-style: none;
   text-align: center;
-  margin-right: -22px;
-
+  margin-right: flex;
   @media screen and (max-width: 768px) {
     display: none;
   }
 `;
 
-export const NavItem = styled.li`
-  height: 100px;
+export const NavGuestItem = styled.li`
+  height: 80px;
 `;
 
 export const NavBtn = styled.nav`
   display: flex;
   align-items: center;
-
   @media screen and (max-width: 768px) {
     display: none;
   }
 `;
 
-export const NavLinks = styled(LinkS)`
+export const NavGuestLinks = styled(LinkS)`
   color: #fff;
   display: flex;
   align-items: center;
@@ -108,9 +102,8 @@ export const NavLinks = styled(LinkS)`
   padding: 0 1rem;
   height: 100%;
   cursor: pointer;
-
   &.active {
-    border-bottom: 3px solid #14cca4;
+    border-bottom: 3px solid #c20114;
   }
 `;
 
@@ -119,6 +112,7 @@ export const NavBtnLink = styled(LinkR)`
   background: #14cca4;
   white-space: nowrap;
   padding: 10px 22px;
+  height: 100px;
   color: white;
   font-size: 16px;
   outline: none;
@@ -126,16 +120,15 @@ export const NavBtnLink = styled(LinkR)`
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
-
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
-    color: #14cca4;
+    color: #c20114;
   }
 `;
 export const NavBtnLinkAdmin = styled(LinkA)`
   border-radius: 50px;
-  background: #14cca4;
+  background: #c20114;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -145,7 +138,6 @@ export const NavBtnLinkAdmin = styled(LinkA)`
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
-
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
@@ -155,7 +147,7 @@ export const NavBtnLinkAdmin = styled(LinkA)`
 
 export const NavBtnLinkEmployee = styled(LinkE)`
   border-radius: 50px;
-  background: #14cca4;
+  background: #c20114;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -165,7 +157,6 @@ export const NavBtnLinkEmployee = styled(LinkE)`
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
-
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
@@ -174,7 +165,7 @@ export const NavBtnLinkEmployee = styled(LinkE)`
 `;
 export const NavBtnLinkGuest = styled(LinkG)`
   border-radius: 50px;
-  background: #14cca4;
+  background: #c20114;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;

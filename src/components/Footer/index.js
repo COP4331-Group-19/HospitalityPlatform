@@ -60,11 +60,9 @@ const Footer = () => {
         <SocialMedia>
           <SocialMediaWrap>
             <SocialLogo to="/" onClick={toggleHome}>
-              CyberHotel
+              HotelKnightro
             </SocialLogo>
-            <WebsiteRights>
-              CyberHotel © 2021 All rights reserved.
-            </WebsiteRights>
+            <WebsiteRights>Powered by HospitalityPlatform 1.0.0</WebsiteRights>
             <SocialIcons>
               <SocialIconLink href="/" target="_blank" aria-label="Facebook">
                 <FaFacebook />
@@ -76,7 +74,7 @@ const Footer = () => {
               <SocialIconLink
                 target="_blank"
                 aria-label="Twitter"
-                href="//www.twitter.com/cyberhotelCOP4331"
+                href="//www.twitter.com/HotelKnightroCOP4331"
               >
                 <FaTwitter />
               </SocialIconLink>
