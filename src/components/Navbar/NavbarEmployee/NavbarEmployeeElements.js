@@ -39,9 +39,9 @@ export const NavbarEmployee = styled.nav`
 `;
 
 export const NavbarEmployeeContainer = styled.div`
-  display: flex;
   justify-content: space-between;
-  height: 80px;
+  justify-self: flex-start;
+  height: 30px;
   z-index: 1;
   width: 100%;
   padding: 0 24px;
@@ -79,6 +79,7 @@ export const NavEmployeeMenu = styled.ul`
   align-items: center;
   list-style: none;
   text-align: center;
+  margin-left: 50%;
   margin-right: flex;
 
   @media screen and (max-width: 768px) {
