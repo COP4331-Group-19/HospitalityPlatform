@@ -43,61 +43,20 @@ const NavbarEmployee = ({ toggle }) => {
       <IconContext.Provider value={{ color: "#fff" }}>
         <Nav scrollNav={scrollNav}>
           <NavbarEmployeeContainer>
-            <NavEmployeeLogo onClick={toggleHome} to="/">
-              Hotel Knightro
-            </NavEmployeeLogo>
+            <NavEmployeeLogo to="/">Hotel Knightro</NavEmployeeLogo>
             <MobileIcon onClick={toggle}>
               <FaBars />
             </MobileIcon>
             <NavEmployeeMenu>
               <NavEmployeeItem>
-                <NavEmployeeLinks
-                  to="about"
-                  smooth={true}
-                  duration={500}
-                  spy={true}
-                  exact="true"
-                  offset={-80}
-                >
-                  About
-                </NavEmployeeLinks>
+                <NavBtnLink to="/aboutemployee">About</NavBtnLink>
               </NavEmployeeItem>
               <NavEmployeeItem>
-                <NavEmployeeLinks
-                  to="services"
-                  smooth={true}
-                  duration={500}
-                  spy={true}
-                  exact="true"
-                  offset={-80}
-                >
-                  Services
-                </NavEmployeeLinks>
+                <NavBtnLink to="/orders">Orders</NavBtnLink>
               </NavEmployeeItem>
               <NavEmployeeItem>
-                <NavEmployeeLinks
-                  to="profile"
-                  smooth={true}
-                  duration={500}
-                  spy={true}
-                  exact="true"
-                  offset={-80}
-                >
-                  My Profile
-                </NavEmployeeLinks>
+                <NavBtnLink to="/myprofileemployee">Account Setting</NavBtnLink>
               </NavEmployeeItem>
-              {/* <NavItem>
-                <NavLinks
-                  to="signup"
-                  smooth={true}
-                  duration={500}
-                  spy={true}
-                  exact="true"
-                  offset={-80}
-                >
-                  Sign Up
-                </NavLinks>
-              </NavItem> */}
             </NavEmployeeMenu>
           </NavbarEmployeeContainer>
         </Nav>
