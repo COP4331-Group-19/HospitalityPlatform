@@ -102,9 +102,10 @@ global.roomGen = (dbObj) => {
         "floor": dbObj.Floor,
         "orders": []
     }
-    for (let i = 0; i < dbObj.Orders.length; i++) {
-        apiObj.orders[i] = orderGen(dbObj.Orders[i]);
-    }
+    if (dbObj.Orders)
+        for (let i = 0; i < dbObj.Orders.length; i++) {
+            apiObj.orders[i] = orderGen(dbObj.Orders[i]);
+        }
     return apiObj;
 }
 
@@ -128,6 +129,8 @@ global.errGen = (errCode, str) => {
         "description": desc
     }
 }
+
+global.INSTANCE_URL = "https://hospitalityplatform.herokuapp.com";
 
 // Incrementing user IDs.
 // Originally from below link but probably doesn't resemble it at all after fixes:
