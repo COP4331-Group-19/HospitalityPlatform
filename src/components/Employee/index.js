@@ -1,14 +1,9 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import EmployeeCardComponent from "./EmployeeCardComponent";
 import AccountSettingComponent from "./AccountSettingComponent";
-import NavbarEmployee from "../Navbar/NavbarEmployee";
 import Icon1 from "../../images/svg-1.svg";
 import Icon2 from "../../images/svg-3.svg";
 import Icon3 from "../../images/svg-5.svg";
-// import Table from "..react-bootstrap/Table";
-// import Card from "../../../react-bootstrap/Cards";
-// import CardGroup from "../react-bootstrap/CardGroup";
 
 import {
   AccountSettingWrapper,
@@ -37,38 +32,13 @@ const Employee = () => {
       <FormWrap>
         <FormContent>
           <Form>
-            <EmployeeH3>hello</EmployeeH3>
-            <FormLittle action="#">
-              <EmployeeH3>Room 221B</EmployeeH3>
-            </FormLittle>
+            <EmployeeH3>Employee name: </EmployeeH3>
           </Form>
         </FormContent>
       </FormWrap>
-      <EmployeeH1>Our Employee</EmployeeH1>
-      <EmployeeWrapper>
-        <EmployeeCardComponent
-          items={"blankets"}
-          description={"this is a description"}
-        />
-        <EmployeeCardComponent />
-        <EmployeeCardComponent />
-        <EmployeeCardComponent />
-        <EmployeeCardComponent />
-        <EmployeeCardComponent />
-      </EmployeeWrapper>
-      <EmployeeH1>Account Settings</EmployeeH1>
+      <EmployeeH1>You're logged in! Let's get to work.</EmployeeH1>
       {/* <Link to="/signin">Edit</Link> */}
-      <AccountSettingWrapper>
-        <AccountSettingComponent
-          settingTitle="FirstName"
-          description="this is a description"
-        />
-        <AccountSettingComponent settingTitle="LastName" />
-        <AccountSettingComponent settingTitle="PhoneNumber" />
-        <AccountSettingComponent settingTitle="Email" />
-        <AccountSettingComponent settingTitle="Username" />
-        <AccountSettingComponent settingTitle="Password" />
-      </AccountSettingWrapper>
+      <AccountSettingWrapper></AccountSettingWrapper>
       {/*Setting container*/}
       {/* AccountSettingComponent settingTitle="FirstName" value="Angel*/}
       {/* AccountSettingComponent settingTitle="Password hidden={true}*/}
