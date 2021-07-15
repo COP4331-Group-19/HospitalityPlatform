@@ -42,8 +42,10 @@ const NavbarEmployee = ({ toggle }) => {
     <>
       <IconContext.Provider value={{ color: "#fff" }}>
         <Nav scrollNav={scrollNav}>
+          <NavEmployeeLogo to="/">Hotel Knightro</NavEmployeeLogo>
+
           <NavbarEmployeeContainer>
-            <NavEmployeeLogo to="/">Hotel Knightro</NavEmployeeLogo>
+            {/* <NavEmployeeLogo to="/">Hotel Knightro</NavEmployeeLogo> */}
             <MobileIcon onClick={toggle}>
               <FaBars />
             </MobileIcon>
