@@ -1,22 +1,16 @@
 import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, Button, TextInput, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import bp from '../Path.js';
-import jwt from 'react-native-pure-jwt';
 
-function LoginScreen() {
 
-    var Login;
-    var Password;
+function PasswordChange() {
+
+    var Email;
 
     const [message, setMessage] = useState('');
 
-    const doLogin = async event => {
-        setMessage('Logging In');
-    }
-
     const doPassReset = async event => {
-        setMessage('Reseting Password');
+        setMessage('PasswordReset');
     }
 
     return (
@@ -32,54 +26,36 @@ function LoginScreen() {
                     </View>
                     {/*Break*/}
                     <Text>{'\n'}</Text>
-                    {/* UserName */}
-                    <View style={styles.login_pack}>
-                        <Feather name='user' size={40} color="black" />
+
+                    {/* Email */}
+                    <View style={styles.email_pack}>
+                        <Feather name='mail' size={30} color="black" />
                         <TextInput
-                            style={styles.login}
-                            placeholder="UserName"
-                            onChangeText={(val) => { Login = val }}
+                            style={styles.email}
+                            placeholder="Enter Your Email"
+                            onChangeText={(val) => { Email = val }}
                         />
                     </View>
                     {/*Break*/}
                     <Text>{'\n'}</Text>
-                    {/* Password */}
-                    <View style={styles.login_pack}>
-                        <Feather name='eye-off' size={40} color="black" />
-                        <TextInput
-                            style={styles.password}
-                            placeholder="Password"
-                            secureTextEntry={true}
-                            onChangeText={(val) => { Password = val }}
-                        />
-                    </View>
-                    {/*Break*/}
-                    <Text>{'\n'}</Text>
+
+                    {/* Status */}
                     <View>
                         <Text style={styles.status}>{message}</Text>
                     </View>
                     {/*Break*/}
                     <Text>{'\n'}</Text>
+
+                    {/* Reset */}
                     <TouchableOpacity
                         color="black"
                         title="LOGIN"
                         style={styles.button}
-                        onPress={doLogin}
-                    >
-                        <View style={styles.button_pack}>
-                            <Text style={styles.button}>Log In </Text>
-                            <Feather name="log-in" size={40} color="white" />
-                        </View>
-                    </TouchableOpacity>
-                    {/*Break*/}
-                    <Text>{'\n'}</Text>
-                    <TouchableOpacity
-                        color="black"
-                        title="PasswordRes"
-                        style={styles.button}
                         onPress={doPassReset}
                     >
-                    <Text style={styles.resetbutton}>Forgot Password ?</Text>
+                        <View style={styles.button_pack}>
+                            <Text style={styles.button}>Reset</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
@@ -102,32 +78,18 @@ const styles = StyleSheet.create({
         alignItems: "center",
         opacity: 0.7
     },
-    login_index: {
-        textAlign: 'center',
-        fontSize: 25,
-        color: 'green',
-        backgroundColor: "orange",
-        fontWeight: 'bold',
-        borderRadius: 5
-    },
-    login: {
+    email: {
         textAlign: 'left',
-        fontSize: 40,
+        fontSize: 20,
         backgroundColor: "lightgrey",
         borderRadius: 5,
-        height: 50
-    },
-    password: {
-        textAlign: 'left',
-        fontSize: 40,
-        backgroundColor: "lightgrey",
-        borderRadius: 5,
-        height: 50
+        height: 50,
+        maxWidth:'80%'
     },
     button: {
         textAlign: 'center',
         fontSize: 30,
-        backgroundColor: 'green',
+        backgroundColor: 'blue',
         borderRadius: 5,
         fontWeight: 'bold',
         height: 40,
@@ -145,8 +107,9 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         width: '75%'
     },
-    login_pack: {
-        justifyContent: 'center',
+    email_pack: {
+        justifyContent: 'flex-start',
+        alignItems:'center',
         flexDirection: 'row',
         backgroundColor: 'lightgrey',
         borderRadius: 5
@@ -154,23 +117,14 @@ const styles = StyleSheet.create({
     button_pack: {
         justifyContent: 'center',
         flexDirection: 'row',
-        backgroundColor: 'green',
+        backgroundColor: 'blue',
         borderRadius: 5
     },
     title: {
         fontSize: 35,
         fontWeight: 'bold',
         color: 'black'
-    },
-    resetbutton:{
-        textAlign: 'center',
-        fontSize: 25,
-        backgroundColor: 'red',
-        borderRadius: 5,
-        fontWeight: 'bold',
-        height: 40,
-        color: 'white'
     }
 });
 
-export default LoginScreen;
+export default PasswordChange;
