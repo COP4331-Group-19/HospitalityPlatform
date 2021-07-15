@@ -115,7 +115,7 @@ export const NavEmployeeLinks = styled(LinkS)`
 
 export const NavBtnLink = styled(LinkR)`
   border-radius: 50px;
-  background: #c20114;
+  background: #14cca4;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -129,63 +129,6 @@ export const NavBtnLink = styled(LinkR)`
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
-    color: #c20114;
-  }
-`;
-export const NavBtnLinkAdmin = styled(LinkA)`
-  border-radius: 50px;
-  background: #c20114;
-  white-space: nowrap;
-  padding: 10px 22px;
-  color: white;
-  font-size: 16px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-
-  &:hover {
-    transition: all 0.2s ease-in-out;
-    background: #fff;
-    color: #c20114;
-  }
-`;
-
-export const NavBtnLinkEmployee = styled(LinkE)`
-  border-radius: 50px;
-  background: #c20114;
-  white-space: nowrap;
-  padding: 10px 22px;
-  color: white;
-  font-size: 16px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-
-  &:hover {
-    transition: all 0.2s ease-in-out;
-    background: #fff;
-    color: #c20114;
-  }
-`;
-export const NavBtnLinkGuest = styled(LinkG)`
-  border-radius: 50px;
-  background: #c20114;
-  white-space: nowrap;
-  padding: 10px 22px;
-  color: white;
-  font-size: 16px;
-  outline: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  text-decoration: none;
-  &:hover {
-    transition: all 0.2s ease-in-out;
-    background: #fff;
-    color: #c20114;
+    color: black;
   }
 `;
