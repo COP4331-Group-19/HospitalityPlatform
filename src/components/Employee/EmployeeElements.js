@@ -132,7 +132,7 @@ export const EmployeeH3 = styled.h3`
   color: white;
   margin-bottom: 10px;
   margin-left: 10px;
-  display: flex;
+  display: grid;
   justify-content: center;
   align-items: left;
 
@@ -171,7 +171,6 @@ export const Form = styled.form`
   max-width: 500px;
   width: 100%;
   z-index: 1;
-  display: grid;
   margin-top: 150px;
   padding: 50px 250px;
   border-radius: 4px;
