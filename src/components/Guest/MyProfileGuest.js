@@ -62,12 +62,24 @@ const MyProfileGuest = () => {
         <AccountSettingWrapper>
           <GuestAccountSettingComponent
             settingTitle="FirstName"
-            description="this is a description"
+            description="Guest_FirstName_Placeholder"
           />
-          <GuestAccountSettingComponent settingTitle="LastName" />
-          <GuestAccountSettingComponent settingTitle="PhoneNumber" />
-          <GuestAccountSettingComponent settingTitle="Email" />
-          <GuestAccountSettingComponent settingTitle="Username" />
+          <GuestAccountSettingComponent
+            settingTitle="LastName"
+            description="Guest_LastName_Placeholder"
+          />
+          <GuestAccountSettingComponent
+            settingTitle="PhoneNumber"
+            description="Guest_PhoneNumber_Placeholder"
+          />
+          <GuestAccountSettingComponent
+            settingTitle="Email"
+            description="Guest_Email_Placeholder"
+          />
+          <GuestAccountSettingComponent
+            settingTitle="UserName"
+            description="Guest_UserName_Placeholder"
+          />
         </AccountSettingWrapper>
         {/*Setting container*/}
         {/* AccountSettingComponent settingTitle="FirstName" value="Angel*/}
