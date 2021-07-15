@@ -295,21 +295,21 @@ app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, 
 
 // Edit a preexisting room
 app.patch("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
-  /*const db = db_client.db();
+  const db = db_client.db();
   const {occupant, orders, floor} = req.body;
   const results = await
   // search if room exists
   db.collection('Room').findOneAndUpdate({RoomID: req.params.room_id},
     {$set: {Occupant: occupant, Orders: orders, Floor: floor}}, {returnOriginal: false});
-
-  let room = results;
-  if (room == null) {
-    return res.status(404).json(errGen(400, "Room not Found"));
+  console.log(results);
+  let roomData = results.value;
+  console.log(roomData);
+  if (roomData == null) {
+    return res.status(404).json(errGen(404, "Room not Found"));
   }
   else {
-    return res.status(200).json(roomGen(room));
-  }*/
-
+    return res.status(200).json(roomGen(roomData));
+  }
 })
 
 // Delete a room
