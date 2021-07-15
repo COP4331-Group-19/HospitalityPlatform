@@ -32,7 +32,7 @@ const Employee = () => {
       <FormWrap>
         <FormContent>
           <Form>
-            <EmployeeH3>Employee name: </EmployeeH3>
+            <EmployeeH3>EmployeeName: </EmployeeH3>
           </Form>
         </FormContent>
       </FormWrap>
