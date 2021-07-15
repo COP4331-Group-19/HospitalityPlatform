@@ -144,7 +144,7 @@ app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
 app.get("/api/room/:room_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
   const db = db_client.db();
   const results = await
-      // search if username already exists
+      // search if room exists
       db.collection('Room').find({RoomID: req.params.room_id}).toArray();
       console.log(results);
   if (results.length > 0) {
@@ -159,7 +159,7 @@ app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, 
   const {room_id, floor} = req.body;
   const db = db_client.db();
   const results = await
-      // search if username already exists
+      // search if room exists
       db.collection('Room').find({RoomID:room_id}).toArray();
       console.log(results);
   if (results.length > 0) {
@@ -174,13 +174,27 @@ app.post("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, 
 })
 // Edit a preexisting room
 app.patch("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
+  /*const db = db_client.db();
+  const {occupant, orders, floor} = req.body;
+  const results = await
+  // search if room exists
+  db.collection('Room').findOneAndUpdate({RoomID: req.params.room_id},
+    {$set: {Occupant: occupant, Orders: orders, Floor: floor}}, {returnOriginal: false});
+
+  let room = results;
+  if (room == null) {
+    return res.status(404).json(errGen(400, "Room not Found"));
+  }
+  else {
+    return res.status(200).json(roomGen(room));
+  }*/
 
 })
 // Delete a room
 app.delete("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
   const db = db_client.db();
   const results = await
-      // search if username already exists
+      // search if room exists
       db.collection('Room').find({RoomID: req.params.room_id}).toArray();
       console.log(results);
   if (results.length > 0) {
@@ -195,7 +209,7 @@ app.delete("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req
 app.get("/api/floor/:floor_number", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
   const db = db_client.db();
   const results = await
-      // search if username already exists
+      // search if there are rooms located on the floor
       db.collection('Room').find({Floor: Number(req.params.floor_number)}).toArray();
       console.log(results);
   if (results.length > 0) {
