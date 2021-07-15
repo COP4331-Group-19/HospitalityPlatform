@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { Link } from "react-scroll";
+import { Link as LinkR } from "react-router-dom";
 
 export const AccountSettingCard = styled.div`
   background: #2c2c2c;
@@ -126,10 +128,10 @@ export const EmployeeH2 = styled.h2`
   margin-bottom: 10px;
 `;
 export const EmployeeH3 = styled.h3`
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: white;
   margin-bottom: 10px;
-  margin-left: -25px;
+  margin-left: 10px;
   display: flex;
   justify-content: center;
   align-items: left;
@@ -170,7 +172,6 @@ export const Form = styled.form`
   width: 100%;
   z-index: 1;
   display: grid;
-  margin: 0 auto;
   margin-top: 150px;
   padding: 50px 250px;
   border-radius: 4px;
@@ -180,19 +181,61 @@ export const Form = styled.form`
     padding: 32px 32px;
   }
 `;
-export const FormLittle = styled.form`
-  background: #14cca4;
-  max-width: 500px;
-  width: 50%;
-  z-index: 2;
-  display: grid;
-  margin-top: -30px;
-  margin-left: -190px;
-  padding: 20px 50px;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-
-  @media screen and (max-width: 400px) {
-    padding: 32px 32px;
+export const EditAccountBtnLink = styled(LinkR)`
+  border-radius: 50px;
+  background: #c20114;
+  white-space: nowrap;
+  padding: 10px 22px;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+  right: 100;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    background: #fff;
+    color: #14cca4;
   }
+`;
+
+export const FormButton = styled.button`
+  background: #c20114;
+  padding: 16px 0;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    background: #fff;
+    color: #c20114;
+  }
+`;
+
+export const IncDecButton = styled.button`
+  cursor: pointer;
+  display: flex;
+  height 100%;
+  background-color: transparent;
+  border: 0;
+  font-size; 3rem;
+  padding 0;
+  height 40px;
+`;
+
+export const Value = styled.div`
+  margin: 3px 8px;
+  padding: 4px 8px;
+  main-width: 2rem;
+  text-allign: center:
+  font-size: 1.5rem;
+  line-height: 1rem;
+  height: 24px;
+  display: flex;
+  justrify-content: center;
+  allign-items: center
 `;
