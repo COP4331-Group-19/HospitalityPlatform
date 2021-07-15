@@ -10,6 +10,7 @@ import GuestPage from './pages/guest';
 import AboutGuestPage from './pages/aboutguest';
 import MyProfileGuestPage from './pages/myprofileguest';
 import PasswordResetPage from './pages/resetpassword';
+import EditAccountGuestPage from "./pages/editaccountguest";
 
 function App() {
   return (
@@ -23,6 +24,11 @@ function App() {
         <Route path="/guest" component={GuestPage} exact />
         <Route path="/aboutguest" component={AboutGuestPage} exact />
         <Route path="/myprofileguest" component={MyProfileGuestPage} exact />
+          <Route
+          path="/editaccountguest"
+          component={EditAccountGuestPage}
+          exact
+        />
       </Switch>
     </Router>
   );
