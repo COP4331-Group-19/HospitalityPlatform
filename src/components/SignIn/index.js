@@ -94,7 +94,8 @@ const SignIn = () => {
               <FormLabel htmlFor="for">Password</FormLabel>
               <FormInput type="password" required />
 
-              <FormLabel> {message} </FormLabel>
+//               <FormLabel> {message} </FormLabel>
+                 <FormLabel> "test message" </FormLabel>
 
 //               <FormButton type="submit" class="button" onClick={doLogin}>
 //                 Continue
