@@ -99,9 +99,9 @@ const Navbar = ({ toggle }) => {
             </NavMenu>
             <NavBtn>
               <NavBtnLink to="/signin">Sign In</NavBtnLink>
-              <NavBtnLinkAdmin to="/admin">AdminPage</NavBtnLinkAdmin>
-              <NavBtnLinkEmployee to="/employee">EmployeePage</NavBtnLinkEmployee>
-              <NavBtnLinkGuest to="/aboutguest">Guest</NavBtnLinkGuest>
+//               <NavBtnLinkAdmin to="/admin">AdminPage</NavBtnLinkAdmin>
+//               <NavBtnLinkEmployee to="/employee">EmployeePage</NavBtnLinkEmployee>
+//               <NavBtnLinkGuest to="/aboutguest">Guest</NavBtnLinkGuest>
             </NavBtn>
           </NavbarContainer>
         </Nav>
