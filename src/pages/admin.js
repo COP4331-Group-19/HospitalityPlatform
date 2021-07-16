@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Admin from "../components/Admin";
 import ScrollToTop from "../components/ScrollToTop";
-import NavbarEmployee from "../components/Navbar/NavbarEmployee";
+import NavbarAdmin from "../components/Navbar/NavbarAdmin";
 import Footer from "../components/Footer";
 
 function AdminPage() {
@@ -12,7 +12,7 @@ function AdminPage() {
   };
   return (
     <>
-      <NavbarEmployee toggle={toggle} />
+      <NavbarAdmin toggle={toggle} />
       <ScrollToTop />
       <Admin />
       <Footer />
