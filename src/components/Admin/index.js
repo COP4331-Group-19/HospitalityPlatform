@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import AdminAccountSettingComponent from "./AdminAccountSettingComponent";
 import AdminCardComponent from "../Admin/AdminCardComponent";
 import {
@@ -20,31 +21,42 @@ const Admin = () => {
   return (
     <>
       <AdminContainer>
-        <FormWrap>
-          <FormContent>
-            <Form>
-              <AdminH3>hello</AdminH3>
-              <FormLittle action="#">
-                <AdminH3>Room 221B</AdminH3>
-              </FormLittle>
-            </Form>
-          </FormContent>
-        </FormWrap>
-        <AdminH1>Admin Account</AdminH1>
+        <AdminH1>Room Availability</AdminH1>
         <AdminWrapper>
+          {/* 300-304 rooms */}
+          {/* I linked to register account to give you some code that
+          will link to another page or whatever you need */}
+          <Link to="/registeraccount">
+            <AdminCardComponent
+              username={"username"}
+              vacancy={"vacant"}
+              roomnumber="Room 300"
+            />
+          </Link>
+          <AdminCardComponent />
+          <AdminCardComponent />
+          <AdminCardComponent />
+          {/* 200-204 rooms */}
           <AdminCardComponent
-            items={"blankets"}
-            description={"this is a description"}
+            username={"username"}
+            vacancy={"vacant"}
+            roomnumber="Room 200"
           />
           <AdminCardComponent />
           <AdminCardComponent />
           <AdminCardComponent />
+          {/* 100-104 rooms */}
+          <AdminCardComponent
+            username={"username"}
+            vacancy={"vacant"}
+            roomnumber="Room 100"
+          />
+          <AdminCardComponent />
           <AdminCardComponent />
           <AdminCardComponent />
         </AdminWrapper>
-        <AdminH1>Account Settings</AdminH1>
-        {/* <Link to="/signin">Edit</Link> */}
-        <AccountSettingWrapper>
+        {/* <AdminH1>Account Settings</AdminH1> */}
+        {/* <AccountSettingWrapper>
           <AdminAccountSettingComponent
             settingTitle="FirstName"
             description="this is a description"
@@ -54,10 +66,7 @@ const Admin = () => {
           <AdminAccountSettingComponent settingTitle="Email" />
           <AdminAccountSettingComponent settingTitle="Username" />
           <AdminAccountSettingComponent settingTitle="Password" />
-        </AccountSettingWrapper>
-        {/*Setting container*/}
-        {/* AccountSettingComponent settingTitle="FirstName" value="Angel*/}
-        {/* AccountSettingComponent settingTitle="Password hidden={true}*/}
+        </AccountSettingWrapper> */}
       </AdminContainer>
     </>
   );
