@@ -66,3 +66,4 @@ const SidebarEmployee = ({ isOpen, toggle }) => {
 };
 
 export default SidebarEmployee;
+
