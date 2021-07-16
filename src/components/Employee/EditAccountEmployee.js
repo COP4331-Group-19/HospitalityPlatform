@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { EmployeeContainer } from "./EmployeeElements";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import {
@@ -13,6 +14,7 @@ import {
   FormButton,
   Text,
 } from "../../components/SignIn/SigninElements.js";
+
 // import Storage from "../../tokenStorage.js";
 
 const EditAccountEmployee = () => {
@@ -84,38 +86,40 @@ const EditAccountEmployee = () => {
 
   return (
     <>
-      <Container>
+      {/* <Container>
         <FormWrap>
           <Icon to="/">Click Cyber Hotel</Icon>
-          <FormContent>
-            <Form action="#">
-              <FormH1>Edit Account</FormH1>
-              <FormLabel htmlFor="for">First Name</FormLabel>
-              <FormInput type="name" />
-              <FormLabel htmlFor="for">Last Name</FormLabel>
-              <FormInput type="name" />
-              <FormLabel htmlFor="for">Phone Number</FormLabel>
-              <FormInput type="phonenumber" />
-              <FormLabel htmlFor="for">Email</FormLabel>
-              <FormInput type="email" />
-              <FormLabel htmlFor="for">UserName</FormLabel>
-              <FormInput type="name" />
-              <FormLabel htmlFor="for">Old Password </FormLabel>
-              <FormInput type="password" required />
-              <FormLabel htmlFor="for">New Password</FormLabel>
-              <FormInput type="password" />
+          <FormContent> */}
+      <EmployeeContainer>
+        <Form action="#">
+          <FormH1>Edit Account</FormH1>
+          <FormLabel htmlFor="for">First Name</FormLabel>
+          <FormInput type="name" />
+          <FormLabel htmlFor="for">Last Name</FormLabel>
+          <FormInput type="name" />
+          <FormLabel htmlFor="for">Phone Number</FormLabel>
+          <FormInput type="phonenumber" />
+          <FormLabel htmlFor="for">Email</FormLabel>
+          <FormInput type="email" />
+          <FormLabel htmlFor="for">UserName</FormLabel>
+          <FormInput type="name" />
+          <FormLabel htmlFor="for">Old Password </FormLabel>
+          <FormInput type="password" required />
+          <FormLabel htmlFor="for">New Password</FormLabel>
+          <FormInput type="password" />
 
-              {/* // <FormLabel> {message} </FormLabel> */}
-              <FormLabel> {message} </FormLabel>
-              {/* //{" "} */}
-              {/* <FormButton type="submit" class="button" onClick={doLogin}>
+          {/* // <FormLabel> {message} </FormLabel> */}
+          <FormLabel> {message} </FormLabel>
+          {/* //{" "} */}
+          {/* <FormButton type="submit" class="button" onClick={doLogin}>
                 // Continue //{" "}
               </FormButton> */}
-              <FormButton to="/myprofileemployee">Submit Changes</FormButton>
-            </Form>
-          </FormContent>
+          <FormButton to="/myprofileemployee">Submit Changes</FormButton>
+        </Form>
+      </EmployeeContainer>
+      {/* </FormContent>
         </FormWrap>
-      </Container>
+      </Container> */}
     </>
   );
 };
