@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AboutGuest from "../components/Guest/AboutGuest";
+import SidebarGuest from "../components/Sidebar/SidebarGuest.js";
 import ScrollToTop from "../components/ScrollToTop";
 import NavbarGuest from "../components/Navbar/NavbarGuest";
 import Footer from "../components/Footer";
@@ -12,7 +13,8 @@ function AboutGuestPage() {
   };
   return (
     <>
-      <NavbarGuest />
+      <NavbarGuest toggle={toggle} />
+      <SidebarGuest isOpen={isOpen} toggle={toggle} />
       <ScrollToTop />
       <AboutGuest />
       <Footer />
