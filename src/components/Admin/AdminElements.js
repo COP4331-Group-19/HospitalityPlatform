@@ -66,7 +66,7 @@ export const AdminWrapper = styled.div`
   max-width: 1000px;
   margin: 100px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   align-items: center;
   grid-gap: 16px;
   padding: 0 50px;
@@ -82,7 +82,7 @@ export const AdminWrapper = styled.div`
 `;
 
 export const AdminCard = styled.div`
-  background: #3d3d3d;
+  background: #5c5c5c;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -109,7 +109,7 @@ export const AdminIcon = styled.img`
 export const AdminH1 = styled.h1`
   font-size: 2.5rem;
   color: #fff;
-  margin-top: 30px;
+  margin-top: 100px;
   margin-bottom: -60px;
   display: flex;
   justify-content: center;
@@ -165,7 +165,7 @@ export const FormContent = styled.div`
   }
 `;
 export const Form = styled.form`
-  background: #3d3d3d;
+  background: #5c5c5c;
   max-width: 500px;
   width: 100%;
   z-index: 1;
