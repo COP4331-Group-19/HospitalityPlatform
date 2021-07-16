@@ -15,6 +15,8 @@ import EditAccountEmployeePage from "./pages/editaccountemployee.js";
 import AboutEmployeePage from "./pages/aboutemployee";
 import OrdersPage from "./pages/orders";
 import MyProfileEmployeePage from "./pages/myprofileemployee";
+import RegisterAccountPage from "./pages/registeraccount";
+
 
 function App() {
   return (
@@ -46,6 +48,8 @@ function App() {
           component={EditAccountEmployeePage}
           exact
         />
+        <Route path="/registeraccount" component={RegisterAccountPage} exact />
+
       </Switch>
     </Router>
   );
