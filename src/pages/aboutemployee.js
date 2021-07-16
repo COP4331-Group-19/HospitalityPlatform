@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ScrollToTop from "../components/ScrollToTop";
 import NavbarEmployee from "../components/Navbar/NavbarEmployee";
+import SidebarEmployee from "../components/Sidebar/SidebarEmployee.js";
 import Footer from "../components/Footer";
 import AboutEmployeePageComponent from "../components/Employee/AboutEmployeePage";
 
@@ -12,7 +13,8 @@ function AboutEmployeePage() {
   };
   return (
     <>
-      <NavbarEmployee />
+      <NavbarEmployee toggle={toggle} />
+      <SidebarEmployee isOpen={isOpen} toggle={toggle} />
       <ScrollToTop />
       <AboutEmployeePageComponent />
       <Footer />
