@@ -12,7 +12,7 @@ function AdminPage() {
   };
   return (
     <>
-      <NavbarAdmin toggle={toggle} />
+      <NavbarAdmin />
       <ScrollToTop />
       <Admin />
       <Footer />
