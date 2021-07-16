@@ -12,8 +12,9 @@ const AdminCardComponent = (props) => {
   return (
     <AdminCard>
       {/* <AdminIcon src={Icon1} /> */}
-      <AdminH2>{props.items}</AdminH2>
-      <AdminP>{props.description}</AdminP>
+      <AdminH2>{props.username}</AdminH2>
+      <AdminH2>{props.roomnumber}</AdminH2>
+      <AdminP>{props.vacancy}</AdminP>
     </AdminCard>
   );
 };
