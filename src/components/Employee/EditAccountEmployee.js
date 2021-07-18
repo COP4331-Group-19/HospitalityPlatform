@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { EmployeeContainer } from "./EmployeeElements";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import {
@@ -14,75 +13,110 @@ import {
   FormButton,
   Text,
 } from "../../components/SignIn/SigninElements.js";
-
-// import Storage from "../../tokenStorage.js";
+import Storage from "../../tokenStorage.js";
 
 const EditAccountEmployee = () => {
-  const [message, setMessage] = useState("");
 
-  //   //required files
-  //   var bp = require("../Path.js");
+  //required files
+  var bp = require("../Path.js");
 
-  //   //variables used to login
-  //   var LoginName;
-  //   var LoginPassword;
+  //useState
+  const [message, setMessage] = useState(null);
+  const [FirstNameX, setFName] = useState(null);
+  const [LastNameX, setLName] = useState(null);
+  const [PhoneNumberX, setPhone] = useState(null);
+  const [EmailX, setEmail] = useState(null);
 
-  //   // doLogin just a login function
-  //   const doLogin = async (event) => {
-  //     event.preventDefault();
+  //Variables
+  var Token = Storage.retrieveToken()
 
-  //     //JSON OBJECT
-  //     var obj = { username: LoginName.value, password: LoginPassword.value };
-  //     var js = JSON.stringify(obj);
+  //Config for get account
+  var configX = {
+    method: "get",
+    url: bp.buildPath("api/account"),
+    headers: {
+      "Content-Type": "application/json",
+      "authorization": Token
+    }
+  };
 
-  //     //Making a Payload
-  //     var config = {
-  //       method: "post",
-  //       url: bp.buildPath("api/account/login"),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       data: js,
-  //     };
 
-  //     //Sending Payload to the server
-  //     axios(config)
-  //       .then(function (response) {
-  //         var res = response.data;
+  //UserInfo
+  useEffect(async () => {
 
-  //         if (res.err_Code) {
-  //           //Error Message
-  //           setMessage(res.description);
-  //         } else {
-  //           //Import Jasonwebtoken
-  //           var jwt = require("jsonwebtoken");
+    //Get user info everytime we lode the page
+    axios(configX).then(function (response) {
 
-  //           //Removing Bearer
-  //           var decoded = res.token.replace("Bearer ", "");
+      var ud = response.data;
 
-  //           //Decoding the jwt to get the user data
-  //           var ud = jwt.decode(decoded);
+      //Getting info needed for this page
+      setFName(ud.first_name);
+      setLName(ud.last_name);
+      setPhone(ud.phone);
+      setEmail(ud.email);
+    }).catch(function (error) {
+      setMessage(' ' + error);
+    });
 
-  //           //Taking out of the payload
-  //           var userId = ud.id;
-  //           var UserName = ud.username;
-  //           var Role = ud.role;
+  }, []);
 
-  //           //Puting stuff in to the user
-  //           var user = { UserName: UserName, Role: Role, userId: userId };
+  var FirstName = ' ';
+  var LastName = ' ';
+  var Phone = ' ';
+  var Email = ' ';
+  var NewPassword = ' ';
 
-  //           //Locally storing user Data
-  //           localStorage.setItem("user_data", JSON.stringify(user));
+  const doEditAcc = async event => {
+    event.preventDefault();
+    setMessage('');
+    if (NewPassword.value.trim().localeCompare('') === 0) {
+      setMessage('NewPassword is Required');
+    } else {
 
-  //           //Go to the user Window
-  //           window.location.href = "/user";
-  //         }
-  //       })
-  //       .catch(function (error) {
-  //         //Error function to show error as consol logs
-  //         setMessage(" " + error);
-  //       });
-  //   };
+      if (FirstName.value.trim().localeCompare('') === 0) {
+        FirstName = FirstNameX;
+      }
+      if (LastName.value.trim().localeCompare('') === 0) {
+        LastName = LastNameX;
+      }
+      if (Phone.value.trim().localeCompare('') === 0) {
+        Phone = PhoneNumberX;
+      }
+      if (Email.value.trim().localeCompare('') === 0) {
+        Email = EmailX;
+      }
+
+      //JSON OBJECT
+      var obj = {
+        "password": NewPassword.value,
+        "first_name": FirstName.value,
+        "last_name": LastName.value,
+        "email": Email.value,
+        "phone": Phone.value
+      };
+
+      var js = JSON.stringify(obj);
+
+      //Making a Payload
+      var config = {
+        method: "patch",
+        url: bp.buildPath("api/account/"),
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": Token
+        },
+        data: js,
+      };
+      axios(config)
+        .then(function (response) {
+          window.location.href = "/myprofileemployee";
+        })
+        .catch(function (error) {
+          //Error function to show error as consol logs
+          setMessage(" " + error);
+        });
+    }
+  }
 
   return (
     <>
@@ -93,27 +127,17 @@ const EditAccountEmployee = () => {
             <Form action="#">
               <FormH1>Edit Account</FormH1>
               <FormLabel htmlFor="for">First Name</FormLabel>
-              <FormInput type="name" />
+              <FormInput type="name" ref={(c) => FirstName = c} />
               <FormLabel htmlFor="for">Last Name</FormLabel>
-              <FormInput type="name" />
+              <FormInput type="name" ref={(c) => LastName = c} />
               <FormLabel htmlFor="for">Phone Number</FormLabel>
-              <FormInput type="phonenumber" />
+              <FormInput type="phonenumber" ref={(c) => Phone = c} />
               <FormLabel htmlFor="for">Email</FormLabel>
-              <FormInput type="email" />
-              <FormLabel htmlFor="for">UserName</FormLabel>
-              <FormInput type="name" />
-              <FormLabel htmlFor="for">Old Password </FormLabel>
-              <FormInput type="password" required />
-              <FormLabel htmlFor="for">New Password</FormLabel>
-              <FormInput type="password" />
-
-              {/* // <FormLabel> {message} </FormLabel> */}
+              <FormInput type="email" ref={(c) => Email = c} />
+              <FormLabel htmlFor="for">Password</FormLabel>
+              <FormInput type="password" required='true' ref={(c) => NewPassword = c} />
               <FormLabel> {message} </FormLabel>
-              {/* //{" "} */}
-              {/* <FormButton type="submit" class="button" onClick={doLogin}>
-                // Continue //{" "}
-              </FormButton> */}
-              <FormButton to="/myprofileemployee">Submit Changes</FormButton>
+              <FormButton type="submit" class="button" onClick={doEditAcc}>Edit Info</FormButton>
             </Form>
           </FormContent>
         </FormWrap>

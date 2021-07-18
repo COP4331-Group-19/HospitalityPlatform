@@ -43,7 +43,6 @@ export const SidebarMenu = styled.ul`
   grid-template-columns: 1fr;
   grid-template-rows: repeat(6, 80px);
   text-align: center;
-
   @media screen and (max-width: 480px) {
     grid-template-rows: repeat(6, 60px);
   }
@@ -60,7 +59,6 @@ export const SidebarLink = styled(LinkS)`
   text-decoration: none;
   color: #fff;
   cursor: pointer;
-
   &:hover {
     color: #c20114;
     transition: 0.2s ease-in-out;
@@ -84,7 +82,6 @@ export const SidebarRoute = styled(LinkR)`
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   text-decoration: none;
-
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
@@ -103,7 +100,6 @@ export const SidebarLink1 = styled(LinkR)`
   text-decoration: none;
   color: #fff;
   cursor: pointer;
-
   &:hover {
     color: #c20114;
     transition: 0.2s ease-in-out;

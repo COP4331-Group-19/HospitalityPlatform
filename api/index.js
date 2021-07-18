@@ -2,11 +2,14 @@
 var express = require('express'),
     app = express(),
     port = process.env.PORT || 8080;
-var path = require('path');
-var cookieParser = require('cookie-parser');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors());
+app.use(express.static(path.join(__dirname, '../build')));
 
 
 // const request = require("request");
@@ -175,27 +178,16 @@ let api = require('./api.js');
 api.setApp( app, db_client );
 
 // Web server stuff.
-app.all("/", (req, res) => {
-    let options = {
-        root: path.join(__dirname, 'static'),
+app.all("*", (req, res) => {
+    const options = {
         dotfiles: 'deny',
         headers: {
             'x-timestamp': Date.now(),
             'x-sent': true
         }
     }
-    res.send("<h1>Hello COP4331</h1>");
-})
-app.all("/static/:file", (req, res) => {
-    let options = {
-        root: path.join(__dirname, 'static'),
-        dotfiles: 'deny',
-        headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
-        }
-    }
-    res.sendFile(req.params.file, options);
+    const file = path.resolve(__dirname, '..', 'build', 'index.html');
+    res.sendFile(file);
 })
 
 app.listen(port);

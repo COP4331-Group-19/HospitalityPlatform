@@ -12,7 +12,6 @@ export const AccountSettingCard = styled.div`
   max-height: 340px;
   padding: 30px;
   transition: all 0.2s ease-in-out;
-
   &:hover {
     transform: scale(1.02);
     transition: all 0.2s ease-in-out;
@@ -27,11 +26,9 @@ export const AccountSettingWrapper = styled.div`
   align-items: center;
   grid-gap: 200px;
   padding: 0 50px;
-
   @media screen and (max-width: 1000px) {
     grid-template-columns: 1fr 1fr;
   }
-
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
     padding: 0 20px;
@@ -54,11 +51,9 @@ export const EmployeeContainer = styled.div`
   justify-content: center;
   align-items: center;
   background: #2c2c2c;
-
   @media screen and (max-width: 768px) {
     height: 1100px;
   }
-
   @media screen and (max-width: 480px) {
     height: 1300px;
   }
@@ -72,11 +67,9 @@ export const EmployeeWrapper = styled.div`
   align-items: center;
   grid-gap: 16px;
   padding: 0 50px;
-
   @media screen and (max-width: 1000px) {
     grid-template-columns: 1fr 1fr;
   }
-
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
     padding: 0 20px;
@@ -94,7 +87,6 @@ export const EmployeeCard = styled.div`
   padding: 30px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   transition: all 0.2s ease-in-out;
-
   &:hover {
     transform: scale(1.02);
     transition: all 0.2s ease-in-out;
@@ -116,7 +108,6 @@ export const EmployeeH1 = styled.h1`
   display: flex;
   justify-content: center;
   align-items: left;
-
   @media screen and (max-width: 480px) {
     font-size: 2rem;
   }
@@ -135,7 +126,6 @@ export const EmployeeH3 = styled.h3`
   display: grid;
   justify-content: center;
   align-items: left;
-
   @media screen and (max-width: 480px) {
     font-size: 2rem;
   }
@@ -150,7 +140,6 @@ export const FormWrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-
   @media screen and (max-width: 400px) {
     height: 80%;
   }
@@ -161,7 +150,6 @@ export const FormContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-
   @media screen and (max-width: 480px) {
     padding: 10px;
   }
@@ -175,7 +163,6 @@ export const Form = styled.form`
   padding: 50px 250px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-
   @media screen and (max-width: 400px) {
     padding: 32px 32px;
   }

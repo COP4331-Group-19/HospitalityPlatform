@@ -2,3 +2,4 @@ node_modules/*
 */.swagger-codegen/*
 .swagger-codegen-ignore
 .env
+build/

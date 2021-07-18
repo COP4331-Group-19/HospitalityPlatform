@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import GuestAccountSettingComponent from "./GuestAccountSettingComponent";
 import GuestCardComponent from "./GuestCardComponent";
 import NavbarGuest from "../Navbar/NavbarGuest";
+import axios from "axios";
 import {
   AccountSettingWrapper,
   GuestContainer,
@@ -22,68 +23,75 @@ import {
   Value,
   EditAccountBtnLink,
 } from "./GuestElements";
+import Storage from '../../tokenStorage.js';
 
 const MyProfileGuest = () => {
+
+  //useState
+  const [message, setMessage] = useState(null);
+  const [FirstName, setFName] = useState(null);
+  const [LastName, setLName] = useState(null);
+  const [PhoneNumber, setPNumber] = useState(null);
+  const [Email, setEmail] = useState(null);
+  const [UserName, setUName] = useState(null);
+  const [Password, setPass] = useState(null);
+
+  //Variables
+  var Token = Storage.retrieveToken()
+
+  //required files
+  var bp = require("../Path.js");
+
+  //Config for get account
+  var config = {
+    method: "get",
+    url: bp.buildPath("api/account"),
+    headers: {
+      "Content-Type": "application/json",
+      "authorization": Token
+    }
+  };
+
+  //UserInfo
+  useEffect(async () => {
+
+    //Get user info everytime we lode the page
+    axios(config).then(function (response) {
+
+      var ud = response.data;
+
+      //Getting info needed for this page
+      setFName(ud.first_name);
+      setLName(ud.last_name);
+      setPNumber(ud.phone);
+      setEmail(ud.email);
+      setUName(ud.username);
+      setPass(ud.password);
+    }).catch(function (error) {
+      setMessage(' ' + error);
+    });
+
+  }, []);
+
   return (
     <>
       <GuestContainer>
-        <FormWrap>
-          <FormContent>
-            {/* <Form>
-              <GuestH3>hello</GuestH3>
-              <FormLittle action="#">
-                <GuestH3>Room 221B</GuestH3>
-              </FormLittle>
-            </Form> */}
-          </FormContent>
-        </FormWrap>
-        {/* <GuestH1>Active Orders</GuestH1> */}
-
-        <GuestWrapper>
-          {/*           
-          <GuestCardComponent
-            items={"Blankets"}
-            description={"Need more blankets? we'll get you some!"}
-          />
-          <GuestCardComponent 
-          items={"Pillows"}
-          description={"To keep your head supported"}/>
-          <GuestCardComponent />
-          <GuestCardComponent />
-          <GuestCardComponent />
-          <GuestCardComponent /> */}
-        </GuestWrapper>
-        {/* <GuestH1>Account Settings</GuestH1> */}
-        {/* <FormButton>Click me</FormButton> */}
-        <EditAccountBtnLink to="/editaccountguest">
-          Edit Account{" "}
-        </EditAccountBtnLink>
-
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <EditAccountBtnLink to="/editaccountguest">Edit Account{" "}</EditAccountBtnLink>
+        <GuestH1>Account Settings</GuestH1>
         <AccountSettingWrapper>
-          <GuestAccountSettingComponent
-            settingTitle="FirstName"
-            description="Guest_FirstName_Placeholder"
-          />
-          <GuestAccountSettingComponent
-            settingTitle="LastName"
-            description="Guest_LastName_Placeholder"
-          />
-          <GuestAccountSettingComponent
-            settingTitle="PhoneNumber"
-            description="Guest_PhoneNumber_Placeholder"
-          />
-          <GuestAccountSettingComponent
-            settingTitle="Email"
-            description="Guest_Email_Placeholder"
-          />
-          <GuestAccountSettingComponent
-            settingTitle="UserName"
-            description="Guest_UserName_Placeholder"
-          />
+          <GuestAccountSettingComponent settingTitle="FirstName" description={FirstName} />
+          <GuestAccountSettingComponent settingTitle="LastName" description={LastName} />
+          <GuestAccountSettingComponent settingTitle="PhoneNumber" description={PhoneNumber} />
+          <GuestAccountSettingComponent settingTitle="Email" description={Email} />
+          <GuestAccountSettingComponent settingTitle="UserName" description={UserName} />
+          <GuestAccountSettingComponent settingTitle="Password" description={Password} />
         </AccountSettingWrapper>
-        {/*Setting container*/}
-        {/* AccountSettingComponent settingTitle="FirstName" value="Angel*/}
-        {/* AccountSettingComponent settingTitle="Password hidden={true}*/}
       </GuestContainer>
     </>
   );

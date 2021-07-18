@@ -170,7 +170,7 @@ export const FormContent = styled.div`
 `;
 export const Form = styled.form`
   background: #3d3d3d;
-  max-width: 500px;
+  max-width: 600px;
   width: 100%;
   z-index: 1;
   display: grid;
@@ -213,7 +213,6 @@ export const Button = styled(Link)`
   justify-content: center;
   align-items: center;
   transition: all 0.2s ease-in-out;
-
   &:hover {
     transition: all 0.2s ease-in-out;
     background: ${({ primary }) => (primary ? "#ffffff" : "#01BF71")};
@@ -233,7 +232,6 @@ export const EditAccountBtnLink = styled(LinkR)`
   transition: all 0.2s ease-in-out;
   text-decoration: none;
   right: 100;
-
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;
@@ -249,7 +247,6 @@ export const FormButton = styled.button`
   color: #fff;
   font-size: 20px;
   cursor: pointer;
-
   &:hover {
     transition: all 0.2s ease-in-out;
     background: #fff;

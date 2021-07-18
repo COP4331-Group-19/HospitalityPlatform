@@ -26,12 +26,7 @@ const GuestCardComponent = (props) => {
 
   return (
     <GuestCard>
-      {/* <AdminIcon src={Icon1} /> */}
       <GuestH2>{props.items}</GuestH2>
-      <GuestP>{props.description}</GuestP>
-      {/* <IncDecButton onClick={dec}> - </IncDecButton>
-      <Value> {value} </Value>
-      <IncDecButton onClick={inc}> + </IncDecButton> */}
     </GuestCard>
   );
 };

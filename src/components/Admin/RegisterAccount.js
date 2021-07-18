@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import {
@@ -12,75 +12,72 @@ import {
   FormInput,
   FormButton,
   Text,
-} from "../../components/SignIn/SigninElements.js";
-// import Storage from "../../tokenStorage.js";
+} from "./RegisterElements.js";
+import Storage from "../../tokenStorage.js";
 
 const RegisterAccount = () => {
-  const [message, setMessage] = useState("");
+  // useStates
+  const [message, setMessage] = useState(null);
 
-  //   //required files
-  //   var bp = require("../Path.js");
+  //required files
+  var bp = require("../Path.js");
 
-  //   //variables used to login
-  //   var LoginName;
-  //   var LoginPassword;
+  //Variables
+  var Token = Storage.retrieveToken();
 
-  //   // doLogin just a login function
-  //   const doLogin = async (event) => {
-  //     event.preventDefault();
+  //variables
+  var FirstName;
+  var LastName;
+  var PhoneNumber;
+  var Email;
+  var Password;
+  var Role;
+  var UserName;
+  var CID;
+  var COD;
 
-  //     //JSON OBJECT
-  //     var obj = { username: LoginName.value, password: LoginPassword.value };
-  //     var js = JSON.stringify(obj);
+  const doRegister = async event => {
 
-  //     //Making a Payload
-  //     var config = {
-  //       method: "post",
-  //       url: bp.buildPath("api/account/login"),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       data: js,
-  //     };
+    if (UserName === null || Password === null || FirstName === null || LastName === null || Email === null || PhoneNumber === null || Role === null || CID === null || COD === null) {
+      setMessage('Please ennter all information');
+    }
+    else {
 
-  //     //Sending Payload to the server
-  //     axios(config)
-  //       .then(function (response) {
-  //         var res = response.data;
+      //JSON OBJECT
+      var obj = {
+        "username": UserName.value,
+        "password": Password.value,
+        "first_name": FirstName.value,
+        "last_name": LastName.value,
+        "email": Email.value,
+        "phone": PhoneNumber.value,
+        "role": Role.value,
+        "checkin": CID.value,
+        "checkout": COD.value
+      };
 
-  //         if (res.err_Code) {
-  //           //Error Message
-  //           setMessage(res.description);
-  //         } else {
-  //           //Import Jasonwebtoken
-  //           var jwt = require("jsonwebtoken");
+      var js = JSON.stringify(obj);
 
-  //           //Removing Bearer
-  //           var decoded = res.token.replace("Bearer ", "");
-
-  //           //Decoding the jwt to get the user data
-  //           var ud = jwt.decode(decoded);
-
-  //           //Taking out of the payload
-  //           var userId = ud.id;
-  //           var UserName = ud.username;
-  //           var Role = ud.role;
-
-  //           //Puting stuff in to the user
-  //           var user = { UserName: UserName, Role: Role, userId: userId };
-
-  //           //Locally storing user Data
-  //           localStorage.setItem("user_data", JSON.stringify(user));
-
-  //           //Go to the user Window
-  //           window.location.href = "/user";
-  //         }
-  //       })
-  //       .catch(function (error) {
-  //         //Error function to show error as consol logs
-  //         setMessage(" " + error);
-  //       });
-  //   };
+      //Making a Payload
+      var config = {
+        method: "patch",
+        url: bp.buildPath("api/account/"),
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": Token
+        },
+        data: js,
+      };
+      axios(config)
+        .then(function (response) {
+          window.location.href = "/admin";
+        })
+        .catch(function (error) {
+          //Error function to show error as consol logs
+          setMessage(" " + error);
+        });
+    }
+  }
 
   return (
     <>
@@ -91,27 +88,25 @@ const RegisterAccount = () => {
             <Form action="#">
               <FormH1>Register Account</FormH1>
               <FormLabel htmlFor="for">First Name</FormLabel>
-              <FormInput type="name" />
+              <FormInput type="name" ref={(c) => FirstName = c} />
               <FormLabel htmlFor="for">Last Name</FormLabel>
-              <FormInput type="name" />
+              <FormInput type="name" ref={(c) => LastName = c} />
               <FormLabel htmlFor="for">Phone Number</FormLabel>
-              <FormInput type="phonenumber" />
+              <FormInput type="phonenumber" ref={(c) => PhoneNumber = c} />
               <FormLabel htmlFor="for">Email</FormLabel>
-              <FormInput type="email" />
+              <FormInput type="email" ref={(c) => Email = c} />
               <FormLabel htmlFor="for">UserName</FormLabel>
-              <FormInput type="name" />
-              <FormLabel htmlFor="for">Old Password </FormLabel>
-              <FormInput type="password" required />
-              <FormLabel htmlFor="for">New Password</FormLabel>
-              <FormInput type="password" />
-
-              {/* // <FormLabel> {message} </FormLabel> */}
+              <FormInput type="name" ref={(c) => UserName = c} />
+              <FormLabel htmlFor="for">Password </FormLabel>
+              <FormInput type="password" ref={(c) => Password = c} />
+              <FormLabel htmlFor="for">Role </FormLabel>
+              <FormInput type="password" ref={(c) => Role = c} />
+              <FormLabel htmlFor="for">CheckInDate </FormLabel>
+              <FormInput type="password" ref={(c) => CID = c} />
+              <FormLabel htmlFor="for">CheckOutDate </FormLabel>
+              <FormInput type="password" ref={(c) => COD = c} />
               <FormLabel> {message} </FormLabel>
-              {/* //{" "} */}
-              {/* <FormButton type="submit" class="button" onClick={doLogin}>
-                // Continue //{" "}
-              </FormButton> */}
-              <FormButton to="/admin">Submit Changes</FormButton>
+              <FormButton type="submit" class="button" onClick={doRegister}>Register User</FormButton>
             </Form>
           </FormContent>
         </FormWrap>

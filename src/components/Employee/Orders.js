@@ -30,13 +30,7 @@ const Orders = () => {
   };
   return (
     <EmployeeContainer id="Employee">
-      <FormWrap>
-        <FormContent>
-          <Form>
-            <EmployeeH3>Employee name: </EmployeeH3>
-          </Form>
-        </FormContent>
-      </FormWrap>
+      <EmployeeWrapper></EmployeeWrapper>
       <EmployeeH1>Active Orders</EmployeeH1>
       <EmployeeWrapper>
         <EmployeeCardComponent
