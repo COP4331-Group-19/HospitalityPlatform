@@ -187,7 +187,7 @@ app.get("/api/account/letmein/:phone", async (req, res, next) => {
             'created': Date.now()
         }, process.env.JWT_SECRET, {expiresIn: lifetime});
 
-        let url = `${INSTANCE_URL}/resetPassword?token=${token}`;
+        let url = `${INSTANCE_URL}/letmein?token=${token}`;
         if (process.env.SHORTLINK_KEY) {
             url = createShortlink(url);
         }

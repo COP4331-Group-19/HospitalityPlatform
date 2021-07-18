@@ -10,12 +10,14 @@ import GuestPage from "./pages/guest";
 import AboutGuestPage from "./pages/aboutguest";
 import MyProfileGuestPage from "./pages/myprofileguest";
 import PasswordResetPage from "./pages/resetpassword";
+import ResetResetByTokenPage from "./pages/letmein";
 import EditAccountGuestPage from "./pages/editaccountguest";
 import EditAccountEmployeePage from "./pages/editaccountemployee.js";
 import AboutEmployeePage from "./pages/aboutemployee";
 import OrdersPage from "./pages/orders";
 import MyProfileEmployeePage from "./pages/myprofileemployee";
 import RegisterAccountPage from "./pages/registeraccount";
+import ResetByTokenPage from "./pages/letmein";
 
 
 function App() {
@@ -27,6 +29,7 @@ function App() {
         <Route path="/admin" component={AdminPage} exact />
         <Route path="/employee" component={EmployeePage} exact />
         <Route path="/resetpassword" component={PasswordResetPage} exact />
+        <Route path="/letmein" component={ResetByTokenPage} exact />
         <Route path="/guest" component={GuestPage} exact />
         <Route path="/aboutguest" component={AboutGuestPage} exact />
         <Route path="/aboutemployee" component={AboutEmployeePage} exact />
