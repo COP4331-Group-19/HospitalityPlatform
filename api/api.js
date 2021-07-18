@@ -9,6 +9,7 @@ exports.setApp = function (app, db_client) {
 // Register                      v only admin can create reservations!
 app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
     const {username, first_name, last_name, email, phone, role, checkin, checkout, room, password} = req.body;
+    phone = phone.replace(/\D/g,'');
     const db = db_client.db();
     const results = await
         // search if username already exists
@@ -166,7 +167,7 @@ app.get("/api/account/letmein/:phone", async (req, res, next) => {
     if (global.twilio) {
         const db = db_client.db();
         const results = await
-            db.collection('Accounts').find({PhoneNumber: req.params.phone}).toArray();
+            db.collection('Accounts').find({PhoneNumber: req.params.phone.replace(/\D/g,'')}).toArray();
 
         // If the phone number exists, silently fail.
         if (results.length <= 0)
@@ -232,6 +233,8 @@ app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
     delete body.checkin;
     delete body.checkout;
     delete body.room;
+
+    body.phone = body.phone.replace(/\D/g,'');
 
     if (body.password) {
         // Change password.
