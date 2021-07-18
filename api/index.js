@@ -157,7 +157,7 @@ global.createShortlink = (long_url) => {
     const host = "https://o.divi.sh/";
     if (process.env.SHORTLINK_KEY) {
         // Theoretically possible, but statistically unlikely, to be a duplicate.
-        let short_url = `hosp_${Buffer.from(String(Math.floor(Math.random() * 999999999)).replace(/=/g, "")).toString('base64')}`;
+        let short_url = `hosp_${Buffer.from(String(Math.floor(Math.random() * 999999999))).toString('base64').replace(/=/g, "")}`;
 
         const formData = new FormData();
         formData.append("long", long_url);

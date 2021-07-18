@@ -1,14 +1,15 @@
-//Path 
-const app_name = 'cop4331-10'
-exports.buildPath = 
-function buildPath(route)
-{
-    if (process.env.NODE_ENV === 'production') 
+
+const app_name = 'https://hospitalityplatform.herokuapp.com/'
+exports.buildPath =
+    function buildPath(route)
     {
-        return 'https://' + app_name +  '.herokuapp.com/' + route;
+        if (process.env.NODE_ENV === 'production')
+        {
+            return app_name + route;
+        }
+        else
+        {
+            return 'http://localhost:8080/' + route;
+        }
     }
-    else
-    {        
-        return 'http://localhost:8080/' + route;
-    }
-}
+
