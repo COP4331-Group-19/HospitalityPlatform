@@ -234,7 +234,7 @@ app.patch("/api/account/", authn.isAuthorized, async (req, res, next) => {
     delete body.checkout;
     delete body.room;
 
-    body.phone = body.phone.replace(/\D/g,'');
+    body.phone = body.phone.replace(/\D/g, '');
 
     if (body.password) {
         // Change password.
@@ -555,7 +555,7 @@ app.get("/api/orders/my", [authn.isAuthorized,authn.isStaff], async(req, res, ne
     const results = await
         db.collection('Order').find({Order_ID: {$gt: -1}}).toArray();
     if (results.length < 1)
-       return res.status(406).json(errGen(406, "No active orders"));
+       return res.status(200).json(errGen(200, "No active orders"));
     let formatted = [];
     for (let i = 0; i < results.length; i++) {
         formatted[i] = orderGen(results[i]);
@@ -569,7 +569,7 @@ app.get("/api/orders/unclaimed", [authn.isAuthorized, authn.isStaff], async(req,
     const results = await
         db.collection('Order').find({Order_ID: unclaim}).toArray();
     if (results.length < 1)
-       return res.status(406).json(errGen(406, "No unclaimed orders"));
+       return res.status(200).json(errGen(200, "No unclaimed orders"));
     let formatted = [];
     for (let i = 0; i < results.length; i++) {
         formatted[i] = orderGen(results[i]);
