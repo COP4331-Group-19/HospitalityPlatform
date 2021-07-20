@@ -8,7 +8,7 @@ exports.setApp = function (app, db_client) {
 // ======================Account Endpoints=========================
 // Register                      v only admin can create reservations!
 app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
-    const {username, first_name, last_name, email, phone, role, checkin, checkout, room, password} = req.body;
+    let {username, first_name, last_name, email, phone, role, checkin, checkout, room, password} = req.body;
     phone = phone.replace(/\D/g,'');
     const db = db_client.db();
     const results = await
@@ -63,15 +63,15 @@ app.post("/api/account/create", [authn.isAuthorized, authn.isAdmin], async (req,
                 if (process.env.SHORTLINK_KEY) {
                     url = createShortlink(url);
                 }
+                // Send the link
+                let message = `Hello, ${first_name}! You are almost ready to stay at ${hotelInfo[0].Name}! Please visit ${url} to create your account.`;
+                global.twilio.messages
+                    .create({
+                        body: message,
+                        from: '+14073052775',
+                        to: '+1' + phone
+                    });
             }
-            // Send the link
-            let message = `Hello, ${first_name}! You are almost ready to stay at ${hotelInfo[0].Name}! Please visit ${url} to create your account.`;
-            global.twilio.messages
-                .create({
-                    body: message,
-                    from: '+14073052775',
-                    to: '+1' + phone
-                });
         }
 
         let user_data_api_compliant = accountGen(createAction.ops[0]);
