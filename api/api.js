@@ -495,34 +495,31 @@ app.get("/api/room", authn.isAuthorized, async(req, res, next) => {
 })
 
 // Orders an inventory item to a user's room
-app.get("/api/inventory/:inventory_id/:quantity", authn.isAuthorized, async(req, res, next) => {
-    let inventory_id = req.params.inventory_id;
-    let quantity = req.params.quantity;
-    try {
-        inventory_id = Number(inventory_id);
-        if (isNaN(inventory_id))
-            return res.status(400).json(errGen(400, "Invalid item ID."));
-    } catch (err) {
-        // If we can't cast a number
-        return res.status(400, "Invalid item ID.");
-    }
-    // check there exist the inventory_id by checking if results return more than 0
-    // then, we check if we have enough in quantity for the item
-    // if request > db.quantity return json with message warning not enough
+app.post("/api/orders", authn.isAuthorized, async(req, res, next) => {
+    let {itemID, roomID, quantity} = req.body;
+    let staff = -1
+    let guest = req.user.id
+    
     const db = db_client.db();
-    const results = await
-        db.collection('Order').find({Item_ID: inventory_id}).toArray();
-    if (results.length > 0) {
-        let itemData = orderGen(results[0])
-        if (itemData.Quantity < quantity)
-            // return json or error message?
-            return res.status(406).json(errGen(406, "Not enough in quantity"))
-        else
-            return res.status(200).json(itemData)
-    }
-    else
-        return res.status(404).json(errGen(404, "Asset not found"))
 
+    // What will end up in the DB, sans order ID.
+    const obj = {
+        // The await is VERY important.
+        "Order_ID": await getNextSequence(db,"orderid"),
+        "Item_ID": itemID,
+        "Guest": guest,
+        "Room_ID": roomID,
+        "Staff": staff,
+        "Quantity": quantity
+    };
+
+    // Insert, format, and then return.
+    db.collection('Order').insertOne(obj).then((out) => {
+        const results = out.ops[0];
+        return res.status(200).json(orderGen(results));
+    }).catch((err) => {
+        return res.status(500).json(errGen(500, err));
+    });
 })
 
 // Get information on a specific inventory entry
@@ -551,11 +548,12 @@ app.get("/api/inventory/:inventory_id", authn.isAuthorized, async (req, res, nex
 // ======================Staff Endpoints===========================
 // Get Active orders from logged in user's orders
 app.get("/api/orders/my", [authn.isAuthorized,authn.isStaff], async(req, res, next) => {
+    let staff = req.user.id
     const db = db_client.db();
     const results = await
-        db.collection('Order').find({Order_ID: {$gt: -1}}).toArray();
-    if (results.length < 1)
-       return res.status(200).json(errGen(200, "No active orders"));
+        db.collection('Order').find({Staff: staff}).toArray();
+    if (results.length < 1) 
+       return res.status(406).json(errGen(406, "No active orders"));
     let formatted = [];
     for (let i = 0; i < results.length; i++) {
         formatted[i] = orderGen(results[i]);
@@ -567,7 +565,7 @@ app.get("/api/orders/unclaimed", [authn.isAuthorized, authn.isStaff], async(req,
     let unclaim = -1;
     const db = db_client.db();
     const results = await
-        db.collection('Order').find({Order_ID: unclaim}).toArray();
+        db.collection('Order').find({Staff: unclaim}).toArray();
     if (results.length < 1)
        return res.status(200).json(errGen(200, "No unclaimed orders"));
     let formatted = [];
