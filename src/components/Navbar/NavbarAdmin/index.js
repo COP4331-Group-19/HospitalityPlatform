@@ -56,6 +56,9 @@ const NavbarAdmin = ({ toggle }) => {
                 <NavBtnLink to="/registeraccount">Register Account</NavBtnLink>
               </NavAdminItem>
               <NavAdminItem>
+                <NavBtnLink to="/">Log Out</NavBtnLink>
+              </NavAdminItem>
+              <NavAdminItem>
                 {/* <NavBtnLink to="/myprofileAdmin">Account Setting</NavBtnLink> */}
               </NavAdminItem>
             </NavAdminMenu>
