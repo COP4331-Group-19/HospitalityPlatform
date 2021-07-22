@@ -60,6 +60,9 @@ const NavbarGuest = ({ toggle }) => {
               <NavGuestItem>
                 <NavBtnLink to="/myprofileGuest">My Profile</NavBtnLink>
               </NavGuestItem>
+                <NavGuestItem>
+                <NavBtnLink to="/">Log Out</NavBtnLink>
+              </NavGuestItem>
             </NavGuestMenu>
           </NavbarGuestContainer>
         </Nav>
