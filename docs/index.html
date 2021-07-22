@@ -911,13 +911,9 @@
             defs["NewJWT"] = {
   "required" : [ "token" ],
   "type" : "object",
-  "properties" : {
-    "token" : {
-      "type" : "string",
-      "description" : "The Bearer token",
-      "example" : "Bearer V2UncmUgbm8gc3RyYW5nZXJzIHRvIGxvdmUuIFlvdSBub3cgdGhlIHJ1bGVzIGFuZCBzbyBkbyBJLg=="
-    }
-  }
+  "allOf" : [ { }, {
+    "$ref" : "#/components/schemas/User"
+  } ]
 };
             defs["Order"] = {
   "allOf" : [ {
@@ -7998,7 +7994,7 @@ except ApiException as e:
                         <p class="marked"></p>
                         <p></p>
                         <br />
-                        <pre class="prettyprint language-html prettyprinted" data-type="get"><code><span class="pln">/orders/fulfill/{order_id}</span></code></pre>
+                        <pre class="prettyprint language-html prettyprinted" data-type="delete"><code><span class="pln">/orders/fulfill/{order_id}</span></code></pre>
                         <p>
                           <h3>Usage and SDK Samples</h3>
                         </p>
@@ -8018,7 +8014,7 @@ except ApiException as e:
 
                         <div class="tab-content">
                           <div class="tab-pane active" id="examples-Staff-getOrdersFulfillByOrderId-0-curl">
-                           <pre class="prettyprint"><code class="language-bsh">curl -X GET\
+                           <pre class="prettyprint"><code class="language-bsh">curl -X DELETE\
  -H "Authorization: Bearer [[accessToken]]"\
 -H "Accept: application/json"\
 "https://hospitalityplatform.herokuapp.com/api/orders/fulfill/{order_id}"</code></pre>

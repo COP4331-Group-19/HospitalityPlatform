@@ -90,12 +90,12 @@ global.inventoryGen = (dbObj) => {
 }
 global.orderGen = (dbObj) => {
     return {
-        "Order_ID": dbObj.Order_ID,
-        "Room_ID": dbObj.Room_ID,
-        "Staff": dbObj.Staff,
-        "Item_ID": dbObj.Item_ID,
-        "Quantity": dbObj.Quantity,
-        "Guest": dbObj.Guest
+        "order_id": dbObj.Order_ID ? dbObj.Order_ID : -1,
+        "room_id": dbObj.Room_ID ? dbObj.Room_ID : "",
+        "staff": dbObj.Staff ? dbObj.Staff : -1,
+        "item_id": dbObj.Item_ID ? dbObj.Item_ID : -1,
+        "quantity": dbObj.Quantity ? dbObj.Quantity : 1,
+        "guest": dbObj.Guest ? dbObj.Guest : -1
     }
 }
 global.roomGen = (dbObj) => {

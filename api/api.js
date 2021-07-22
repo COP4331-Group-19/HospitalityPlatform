@@ -499,7 +499,7 @@ app.post("/api/orders", authn.isAuthorized, async(req, res, next) => {
     let {itemID, roomID, quantity} = req.body;
     let staff = -1
     let guest = req.user.id
-    
+
     const db = db_client.db();
 
     // What will end up in the DB, sans order ID.
@@ -552,7 +552,7 @@ app.get("/api/orders/my", [authn.isAuthorized,authn.isStaff], async(req, res, ne
     const db = db_client.db();
     const results = await
         db.collection('Order').find({Staff: staff}).toArray();
-    if (results.length < 1) 
+    if (results.length < 1)
        return res.status(406).json(errGen(406, "No active orders"));
     let formatted = [];
     for (let i = 0; i < results.length; i++) {
@@ -575,17 +575,23 @@ app.get("/api/orders/unclaimed", [authn.isAuthorized, authn.isStaff], async(req,
     return res.status(200).json(formatted);
 })
 // Claim an order by its order ID
-    app.patch("/api/orders/claim/:order_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
-        var order_id = req.params.order_id;
-        const db = db_client.db();
-        var user = req.user.id;
-        await db.collection('Order').findOneAndUpdate({ Order_ID: order_id }, { $set: { Staff: user } });
-        const results = await db.collection('Order').findOneAndUpdate({ Order_ID: order_id }).toArray();
-        let order = orderGen(results[0]);
-        if(order.Staff === user){
-            return res.status(200).json(errGen(200));
+    app.get("/api/orders/claim/:order_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
+        try {
+            let order_id = Number(req.params.order_id);
+            const db = db_client.db();
+            let user = Number(req.user.id);
+            await db.collection('Order').findOneAndUpdate({Order_ID: order_id}, {$set: {Staff: user}});
+            const results = await db.collection('Order').find({Order_ID: order_id}).toArray();
+            let order = orderGen(results[0]);
+            // If the staff member on the order is what is intended (aka success), return.
+            if (order.staff === user) {
+                return res.status(200).json(order);
+            }
+            // The order wasn't updated. So panic.
+            return res.status(500).json(errGen(500));
+        } catch(err) {
+            return res.status(404).json(errGen(404, "Order not found."));
         }
-        return res.status(200).json(errGen(555));
     });
     // Fulfill an order by its order ID
     app.delete("/api/orders/fulfill/:order_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {

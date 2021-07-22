@@ -88,6 +88,7 @@ paths:
         - Account
       responses:
         '200':
+          allOf:
           content:
             application/json:
               schema:
@@ -502,7 +503,7 @@ paths:
                 $ref: '#/components/schemas/Order'
           description: Returns the order claimed.
   /orders/fulfill/{order_id}:
-    get:
+    delete:
       tags:
         - Staff
       parameters:
@@ -597,11 +598,18 @@ components:
       required:
         - token
       type: object
-      properties:
-        token:
-          description: The Bearer token
-          type: string
-          example: Bearer V2UncmUgbm8gc3RyYW5nZXJzIHRvIGxvdmUuIFlvdSBub3cgdGhlIHJ1bGVzIGFuZCBzbyBkbyBJLg==
+      allOf:
+        - properties:
+          token:
+            description: The Bearer token
+            type: string
+            example: Bearer V2UncmUgbm8gc3RyYW5nZXJzIHRvIGxvdmUuIFlvdSBub3cgdGhlIHJ1bGVzIGFuZCBzbyBkbyBJLg==
+          notice:
+            description: An optional notice if something with a user's credentials is insecure.
+            type: string
+            example: Please change your password immediately using PATCH /account/
+        - $ref: "#/components/schemas/User"
+
     Credentials:
       required:
         - username
