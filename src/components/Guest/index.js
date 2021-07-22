@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from "react";
-import GuestAccountSettingComponent from "./GuestAccountSettingComponent";
-import GuestCardComponent from "./GuestCardComponent";
-import NavbarGuest from "../Navbar/NavbarGuest";
 import axios from "axios";
 import Storage from '../../tokenStorage.js';
 import {
-  AccountSettingWrapper,
   GuestContainer,
   GuestH1,
-  GuestPageHeader,
   GuestWrapper,
   GuestCard,
-  GuestIcon,
   GuestH2,
   GuestH3,
   GuestP,
@@ -20,28 +14,28 @@ import {
   Form,
   FormLittle,
   Button,
-  FormButton,
-  IncDecButton,
-  Value,
 } from "./GuestElements";
-import { FaAlignCenter } from "react-icons/fa";
 
 const Guest = () => {
 
   //States
-  const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState(null);
+  const [messageO, setMessageO] = useState(null);
   const [FirstName, setFName] = useState(null);
   const [LastName, setLName] = useState(null);
   const [Room, setRoom] = useState(null);
+  const [Inv, setInv] = useState([]);
+  const [check, setcheck] = useState(null);
+  const [Ord, setOrd] = useState([]);
+  const [OrdErr, setOrdErr] = useState(null);
+  const [WOrd, setWOrd] = useState([]);
+  var ItemArray =[];
 
   //Variables
   var Token = Storage.retrieveToken()
-
-  //required files
   var bp = require("../Path.js");
 
-  //Config for get account
+  //GET ACCOUNT INFO
   var config = {
     method: "get",
     url: bp.buildPath("api/account"),
@@ -50,8 +44,6 @@ const Guest = () => {
       "authorization": Token
     }
   };
-
-  //UserInfo
   useEffect(async () => {
 
     //Get user info everytime we lode the page
@@ -69,11 +61,7 @@ const Guest = () => {
 
   }, []);
 
-  //Inventory list
-  const [Inv, setInv] = useState([]);
-  const [check, setcheck] = useState(null);
-
-  //Config for get account
+  //GET INVENTORY ITEMS
   var configI = {
     method: "get",
     url: bp.buildPath("api/inventory"),
@@ -82,60 +70,183 @@ const Guest = () => {
       "authorization": Token
     }
   };
-
-  //UserInfo
   useEffect(async () => {
-
+    setInv([]);
     //Get user info everytime we lode the page
     axios(configI).then(function (response) {
 
       var ud = response.data;
       for (var i = 0; i < ud.length; i++) {
-        setInv(item => [...item, ud[i].name + ": " + ud[i].description]);
+        ItemArray[i] = ud[i].name + "#" + ud[i].description + "#" + ud[i].img + "#" + ud[i].item_id;
+        setInv(item => [...item, ud[i].name + "#" + ud[i].description + "#" + ud[i].img + "#" + ud[i].item_id]);
       }
-
-
     }).catch(function (error) {
       setMessage(' ' + error);
     });
 
   }, []);
+  const GuestCardComponentInv = (props) => {
+    const [value, setValue] = useState(0);
+    const decIvn = async event => {
+      setValue(value - 1);
+      if (value === 0) {
+        setValue(0);
+      }
+    }
+    const incIvn = async event => {
+      setValue(value + 1);
+    }
+    const AddToOrder = async event => {
+      if (value !== 0) {
+        setOrd(item => [...item, props.items + "#" + props.des + "#" + props.img + "#" + props.id + '#' + value]);
+      }
+      else {
+        setOrdErr('You cant order Nothing');
+      }
 
-  //Order List
-  const [Ord, setOrd] = useState([]);
+    }
+    return (
+      <GuestCard style={{ backgroundImage: `url(${props.img})` }}>
+        <GuestH2>{props.items}</GuestH2>
+        <GuestH2>{value}</GuestH2>
+        <GuestP>{props.des}</GuestP>
+        <Button onClick={incIvn}>+</Button>
+        <Button onClick={decIvn}>-</Button>
+        <Button onClick={AddToOrder}> Add to Cart</Button>
+      </GuestCard>
+    );
+  };
 
-  //Add order function
-  const doAddOrder = async event => {
-    
+  //ORDERS CART FOR THIS ROOM
+  const GuestCardComponentOrd = (props) => {
+    return (
+      <GuestCard style={{ backgroundImage: `url(${props.img})` }}>
+        <GuestH2>{props.items}</GuestH2>
+        <GuestP>{props.des}</GuestP>
+      </GuestCard>
+    );
+  };
+
+  //Get All the Room OrDERS
+  var configO = {
+    method: "get",
+    url: bp.buildPath("api/room"),
+    headers: {
+      "Content-Type": "application/json",
+      "authorization": Token
+    }
+  };
+  useEffect(async () => {
+    setWOrd([]);
+    axios(configO).then(function (response) {
+      if (response.data.err_code) {
+        setMessage(' ' + response.data.description);
+      }
+      else {
+        var ud = response.data.orders;
+        if (ud.length > 0) {
+          for (var i = 0; i < ud.length; i++) {
+            for(let j = 0; j < ItemArray.length; j++){
+              if(ud[i].item_id.toString() === ItemArray[j].split('#')[3]){
+                setWOrd(item => [...item, ItemArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ItemArray[j].split('#')[2]]);
+              }
+            }
+          }
+        }
+
+      }
+    }).catch(function (error) {
+      setMessage(' ' + error);
+    })
+  }, []);
+  const GuestCardComponentWOrd = (props) => {
+    return (
+      <GuestCard style={{ backgroundImage: `url(${props.img})` }}>
+        <GuestH2>{props.qun} {props.id}</GuestH2>
+      </GuestCard>
+    );
+  };
+
+  //Method TO ORDER
+  const sendOrder = async event => {
+    for (let i = 0; i < Ord.length; i++) {
+      //Config
+      var configSO = {
+        method: "get",
+        url: bp.buildPath("api/inventory/" + Ord[i].split('#')[3] + "/" + Ord[i].split('#')[4]),
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": Token
+        }
+      }
+
+      axios(configSO).then(function (response) {
+        var O = response.data;
+        if (O.err_code) {
+          setMessage(' ' + O.description);
+          i = Ord.length;
+        } else {
+          Ord[i].split('#')[1] = "ORDERED";
+          setMessageO("All Things Ordered");
+          window.location.href="/guest";
+        }
+      }).catch(function (error) {
+        setMessage(' ' + error);
+      });
+    }
   }
 
-  const toggle = () => {
-    setIsOpen(!isOpen);
-  };
+  //Methoid TO Clear order
+  const delOrder = async event => {
+    setOrd([]);
+  }
+
+  //Main Return
   return (
     <GuestContainer id="Guest">
       <FormWrap>
         <FormContent>
           <Form>
-            <GuestH3>{FirstName}{LastName} {message}</GuestH3>
+            <GuestH3>{FirstName}{LastName} </GuestH3>
             <FormLittle action="#">
               <GuestH3>Room {Room}</GuestH3>
             </FormLittle>
           </Form>
         </FormContent>
       </FormWrap>
+      <GuestH1>Orders You are Waiting on</GuestH1>
+      <br /><br /><br /><br />
+      <GuestP>{message}</GuestP>
+      <GuestWrapper>
+        {
+          WOrd.map(itm =>
+            <GuestCardComponentWOrd id={itm.split('#')[0]} qun={itm.split('#')[1]} img={itm.split('#')[2]}/>
+          )
+        }
+      </GuestWrapper>
+      <GuestH1>Your Orders Cart</GuestH1>
+      <br /><br /><br /><br />
+      <GuestP>{messageO}</GuestP>
+      <Button onClick={sendOrder}>Order</Button>
+      <Button onClick={delOrder}>Clear All Orders</Button>
+      <GuestWrapper>
+        {
+          Ord.map(itm =>
+            <GuestCardComponentOrd items={itm.split('#')[4] + ' ' + itm.split("#")[0]} des={itm.split("#")[1]} img={itm.split("#")[2]} id={itm.split('#')[3]} />
+          )
+        }
+      </GuestWrapper>
+
       <GuestH1>Services</GuestH1>
+      <GuestP>{OrdErr}</GuestP>
       <GuestWrapper>
         {
-          Inv.map(itm => <GuestCardComponent items={itm}> </GuestCardComponent>)
+          Inv.map(itm =>
+            <GuestCardComponentInv items={itm.split("#")[0]} des={itm.split("#")[1]} img={itm.split("#")[2]} id={itm.split('#')[3]} />
+          )
         }
       </GuestWrapper>
-      <GuestH1>Your Orders</GuestH1>
-      <GuestWrapper>
-        {
-          Ord.map(itm => <GuestCardComponent items={itm} />)
-        }
-      </GuestWrapper>
+
     </GuestContainer>
   );
 };
