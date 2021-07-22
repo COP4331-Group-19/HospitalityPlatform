@@ -6,17 +6,12 @@ import {
 } from "./GuestElements";
 
 const GuestAccountSettingComponent = (props) => {
-  const hideText = (text) => {
-    /* turn text into asterisk */
-  };
 
   return (
     <AccountSettingCard>
-      {/* <AccountSettingIcon src={Icon1} /> */}
       <AccountSettingH2>{props.settingTitle}</AccountSettingH2>
       <AccountP>{props.description}</AccountP>
       <AccountSettingH2>
-        {/* {props.hidden ? hideText(props.value) : value} */}
       </AccountSettingH2>
     </AccountSettingCard>
   );
