@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import {
   Container,
   FormWrap,
@@ -11,7 +10,6 @@ import {
   FormLabel,
   FormInput,
   FormButton,
-  Text,
 } from "../../components/SignIn/SigninElements.js";
 import Storage from "../../tokenStorage.js";
 
@@ -119,7 +117,6 @@ const EditAccountEmployee = () => {
   }
 
   return (
-    <>
       <Container>
         <FormWrap>
           <Icon to="/">Click Cyber Hotel</Icon>
@@ -142,7 +139,6 @@ const EditAccountEmployee = () => {
           </FormContent>
         </FormWrap>
       </Container>
-    </>
   );
 };
 
