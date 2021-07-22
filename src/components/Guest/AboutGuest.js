@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import GuestAccountSettingComponent from "./GuestAccountSettingComponent";
-import GuestCardComponent from "./GuestCardComponent";
-import NavbarGuest from "../Navbar/NavbarGuest";
 import axios from "axios";
 import Storage from '../../tokenStorage.js';
 import {
@@ -9,19 +6,11 @@ import {
   GuestContainer,
   GuestH1,
   GuestWrapper,
-  GuestCard,
-  GuestIcon,
-  GuestH2,
   GuestH3,
-  GuestP,
   FormWrap,
   FormContent,
   Form,
   FormLittle,
-  Button,
-  FormButton,
-  IncDecButton,
-  Value,
 } from "./GuestElements";
 
 const AboutGuest = () => {
@@ -33,7 +22,7 @@ const AboutGuest = () => {
   const [Room, setRoom] = useState(null);
 
   //Variables
-  var Token = Storage.retrieveToken()
+  var Token = Storage.retrieveToken();
 
   //required files
   var bp = require("../Path.js");
