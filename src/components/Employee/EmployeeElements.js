@@ -79,6 +79,7 @@ export const EmployeeWrapper = styled.div`
 export const EmployeeCard = styled.div`
   background: #3d3d3d;
   display: flex;
+  background-size:cover;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
@@ -113,9 +114,30 @@ export const EmployeeH1 = styled.h1`
   }
 `;
 
+export const Button = styled(Link)`
+  border-radius: 50px;
+  background: ${({ primary }) => (primary ? "#4F7CAC" : "#010606")};
+  white-space: nowrap;
+  padding: ${({ big }) => (big ? "14px 48px" : "12px 30px")};
+  color: ${({ dark }) => (dark ? "#010606" : "#ffffff")};
+  font-size: ${({ fontBig }) => (fontBig ? "20px" : "16px")};
+  outline: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    background: ${({ primary }) => (primary ? "#ffffff" : "#01BF71")};
+  }
+`;
+
 export const EmployeeH2 = styled.h2`
   font-size: 1rem;
-  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
   margin-bottom: 10px;
 `;
 export const EmployeeH3 = styled.h3`
@@ -132,7 +154,8 @@ export const EmployeeH3 = styled.h3`
 `;
 export const EmployeeP = styled.p`
   font-size: 1rem;
-  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
   text-align: center;
 `;
 export const FormWrap = styled.div`
