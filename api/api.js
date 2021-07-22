@@ -495,12 +495,21 @@ app.get("/api/room", authn.isAuthorized, async(req, res, next) => {
 })
 
 // Orders an inventory item to a user's room
-app.post("/api/orders", authn.isAuthorized, async(req, res, next) => {
-    let {itemID, roomID, quantity} = req.body;
+app.get("/api/inventory/:inventory_id/:quantity", authn.isAuthorized, async(req, res, next) => {
+    let itemID = Number(req.params.inventory_id);
+    let quantity = Number(req.params.quantity);
     let staff = -1
     let guest = req.user.id
 
+    // This should
+    if (isNaN(itemID) || isNaN(quantity))
+        return res.status(400).json(errGen(400, "Invalid ID or quantity given."));
+
     const db = db_client.db();
+
+    // Get users' room. (Look Ma, no hands!)
+    let roomReq = await db.collection('Accounts').find({UserID: Number(req.user.id)}).toArray();
+    let roomID = roomReq[0].RoomNumber;
 
     // What will end up in the DB, sans order ID.
     const obj = {
@@ -513,11 +522,21 @@ app.post("/api/orders", authn.isAuthorized, async(req, res, next) => {
         "Quantity": quantity
     };
 
+    // Insert into users' room.
+    let roomUpdate = db.collection('Room').findOneAndUpdate({RoomID: roomID}, {
+        $addToSet: {
+            Orders: obj
+        }
+    });
+
     // Insert, format, and then return.
     db.collection('Order').insertOne(obj).then((out) => {
         const results = out.ops[0];
         return res.status(200).json(orderGen(results));
     }).catch((err) => {
+        // Just an FWI: I know I'm not immune to this, but exposing exact errors like this can give theoretical actors
+        // hints about how the system operates and potentially abuse it.
+        // However, since this /is/ open-source, this could be done anyways.
         return res.status(500).json(errGen(500, err));
     });
 })
@@ -585,6 +604,14 @@ app.get("/api/orders/unclaimed", [authn.isAuthorized, authn.isStaff], async(req,
             let order = orderGen(results[0]);
             // If the staff member on the order is what is intended (aka success), return.
             if (order.staff === user) {
+                // Plop into user's room and then return.
+                // Insert into users' room. Something something "non-relational database"
+                let roomUpdate = await db.collection('Room').findOneAndUpdate({RoomID: order.room_id}, {
+                    $set: {
+                        "Orders.$[element].Staff": user
+                    }
+                }, {multi: true, arrayFilters: [ {"element.Order_ID": {$eq: order_id}} ]});
+
                 return res.status(200).json(order);
             }
             // The order wasn't updated. So panic.
@@ -595,14 +622,27 @@ app.get("/api/orders/unclaimed", [authn.isAuthorized, authn.isStaff], async(req,
     });
     // Fulfill an order by its order ID
     app.delete("/api/orders/fulfill/:order_id", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
-        var order_id = req.params.order_id;
+        let order_id = Number(req.params.order_id);
+        if (isNaN(order_id))
+            return res.status(400).json(errGen(400), "Invalid Order ID")
+
         const db = db_client.db();
-        await db.collection('Order').findOneAndDelete({ Order_ID: order_id });
+        // Let's save this before we delete it... we need the Room ID from it.
+        let before = await db.collection('Order').findOneAndDelete({ Order_ID: order_id });
         const result = await db.collection('Order').find({ Order_ID: order_id }).toArray();
+
+        // Remove from room as well.
+        let roomUpdate = await db.collection('Room').findOneAndUpdate({RoomID: before.value.Room_ID}, {
+            $pull: {
+                Orders: { "Order_ID": order_id }
+            }
+        });
+        console.log(roomUpdate)
+
         if (result.length < 1) {
             return res.status(200).json(errGen(200));
         }
-        return res.status(200).json(errGen(555));
+        return res.status(500).json(errGen(500));
     });
 // ==================End of Staff Endpoints========================
 
