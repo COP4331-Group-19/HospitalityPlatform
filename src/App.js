@@ -18,7 +18,6 @@ import OrdersPage from "./pages/orders";
 import MyProfileEmployeePage from "./pages/myprofileemployee";
 import RegisterAccountPage from "./pages/registeraccount";
 import ResetByTokenPage from "./pages/letmein";
-import OnboardingPage from "./pages/onboarding";
 
 
 function App() {
