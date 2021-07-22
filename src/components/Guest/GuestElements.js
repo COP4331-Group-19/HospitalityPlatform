@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-scroll";
 import { Link as LinkR } from "react-router-dom";
 
+
 export const AccountSettingCard = styled.div`
   background: #2c2c2c;
   display: flex;
@@ -78,6 +79,7 @@ export const GuestWrapper = styled.div`
 
 export const GuestCard = styled.div`
   background: #3d3d3d;
+  background-size: cover;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -128,7 +130,8 @@ export const GuestH1 = styled.h1`
 
 export const GuestH2 = styled.h2`
   font-size: 1rem;
-  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
   margin-bottom: 10px;
 `;
 
@@ -146,7 +149,8 @@ export const GuestH3 = styled.h3`
 `;
 export const GuestP = styled.p`
   font-size: 1rem;
-  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+  color: black;
   text-align: center;
 `;
 export const FormWrap = styled.div`
