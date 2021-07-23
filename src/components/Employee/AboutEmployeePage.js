@@ -1,23 +1,13 @@
 import React, { useState, useEffect } from "react";
-import AccountSettingComponent from "./AccountSettingComponent";
-import Icon1 from "../../images/svg-1.svg";
-import Icon2 from "../../images/svg-3.svg";
-import Icon3 from "../../images/svg-5.svg";
 import axios from "axios";
 import {
   AccountSettingWrapper,
   EmployeeContainer,
   EmployeeH1,
-  EmployeeWrapper,
-  EmployeeCard,
-  EmployeeIcon,
-  EmployeeH2,
   EmployeeH3,
-  EmployeeP,
   FormWrap,
   FormContent,
   Form,
-  FormLittle,
 } from "./EmployeeElements";
 import Storage from '../../tokenStorage.js';
 

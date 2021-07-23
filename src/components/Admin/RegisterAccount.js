@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import {
   Container,
   FormWrap,
@@ -11,7 +10,6 @@ import {
   FormLabel,
   FormInput,
   FormButton,
-  Text,
 } from "./RegisterElements.js";
 import Storage from "../../tokenStorage.js";
 
@@ -33,18 +31,20 @@ const RegisterAccount = () => {
   var Password;
   var Role;
   var UserName;
+  var Room;
   var CID;
   var COD;
 
   const doRegister = async event => {
 
-    if (UserName === null || Password === null || FirstName === null || LastName === null || Email === null || PhoneNumber === null || Role === null || CID === null || COD === null) {
+    if (Room === null || UserName === null || Password === null || FirstName === null || LastName === null || Email === null || PhoneNumber === null || Role === null || CID === null || COD === null) {
       setMessage('Please ennter all information');
     }
     else {
 
       //JSON OBJECT
       var obj = {
+        "room": Room.value,
         "username": UserName.value,
         "password": Password.value,
         "first_name": FirstName.value,
@@ -60,17 +60,22 @@ const RegisterAccount = () => {
 
       //Making a Payload
       var config = {
-        method: "patch",
-        url: bp.buildPath("api/account/"),
+        method: "post",
+        url: bp.buildPath("api/account/create"),
         headers: {
           "Content-Type": "application/json",
           "authorization": Token
         },
         data: js,
       };
+      //REGISTERING A NEW USER
       axios(config)
         .then(function (response) {
-          window.location.href = "/admin";
+          if(response.data.err_code){
+            setMessage(" " + response.data.description)
+          }else{
+            window.location.href = "/admin";
+          }
         })
         .catch(function (error) {
           //Error function to show error as consol logs
@@ -83,10 +88,12 @@ const RegisterAccount = () => {
     <>
       <Container>
         <FormWrap>
-          <Icon to="/">Click Cyber Hotel</Icon>
+          <Icon to="/">Cyber Hotel</Icon>
           <FormContent>
             <Form action="#">
               <FormH1>Register Account</FormH1>
+              <FormLabel htmlFor="for">Room </FormLabel>
+              <FormInput type="name" ref={(c) => Room = c} />
               <FormLabel htmlFor="for">First Name</FormLabel>
               <FormInput type="name" ref={(c) => FirstName = c} />
               <FormLabel htmlFor="for">Last Name</FormLabel>
@@ -100,11 +107,11 @@ const RegisterAccount = () => {
               <FormLabel htmlFor="for">Password </FormLabel>
               <FormInput type="password" ref={(c) => Password = c} />
               <FormLabel htmlFor="for">Role </FormLabel>
-              <FormInput type="password" ref={(c) => Role = c} />
+              <FormInput type="name" ref={(c) => Role = c} />
               <FormLabel htmlFor="for">CheckInDate </FormLabel>
-              <FormInput type="password" ref={(c) => CID = c} />
+              <FormInput type="name" ref={(c) => CID = c} />
               <FormLabel htmlFor="for">CheckOutDate </FormLabel>
-              <FormInput type="password" ref={(c) => COD = c} />
+              <FormInput type="name" ref={(c) => COD = c} />
               <FormLabel> {message} </FormLabel>
               <FormButton type="submit" class="button" onClick={doRegister}>Register User</FormButton>
             </Form>

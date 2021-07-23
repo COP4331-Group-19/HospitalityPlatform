@@ -1,26 +1,10 @@
 import React, { useState, useEffect } from "react";
 import GuestAccountSettingComponent from "./GuestAccountSettingComponent";
-import GuestCardComponent from "./GuestCardComponent";
-import NavbarGuest from "../Navbar/NavbarGuest";
 import axios from "axios";
 import {
   AccountSettingWrapper,
   GuestContainer,
   GuestH1,
-  GuestWrapper,
-  GuestCard,
-  GuestIcon,
-  GuestH2,
-  GuestH3,
-  GuestP,
-  FormWrap,
-  FormContent,
-  Form,
-  FormLittle,
-  Button,
-  FormButton,
-  IncDecButton,
-  Value,
   EditAccountBtnLink,
 } from "./GuestElements";
 import Storage from '../../tokenStorage.js';

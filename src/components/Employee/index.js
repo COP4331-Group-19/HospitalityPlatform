@@ -1,31 +1,19 @@
 import React, { useState, useEffect } from "react";
-import EmployeeCardComponent from "./EmployeeCardComponent";
-import AccountSettingComponent from "./AccountSettingComponent";
-import Icon1 from "../../images/svg-1.svg";
-import Icon2 from "../../images/svg-3.svg";
-import Icon3 from "../../images/svg-5.svg";
 import axios from "axios";
 import Storage from '../../tokenStorage.js';
 import {
   AccountSettingWrapper,
   EmployeeContainer,
   EmployeeH1,
-  EmployeeWrapper,
-  EmployeeCard,
-  EmployeeIcon,
-  EmployeeH2,
   EmployeeH3,
-  EmployeeP,
   FormWrap,
   FormContent,
   Form,
-  FormLittle,
 } from "./EmployeeElements";
 
 
 const Employee = () => {
   //States
-  const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState(null);
   const [FirstName, setFName] = useState(null);
   const [LastName, setLName] = useState(null);
@@ -64,9 +52,6 @@ const Employee = () => {
 
   }, []);
 
-  const toggle = () => {
-    setIsOpen(!isOpen);
-  };
   return (
     <EmployeeContainer id="Employee">
       <FormWrap>

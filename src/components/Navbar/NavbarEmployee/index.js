@@ -59,6 +59,9 @@ const NavbarEmployee = ({ toggle }) => {
               <NavEmployeeItem>
                 <NavBtnLink to="/myprofileemployee">Account Setting</NavBtnLink>
               </NavEmployeeItem>
+              <NavEmployeeItem>
+                <NavBtnLink to="/">Log Out</NavBtnLink>
+              </NavEmployeeItem>
             </NavEmployeeMenu>
           </NavbarEmployeeContainer>
         </Nav>
