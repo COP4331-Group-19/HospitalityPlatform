@@ -3,6 +3,7 @@ import Admin from "../components/Admin";
 import ScrollToTop from "../components/ScrollToTop";
 import UnifiedNavbar from "../components/Navbar/UnifiedNavbar";
 import Footer from "../components/Footer";
+import UnifiedSidebar from "../components/Sidebar/UnifiedSidebar";
 
 function AdminPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +14,7 @@ function AdminPage() {
   return (
     <>
       <UnifiedNavbar />
+      <UnifiedSidebar/>
       <ScrollToTop />
       <Admin />
       <Footer />

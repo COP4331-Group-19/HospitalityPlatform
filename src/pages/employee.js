@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Employee from "../components/Employee";
 import ScrollToTop from "../components/ScrollToTop";
 import UnifiedNavbar from "../components/Navbar/UnifiedNavbar";
-import SidebarEmployee from "../components/Sidebar/SidebarEmployee.js";
+import UnifiedSidebar from "../components/Sidebar/UnifiedSidebar.js";
 import Footer from "../components/Footer";
 
 function EmployeePage() {
@@ -14,7 +14,7 @@ function EmployeePage() {
   return (
     <>
       <UnifiedNavbar toggle={toggle} />
-      <SidebarEmployee isOpen={isOpen} toggle={toggle} />
+      <UnifiedSidebar isOpen={isOpen} toggle={toggle} />
       <ScrollToTop />
       <Employee />
       <Footer />
