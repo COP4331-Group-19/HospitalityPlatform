@@ -1,6 +1,19 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
+export const HelpLink = styled.a`
+  color: grey;
+  text-align: center;
+  margin: 5px auto;
+  display: block;
+  padding: 12px 12px 0 12px;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    opacity: 0.7;
+    cursor: pointer;
+  }
+`;
+
 export const Container = styled.div`
   min-height: 692px;
   position: fixed;

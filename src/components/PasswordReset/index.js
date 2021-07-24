@@ -61,7 +61,7 @@ const ResetPassword = () => {
       <>
         <Container>
           <FormWrap>
-            <Icon to="/">CyberHotel</Icon>
+            <Icon to="/signin">&lsaquo; Sign In</Icon>
             <FormContent>
               <Form action="#">
                 <FormH1>Forgot Password</FormH1>

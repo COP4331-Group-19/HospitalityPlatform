@@ -14,6 +14,9 @@ import {
   Form,
   FormLittle,
   Button,
+  GuestEmptyWarn,
+  RockerButtons,
+  RockerMid
 } from "./GuestElements";
 
 const Guest = () => {
@@ -106,12 +109,10 @@ const Guest = () => {
 
     }
     return (
-      <GuestCard style={{ backgroundImage: `url(${props.img})` }}>
+      <GuestCard style={{ backgroundImage: `url(${props.img})`, backgroundPosition: "center" }}>
         <GuestH2>{props.items}</GuestH2>
-        <GuestH2>{value}</GuestH2>
         <GuestP>{props.des}</GuestP>
-        <Button onClick={incIvn}>+</Button>
-        <Button onClick={decIvn}>-</Button>
+        <RockerButtons style={{ borderRadius: "8px 8px 0 0", marginTop: "5px" }} onClick={incIvn}>▲</RockerButtons><RockerMid>{value}</RockerMid><RockerButtons style={{ borderRadius: "0 0 8px 8px"}} onClick={decIvn}>▼</RockerButtons>
         <Button onClick={AddToOrder}> Add to Cart</Button>
       </GuestCard>
     );
@@ -161,7 +162,7 @@ const Guest = () => {
   }, []);
   const GuestCardComponentWOrd = (props) => {
     return (
-      <GuestCard style={{ backgroundImage: `url(${props.img})` }}>
+      <GuestCard style={{ backgroundImage: `url(${props.img})`}}>
         <GuestH2>{props.qun} {props.id}</GuestH2>
       </GuestCard>
     );
@@ -214,9 +215,9 @@ const Guest = () => {
           </Form>
         </FormContent>
       </FormWrap>
-      <GuestH1>Orders You are Waiting on</GuestH1>
-      <br /><br /><br /><br />
+      <GuestH1>Pending Orders</GuestH1>
       <GuestP>{message}</GuestP>
+      { (WOrd.length === 0) ? <GuestEmptyWarn>No Pending Orders!</GuestEmptyWarn> : null }
       <GuestWrapper>
         {
           WOrd.map(itm =>
@@ -224,8 +225,7 @@ const Guest = () => {
           )
         }
       </GuestWrapper>
-      <GuestH1>Your Orders Cart</GuestH1>
-      <br /><br /><br /><br />
+      <GuestH1>Your Cart</GuestH1>
       <GuestP>{messageO}</GuestP>
       <Button onClick={sendOrder}>Order</Button>
       <Button onClick={delOrder}>Clear All Orders</Button>
@@ -239,6 +239,7 @@ const Guest = () => {
 
       <GuestH1>Services</GuestH1>
       <GuestP>{OrdErr}</GuestP>
+      { (Inv.length === 0) ? <GuestEmptyWarn>No services are available.</GuestEmptyWarn> : null }
       <GuestWrapper>
         {
           Inv.map(itm =>

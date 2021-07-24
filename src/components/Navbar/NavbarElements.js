@@ -119,6 +119,7 @@ export const NavBtnLink = styled(LinkR)`
   background: #14cca4;
   white-space: nowrap;
   padding: 10px 22px;
+  margin: 8px;
   color: white;
   font-size: 16px;
   outline: none;
@@ -136,6 +137,7 @@ export const NavBtnLink = styled(LinkR)`
 export const NavBtnLinkAdmin = styled(LinkA)`
   border-radius: 50px;
   background: #14cca4;
+  margin: 8px;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -156,6 +158,7 @@ export const NavBtnLinkAdmin = styled(LinkA)`
 export const NavBtnLinkEmployee = styled(LinkE)`
   border-radius: 50px;
   background: #14cca4;
+  margin: 8px;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;
@@ -175,6 +178,7 @@ export const NavBtnLinkEmployee = styled(LinkE)`
 export const NavBtnLinkGuest = styled(LinkG)`
   border-radius: 50px;
   background: #14cca4;
+  margin: 8px;
   white-space: nowrap;
   padding: 10px 22px;
   color: white;

@@ -62,7 +62,7 @@ export const GuestContainer = styled.div`
 
 export const GuestWrapper = styled.div`
   max-width: 1000px;
-  margin: 100px;
+  margin: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
@@ -105,8 +105,7 @@ export const GuestIcon = styled.img`
 export const GuestPageHeader = styled.h1`
   font-size: 2.5rem;
   color: #fff;
-  margin-top: 30px;
-  margin-bottom: -60px;
+  margin-top: 15px;
   display: flex;
   justify-content: center;
   align-items: left;
@@ -118,8 +117,7 @@ export const GuestPageHeader = styled.h1`
 export const GuestH1 = styled.h1`
   font-size: 2.5rem;
   color: #fff;
-  margin-top: 30px;
-  margin-bottom: -60px;
+  margin-top: 15px;
   display: flex;
   justify-content: center;
   align-items: left;
@@ -127,6 +125,54 @@ export const GuestH1 = styled.h1`
     font-size: 2rem;
   }
 `;
+
+export const GuestEmptyWarn = styled.p`
+  font-size: 2.5rem;
+  color: grey;
+  font-size: 24px;
+  padding: 20px;
+  text-align: center;
+  margin: auto;
+`;
+
+export const RockerButtons = styled.a`
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: inline;
+  background: ${({ primary }) => (primary ? "#4F7CAC" : "#010606")};
+  white-space: nowrap;
+  font-weight: bold;
+  padding: 5px 0;
+  color: ${({ dark }) => (dark ? "#010606" : "#ffffff")};
+  font-size: ${({ fontBig }) => (fontBig ? "30px" : "22px")};
+  outline: none;
+  border: none;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+  width: 66px;
+  text-align: center;
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    background: ${({ primary }) => (primary ? "#ffffff" : "#01BF71")};
+  }
+`;
+
+export const RockerMid = styled.p`
+  width: 66px;
+  text-align: center;
+  display: inline;
+  font-size: ${({ fontBig }) => (fontBig ? "30px" : "22px")};
+  font-weight: bold;
+  color: ${({ dark }) => (dark ? "#010606" : "#ffffff")};
+  background: ${({ primary }) => (primary ? "#4F7CAC" : "#010606")};
+  padding: 3px;
+`
 
 export const GuestH2 = styled.h2`
   font-size: 1rem;
@@ -204,6 +250,8 @@ export const FormLittle = styled.form`
 `;
 
 export const Button = styled(Link)`
+  display: inline-block;
+  margin: 8px;
   border-radius: 50px;
   background: ${({ primary }) => (primary ? "#4F7CAC" : "#010606")};
   white-space: nowrap;

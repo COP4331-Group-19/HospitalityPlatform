@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormInput,
   FormButton,
+  HelpLink,
   Text,
 } from "./SigninElements";
 import Storage from '../../tokenStorage.js';
@@ -80,7 +81,7 @@ const SignIn = () => {
     <>
       <Container>
         <FormWrap>
-          <Icon to="/">CyberHotel</Icon>
+          <Icon to="/">&lsaquo; Home</Icon>
           <FormContent>
             <Form action="#">
               <FormH1>Sign in to your account</FormH1>
@@ -92,7 +93,7 @@ const SignIn = () => {
               <FormButton type="submit" class="button" onClick={doLogin}>Continue</FormButton>
               <br />
               <p classname="forgot-password text-right">
-                <Link to={"/resetpassword"}>Forgot password?</Link>
+                <HelpLink href={"/resetpassword"}>Forgot password?</HelpLink>
               </p>
             </Form>
           </FormContent>

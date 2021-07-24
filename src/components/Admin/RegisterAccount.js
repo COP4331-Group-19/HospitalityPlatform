@@ -88,7 +88,7 @@ const RegisterAccount = () => {
     <>
       <Container>
         <FormWrap>
-          <Icon to="/">Cyber Hotel</Icon>
+          <Icon to="/admin">&lsaquo; Rooms</Icon>
           <FormContent>
             <Form action="#">
               <FormH1>Register Account</FormH1>
