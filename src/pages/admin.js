@@ -13,8 +13,8 @@ function AdminPage() {
   };
   return (
     <>
-      <UnifiedNavbar />
-      <UnifiedSidebar/>
+      <UnifiedNavbar toggle={toggle} />
+      <UnifiedSidebar isOpen={isOpen} toggle={toggle} />
       <ScrollToTop />
       <Admin />
       <Footer />

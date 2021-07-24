@@ -63,7 +63,6 @@ const AboutEmployeePageComponent = () => {
           </FormContent>
         </FormWrap>
         <EmployeeH1>ABOUT PAGE</EmployeeH1>
-        <AccountSettingWrapper></AccountSettingWrapper>
       </EmployeeContainer>
     </>
   );

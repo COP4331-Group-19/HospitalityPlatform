@@ -10,6 +10,7 @@ import {
 const Admin = () => {
 
   //Room Details
+  // TODO: Use API to get a list of floors.
   const [F1, setF1] = useState(["-----", "100", "-----", "101", "-----", "102", "-----", "103"]);
   const [F2, setF2] = useState(["-----", "200", "-----", "201", "-----", "202", "-----", "203"]);
   const [F3, setF3] = useState(["-----", "300", "-----", "301", "-----", "302", "-----", "303"]);
