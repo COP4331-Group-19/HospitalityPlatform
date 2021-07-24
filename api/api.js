@@ -315,6 +315,24 @@ exports.setApp = function (app, db_client) {
         }
     })
 
+    // Delete an account
+    app.delete("/api/account/:account_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
+        let accID = Number(req.params.account_id);
+        if (isNaN(accID))
+            return res.status(400).json(errGen(400, "Invalid account ID"));
+        const db = db_client.db();
+        const results = await
+            // search if account exists
+            db.collection('Accounts').find({ UserID: accID }).toArray();
+        console.log(results);
+        if (results.length > 0) {
+            db.collection('Accounts').deleteOne({ UserID: accID });
+            return res.status(200).json(errGen(200));
+        }
+        else
+            return res.status(404).json(errGen(404, "Account Not Found"));
+    })
+
     // Delete a room
     app.delete("/api/room/:room_id", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
         const db = db_client.db();

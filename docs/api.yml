@@ -88,7 +88,6 @@ paths:
         - Account
       responses:
         '200':
-          allOf:
           content:
             application/json:
               schema:
@@ -96,6 +95,26 @@ paths:
           description: Return the currently logged-in user's account information.
       operationId: post_account_login
       description: Given a username and password, returns a JWT for the session.
+  /account/{account_id}:
+    delete:
+      tags:
+        - Admin
+      operationId: delete_account_by_account_id
+      summary: Deletes an account.
+      parameters:
+        - name: account_id
+          in: path
+          description: Account ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error200'
+          description: Returns a success message of the account's deletion.
   /account/all/:
     get:
       tags:
@@ -600,14 +619,14 @@ components:
       type: object
       allOf:
         - properties:
-          token:
-            description: The Bearer token
-            type: string
-            example: Bearer V2UncmUgbm8gc3RyYW5nZXJzIHRvIGxvdmUuIFlvdSBub3cgdGhlIHJ1bGVzIGFuZCBzbyBkbyBJLg==
-          notice:
-            description: An optional notice if something with a user's credentials is insecure.
-            type: string
-            example: Please change your password immediately using PATCH /account/
+            token:
+              description: The Bearer token
+              type: string
+              example: Bearer V2UncmUgbm8gc3RyYW5nZXJzIHRvIGxvdmUuIFlvdSBub3cgdGhlIHJ1bGVzIGFuZCBzbyBkbyBJLg==
+            notice:
+              description: An optional notice if something with a user's credentials is insecure.
+              type: string
+              example: Please change your password immediately using PATCH /account/
         - $ref: "#/components/schemas/User"
 
     Credentials:
