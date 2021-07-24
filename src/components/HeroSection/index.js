@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "../ButtonElements";
 import Picture from "../../images/hotel.jpg";
-// import Video from "../../videos/video.mp4";
+// import Video from "https://i.divi.sh/hosp/jumbotron.mp4";
 import {
   HeroContainer,
   HeroBg,
@@ -24,15 +24,15 @@ function HeroSection() {
   return (
     <HeroContainer id="home">
       <HeroBg>
-        <PictureBg
-          playsInline
-          autoPlay
-          loop
-          muted
-          src={Picture}
-          type="hotel/jpg"
-        />
-        {/* <VideoBg playsInline autoPlay loop muted src={Video} type="video/mp4" /> */}
+        {/*<PictureBg*/}
+        {/*  playsInline*/}
+        {/*  autoPlay*/}
+        {/*  loop*/}
+        {/*  muted*/}
+        {/*  src={Picture}*/}
+        {/*  type="hotel/jpg"*/}
+        {/*/>*/}
+         <VideoBg playsInline autoPlay loop muted src="https://i.divi.sh/i/hotel_jumbotron.mp4" type="video/mp4" />
       </HeroBg>
       <HeroContent>
         <HeroH1>Hotel Knightro</HeroH1>

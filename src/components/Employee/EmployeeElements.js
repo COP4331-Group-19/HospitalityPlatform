@@ -19,18 +19,17 @@ export const AccountSettingCard = styled.div`
   }
 `;
 export const AccountSettingWrapper = styled.div`
-  max-width: 1000px;
-  margin: 100px;
+  margin: 10px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: auto auto auto;
   align-items: center;
-  grid-gap: 200px;
+  grid-gap: 20px;
   padding: 0 50px;
   @media screen and (max-width: 1000px) {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: auto auto;
   }
   @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto;
     padding: 0 20px;
   }
 `;
@@ -105,7 +104,7 @@ export const EmployeeH1 = styled.h1`
   font-size: 2.5rem;
   color: #fff;
   margin-top: 30px;
-  margin-bottom: -60px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: center;
   align-items: left;

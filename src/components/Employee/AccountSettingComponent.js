@@ -6,7 +6,7 @@ import {
 } from "./EmployeeElements";
 
 const AccountSettingComponent = (props) => {
-  
+
   return (
     <AccountSettingCard>
       <AccountSettingH2>{props.settingTitle}</AccountSettingH2>

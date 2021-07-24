@@ -8,12 +8,9 @@ import AdminPage from "./pages/admin";
 import EmployeePage from "./pages/employee";
 import GuestPage from "./pages/guest";
 import AboutGuestPage from "./pages/aboutguest";
-import MyProfileGuestPage from "./pages/myprofileguest";
 import PasswordResetPage from "./pages/resetpassword";
 import ResetResetByTokenPage from "./pages/letmein";
-import EditAccountGuestPage from "./pages/editaccountguest";
-import EditAccountEmployeePage from "./pages/editaccountemployee.js";
-import AboutEmployeePage from "./pages/aboutemployee";
+import EditAccountEmployeePage from "./pages/editaccountemployee";
 import OrdersPage from "./pages/orders";
 import MyProfileEmployeePage from "./pages/myprofileemployee";
 import RegisterAccountPage from "./pages/registeraccount";
@@ -33,23 +30,16 @@ function App() {
         <Route path="/letmein" component={ResetByTokenPage} exact />
         {/*<Route path="/onboarding" component={OnboardingPage} exact />*/}
         <Route path="/guest" component={GuestPage} exact />
-        <Route path="/aboutguest" component={AboutGuestPage} exact />
-        <Route path="/aboutemployee" component={AboutEmployeePage} exact />
+        <Route path="/about" component={AboutGuestPage} exact />
 
-        <Route path="/myprofileguest" component={MyProfileGuestPage} exact />
         <Route path="/orders" component={OrdersPage} exact />
         <Route
-          path="/myprofileemployee"
+          path="/settings"
           component={MyProfileEmployeePage}
           exact
         />
         <Route
-          path="/editaccountguest"
-          component={EditAccountGuestPage}
-          exact
-        />
-        <Route
-          path="/editaccountemployee"
+          path="/editaccount"
           component={EditAccountEmployeePage}
           exact
         />

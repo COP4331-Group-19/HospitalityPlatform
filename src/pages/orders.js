@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Orders from "../components/Employee/Orders";
 import ScrollToTop from "../components/ScrollToTop";
-import NavbarEmployee from "../components/Navbar/NavbarEmployee";
+import UnifiedNavbar from "../components/Navbar/UnifiedNavbar";
 import SidebarEmployee from "../components/Sidebar/SidebarEmployee.js";
 import Footer from "../components/Footer";
 
@@ -13,7 +13,7 @@ function OrdersPage() {
   };
   return (
     <>
-      <NavbarEmployee toggle={toggle} />
+      <UnifiedNavbar toggle={toggle} />
       <SidebarEmployee isOpen={isOpen} toggle={toggle} />
       <ScrollToTop />
       <Orders />

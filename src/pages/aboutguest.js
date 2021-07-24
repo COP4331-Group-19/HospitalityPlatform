@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AboutGuest from "../components/Guest/AboutGuest";
 import SidebarGuest from "../components/Sidebar/SidebarGuest.js";
 import ScrollToTop from "../components/ScrollToTop";
-import NavbarGuest from "../components/Navbar/NavbarGuest";
+import UnifiedNavbar from "../components/Navbar/UnifiedNavbar";
 import Footer from "../components/Footer";
 
 function AboutGuestPage() {
@@ -13,7 +13,7 @@ function AboutGuestPage() {
   };
   return (
     <>
-      <NavbarGuest toggle={toggle} />
+      <UnifiedNavbar toggle={toggle} />
       <SidebarGuest isOpen={isOpen} toggle={toggle} />
       <ScrollToTop />
       <AboutGuest />

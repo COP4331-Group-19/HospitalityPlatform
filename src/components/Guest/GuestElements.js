@@ -185,10 +185,9 @@ export const GuestH3 = styled.h3`
   font-size: 1.5rem;
   color: white;
   margin-bottom: 10px;
-  margin-left: -25px;
   display: flex;
   justify-content: center;
-  align-items: left;
+  align-items: right;
   @media screen and (max-width: 480px) {
     font-size: 2rem;
   }
@@ -220,30 +219,27 @@ export const FormContent = styled.div`
 `;
 export const Form = styled.form`
   background: #3d3d3d;
-  max-width: 600px;
-  width: 100%;
+  max-width: 400px;
+  width: 95vw;
   z-index: 1;
   display: grid;
+  grid-template-columns: 35% auto;
+  grid-gap: 10px;
   margin: 0 auto;
-  margin-top: 150px;
-  padding: 50px 250px;
+  margin-top: 20px;
+  padding: 25px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-  @media screen and (max-width: 400px) {
-    padding: 32px 32px;
-  }
 `;
 export const FormLittle = styled.form`
   background: #14cca4;
-  max-width: 500px;
-  width: 50%;
+  width: auto;
+  max-height: 70px;
   z-index: 2;
-  display: grid;
-  margin-top: -30px;
-  margin-left: -190px;
-  padding: 20px 50px;
-  border-radius: 4px;
+  padding: 6px;
+  border-radius: 6px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+  text-align: center;
   @media screen and (max-width: 400px) {
     padding: 32px 32px;
   }

@@ -208,10 +208,10 @@ const Guest = () => {
       <FormWrap>
         <FormContent>
           <Form>
-            <GuestH3>{FirstName}{LastName} </GuestH3>
             <FormLittle action="#">
-              <GuestH3>Room {Room}</GuestH3>
+              <GuestH3>Room<br/>{Room}</GuestH3>
             </FormLittle>
+            <GuestH3>{FirstName} {LastName}</GuestH3>
           </Form>
         </FormContent>
       </FormWrap>

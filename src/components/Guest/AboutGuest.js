@@ -14,7 +14,7 @@ import {
 } from "./GuestElements";
 
 const AboutGuest = () => {
-  
+
   //useState
   const [message, setMessage] = useState(null);
   const [FirstName, setFName] = useState(null);
@@ -60,18 +60,18 @@ const AboutGuest = () => {
     <>
       <GuestContainer>
         <FormWrap>
-          <GuestH1>Guest Account</GuestH1>
           <FormContent>
             <Form>
-              <GuestH3>{FirstName}{LastName} {message}</GuestH3>
               <FormLittle action="#">
-                <GuestH3>Room {Room}</GuestH3>
+                <GuestH3>Room<br/>{Room ? Room : "N/A"}</GuestH3>
               </FormLittle>
+              <GuestH3>{FirstName} {LastName}</GuestH3>
             </Form>
           </FormContent>
         </FormWrap>
-        <GuestH1>About us</GuestH1>
+        <GuestH1>About Us</GuestH1>
         <GuestWrapper>{/* <GuestH3>hello</GuestH3> */}</GuestWrapper>
+        {/* todo: get from api? */}
         <GuestH3>Welcome to our Hotel, Come, stay and enjoy your day!</GuestH3>
         <AccountSettingWrapper>
         </AccountSettingWrapper>

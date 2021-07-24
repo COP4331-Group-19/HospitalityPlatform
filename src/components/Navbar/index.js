@@ -36,6 +36,12 @@ const Navbar = ({ toggle }) => {
     scroll.scrollToTop();
   };
 
+  const logOutPls = () => {
+    // Logs out of the account by clearing session data.
+    localStorage.token_data = "";
+    document.cookie="session=;max-age=0";
+  }
+
   return (
     <>
       <IconContext.Provider value={{ color: "#fff" }}>
@@ -48,10 +54,35 @@ const Navbar = ({ toggle }) => {
               <FaBars />
             </MobileIcon>
             <NavBtn>
-              <NavBtnLink to="/signin">Sign In</NavBtnLink>
-               {/*<NavBtnLinkAdmin to="/admin">AdminPage</NavBtnLinkAdmin>*/}
-               {/*<NavBtnLinkEmployee to="/employee">EmployeePage</NavBtnLinkEmployee>*/}
-               {/*<NavBtnLinkGuest to="/aboutguest">Guest</NavBtnLinkGuest>*/}
+              {/* This is what we in the business call "black magic sorcery." It literally pulls roles out of the void (the JWT) */}
+              {/* admin */}
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLinkAdmin to="/admin">Rooms</NavBtnLinkAdmin>  : null) : null
+              }
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLinkAdmin to="/registeraccount">Register Account</NavBtnLinkAdmin>  : null) : null
+              }
+              {/* staff */}
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "staff" ? <NavBtnLinkEmployee to="/aboutemployee">About</NavBtnLinkEmployee>  : null) : null
+              }
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "staff" ? <NavBtnLinkEmployee to="/orders">Orders</NavBtnLinkEmployee>  : null) : null
+              }
+              {/* guest */}
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "guest" ? <NavBtnLinkGuest to="/guest">Services</NavBtnLinkGuest>  : null) : null
+              }
+              {/* All */}
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <NavBtnLink to="/about">About</NavBtnLink>) : null
+              }
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <NavBtnLink onClick={logOutPls} to="/">Settings</NavBtnLink>) : null
+              }
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? <NavBtnLink to="/signin">Sign In</NavBtnLink>  : <NavBtnLink onClick={logOutPls} to="/">Sign Out</NavBtnLink>) : <NavBtnLink onClick={logOutPls} to="/signin">Sign In</NavBtnLink>
+              }
             </NavBtn>
           </NavbarContainer>
         </Nav>
