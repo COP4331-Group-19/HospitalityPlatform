@@ -1,12 +1,12 @@
 import React from 'react';
-import ResetPassword from '../components/ResetByToken';
+import Onboarding from '../components/Onboarding';
 import ScrollToTop from '../components/ScrollToTop';
 
 function ResetByTokenPage() {
     return (
         <>
             <ScrollToTop />
-            <ResetPassword />
+            <Onboarding />
         </>
     );
 }

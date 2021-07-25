@@ -18,7 +18,6 @@ export const Container = styled.div`
 `;
 
 export const FormWrap = styled.div`
-  height: 170%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -63,6 +62,7 @@ export const Form = styled.form`
   margin: 0 auto;
   padding: 20px 20px;
   border-radius: 4px;
+  margin-bottom: 30px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 
   @media screen and (max-width: 400px) {
@@ -76,6 +76,24 @@ export const FormH1 = styled.h1`
   font-size: 20px;
   font-weight: 400;
   text-align: center;
+`;
+
+export const FormH0 = styled.h1`
+  margin-bottom: 20px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+`;
+
+export const FormH2 = styled.h2`
+  color: #fff;
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 400;
+  text-align: center;
+  margin: 2px;
+  margin-bottom: 8px;
 `;
 
 export const FormLabel = styled.label`

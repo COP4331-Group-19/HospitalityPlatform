@@ -59,7 +59,7 @@ exports.setApp = function (app, db_client) {
                 } else {
                     const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
                     // Create shortlink via Senko
-                    let url = `${INSTANCE_URL}/register?username=${username}`;
+                    let url = `${INSTANCE_URL}/onboarding?username=${username}`;
                     if (process.env.SHORTLINK_KEY) {
                         url = createShortlink(url);
                     }
@@ -234,7 +234,8 @@ exports.setApp = function (app, db_client) {
         delete body.checkout;
         delete body.room;
 
-        body.phone = body.phone.replace(/\D/g, '');
+        if (body.phone)
+            body.phone = body.phone.replace(/\D/g, '');
 
         if (body.password) {
             // Change password.

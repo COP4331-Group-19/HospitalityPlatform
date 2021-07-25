@@ -15,7 +15,7 @@ import OrdersPage from "./pages/orders";
 import MyProfileEmployeePage from "./pages/myprofileemployee";
 import RegisterAccountPage from "./pages/registeraccount";
 import ResetByTokenPage from "./pages/letmein";
-// import OnboardingPage from "./pages/onboarding";
+import OnboardingPage from "./pages/onboarding";
 
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
         <Route path="/employee" component={EmployeePage} exact />
         <Route path="/resetpassword" component={PasswordResetPage} exact />
         <Route path="/letmein" component={ResetByTokenPage} exact />
-        {/*<Route path="/onboarding" component={OnboardingPage} exact />*/}
+        <Route path="/onboarding" component={OnboardingPage} exact />
         <Route path="/guest" component={GuestPage} exact />
         <Route path="/about" component={AboutGuestPage} exact />
 

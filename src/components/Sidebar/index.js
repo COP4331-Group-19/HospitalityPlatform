@@ -34,9 +34,6 @@ const Sidebar = ({ isOpen, toggle }) => {
           }
           {/* staff */}
           {
-            localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "staff" ? <SidebarLink to="/aboutemployee">About</SidebarLink>  : null) : null
-          }
-          {
             localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "staff" ? <SidebarLink to="/orders">Orders</SidebarLink>  : null) : null
           }
           {/* guest */}
@@ -44,9 +41,6 @@ const Sidebar = ({ isOpen, toggle }) => {
             localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "guest" ? <SidebarLink to="/guest">Services</SidebarLink>  : null) : null
           }
           {/* All */}
-          {
-            localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <SidebarLink to="/about">About</SidebarLink>) : null
-          }
           {
             localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <SidebarLink onClick={toggle} to="/settings">Settings</SidebarLink>) : null
           }

@@ -62,9 +62,6 @@ const UnifiedNavbar = ({ toggle }) => {
               }
               {/* staff */}
               {
-                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "staff" ? <NavBtnLink to="/aboutemployee">About</NavBtnLink>  : null) : null
-              }
-              {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "staff" ? <NavBtnLink to="/orders">Orders</NavBtnLink>  : null) : null
               }
               {/* guest */}
@@ -72,9 +69,6 @@ const UnifiedNavbar = ({ toggle }) => {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "guest" ? <NavBtnLink to="/guest">Services</NavBtnLink>  : null) : null
               }
               {/* All */}
-              {
-                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <NavBtnLink to="/about">About</NavBtnLink>) : null
-              }
               {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <NavBtnLink to="/settings">Settings</NavBtnLink>) : null
               }

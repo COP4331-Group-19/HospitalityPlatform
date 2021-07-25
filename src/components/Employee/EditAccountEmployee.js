@@ -10,8 +10,10 @@ import {
   FormLabel,
   FormInput,
   FormButton,
-} from "../../components/SignIn/SigninElements.js";
+} from "../Admin/RegisterElements";
 import Storage from "../../tokenStorage.js";
+
+// EDIT ACCOUNT (ALL)
 
 const EditAccountEmployee = () => {
 
@@ -48,6 +50,7 @@ const EditAccountEmployee = () => {
       var ud = response.data;
 
       //Getting info needed for this page
+      console.info(ud);
       setFName(ud.first_name);
       setLName(ud.last_name);
       setPhone(ud.phone);
@@ -67,70 +70,69 @@ const EditAccountEmployee = () => {
   const doEditAcc = async event => {
     event.preventDefault();
     setMessage('');
-    if (NewPassword.value.trim().localeCompare('') === 0) {
-      setMessage('NewPassword is Required');
-    } else {
-
-      if (FirstName.value.trim().localeCompare('') === 0) {
-        FirstName = FirstNameX;
-      }
-      if (LastName.value.trim().localeCompare('') === 0) {
-        LastName = LastNameX;
-      }
-      if (Phone.value.trim().localeCompare('') === 0) {
-        Phone = PhoneNumberX;
-      }
-      if (Email.value.trim().localeCompare('') === 0) {
-        Email = EmailX;
-      }
-
-      //JSON OBJECT
-      var obj = {
-        "password": NewPassword.value,
-        "first_name": FirstName.value,
-        "last_name": LastName.value,
-        "email": Email.value,
-        "phone": Phone.value
-      };
-
-      var js = JSON.stringify(obj);
-
-      //Making a Payload
-      var config = {
-        method: "patch",
-        url: bp.buildPath("api/account/"),
-        headers: {
-          "Content-Type": "application/json",
-          "authorization": Token
-        },
-        data: js,
-      };
-      axios(config)
-        .then(function (response) {
-          window.location.href = "/myprofileemployee";
-        })
-        .catch(function (error) {
-          //Error function to show error as consol logs
-          setMessage(" " + error);
-        });
+    if (FirstName.value && FirstName.value.trim().localeCompare('') === 0) {
+      FirstName = FirstNameX;
     }
-  }
+    if (LastName.value && LastName.value.trim().localeCompare('') === 0) {
+      LastName = LastNameX;
+    }
+    if (Phone.value && Phone.value.trim().localeCompare('') === 0) {
+      Phone = PhoneNumberX;
+    }
+    if (Email.value && Email.value.trim().localeCompare('') === 0) {
+      Email = EmailX;
+    }
 
+    //JSON OBJECT
+    let obj = {
+      "first_name": FirstName.value,
+      "last_name": LastName.value,
+      "email": Email.value,
+      "phone": Phone.value
+    };
+
+    // API fun fact: The password is optional.
+    // JavaScript fun fact: you can just add onto objects like this.
+    if (NewPassword.value && NewPassword.value.trim().localeCompare('') !== 0) {
+      obj.password = NewPassword.value;
+    }
+
+    var js = JSON.stringify(obj);
+
+    //Making a Payload
+    var config = {
+      method: "patch",
+      url: bp.buildPath("api/account/"),
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": Token
+      },
+      data: js,
+    };
+    axios(config)
+      .then(function (response) {
+        window.location.href = "/settings";
+      })
+      .catch(function (error) {
+        //Error function to show error as console logs
+        setMessage(String(error));
+      });
+  }
   return (
       <Container>
         <FormWrap>
-          <Icon to="/">Click Cyber Hotel</Icon>
+          <Icon to="/settings">&lsaquo; Settings</Icon>
           <FormContent>
             <Form action="#">
               <FormH1>Edit Account</FormH1>
               <FormLabel htmlFor="for">First Name</FormLabel>
-              <FormInput type="name" ref={(c) => FirstName = c} />
+              <FormInput placeholder={ FirstNameX } type="name" ref={(c) => FirstName = c} />
               <FormLabel htmlFor="for">Last Name</FormLabel>
-              <FormInput type="name" ref={(c) => LastName = c} />
+              <FormInput placeholder={ LastNameX } type="name" ref={(c) => LastName = c} />
               <FormLabel htmlFor="for">Phone Number</FormLabel>
-              <FormInput type="phonenumber" ref={(c) => Phone = c} />
+              <FormInput placeholder={ PhoneNumberX } type="phonenumber" ref={(c) => Phone = c} />
               <FormLabel htmlFor="for">Email</FormLabel>
-              <FormInput type="email" ref={(c) => Email = c} />
+              <FormInput placeholder={ EmailX } type="email" ref={(c) => Email = c} />
               <FormLabel htmlFor="for">Password</FormLabel>
               <FormInput type="password" required='true' ref={(c) => NewPassword = c} />
               <FormLabel> {message} </FormLabel>

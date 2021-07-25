@@ -74,11 +74,11 @@ const RegisterAccount = () => {
           if(response.data.err_code){
             setMessage(" " + response.data.description)
           }else{
-            window.location.href = "/admin";
+            setMessage("Account provisioned successfully.")
           }
         })
         .catch(function (error) {
-          //Error function to show error as consol logs
+          //Error function to show error as console logs
           setMessage(" " + error);
         });
     }

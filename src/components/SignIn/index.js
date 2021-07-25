@@ -49,10 +49,12 @@ const SignIn = () => {
     axios(config)
       .then(function (response) {
         var res = response.data;
-
         if (res.err_Code) {
           //Error Message
-          setMessage(res.description);
+          if (res.err_Code === 401)
+            setMessage("Username or password invalid.");
+          else
+            setMessage(res.description);
         } else {
           Storage.storeToken(res);
           Acc = res.role;
@@ -72,8 +74,11 @@ const SignIn = () => {
 
       })
       .catch(function (error) {
-        //Error function to show error as consol logs
-        setMessage(" " + error);
+        //Error function to show error as console logs
+        if (String(error).indexOf("401") !== -1)
+          setMessage("Error: Invalid username or password.");
+        else
+          setMessage(String(error));
       });
   };
 
