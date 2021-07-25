@@ -148,6 +148,7 @@ function ProfileScreen({ navigation }) {
 //Task Screen
 function TaskScreen({ navigation }) {
   const [UC, setUC] = useState([]);
+  const [C, setC] = useState([]);
   var ItemsArray = [];
   const [message, setMessage] = useState(null);
 
@@ -172,7 +173,7 @@ function TaskScreen({ navigation }) {
   const urlU = bp.buildPath("api/orders/unclaimed");
   useEffect(async () => {
     setUC([]);
-    const response = await fetch(urlI, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+    const response = await fetch(urlU, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
     try {
       var ud = JSON.parse(await response.text());
       if (ud.err_code) {
@@ -192,7 +193,7 @@ function TaskScreen({ navigation }) {
     }
 
   }, []);
-  const GuestList = (props) => {
+  const UCOrderList = (props) => {
 
     const dothis = async event => {
       setMessage('Claimed');
@@ -209,6 +210,52 @@ function TaskScreen({ navigation }) {
             onPress={dothis}
           >
             <Text>Claim</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+  //TODO ORDERS
+  const urlC = bp.buildPath("api/orders/my");
+  useEffect(async () => {
+    setC([]);
+    const response = await fetch(urlC, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+    try {
+      var ud = JSON.parse(await response.text());
+      if (ud.err_code) {
+        setMessage(' ' + ud.description);
+      }
+      else {
+        for (var i = 0; i < ud.length; i++) {
+          for (let j = 0; j < ItemsArray.length; j++) {
+            if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
+              setC(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id]);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      setMessage(' ' + e.message);
+    }
+
+  }, []);
+  const COrderList = (props) => {
+
+    const dothis = async event => {
+      setMessage('Claimed');
+    };
+
+    return (
+      <View style={styles.Tasks}>
+        <View style={styles.separator}>
+          <Text style={styles.taskinfo}>{" "}Room: {props.room}{" "}</Text>
+          <Text style={styles.taskinfo}>{" "}Order: {props.quantity} {props.name}{" "}</Text>
+          <TouchableOpacity
+            color="black"
+            style={styles.claimButton}
+            onPress={dothis}
+          >
+            <Text>Mark</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -234,18 +281,30 @@ function TaskScreen({ navigation }) {
         </View>
         {/*Break*/}
         <Text>{"\n"}</Text>
-
         <Text style={{ color: 'red' }}>{message}</Text>
-
         {/*Break*/}
         <Text>{"\n"}</Text>
         {/* List of Tasks */}
         <View style={styles.listoftasks}>
-          {
-            UC.map(itm =>
-              <GuestList name={itm.split('#')[0]} quantity={itm.split('#')[1]} room={itm.split('#')[2]} order={itm.split('#')[3]} />
-            )
-          }
+          <Text>UNCLAIMED ORDERS</Text>
+          <Text>{"\n"}</Text>
+          <View>
+            {
+              UC.map(itm =>
+                <UCOrderList name={itm.split('#')[0]} quantity={itm.split('#')[1]} room={itm.split('#')[2]} order={itm.split('#')[3]} />
+              )
+            }
+          </View>
+          <Text>TODO ORDERS</Text>
+          <Text>{"\n"}</Text>
+          <View>
+            {
+              C.map(itm =>
+                <COrderList name={itm.split('#')[0]} quantity={itm.split('#')[1]} room={itm.split('#')[2]} order={itm.split('#')[3]} />
+              )
+            }
+          </View>
+
         </View>
         {/*Break*/}
         <Text>{"\n"}</Text>
