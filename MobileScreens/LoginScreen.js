@@ -2,102 +2,149 @@ import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, Button, TextInput, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import bp from '../Path.js';
-import jwt from 'react-native-pure-jwt';
+import axios from 'axios';
+import Storage from '../tokenStorage.js';
 
-function LoginScreen() {
-  var Login;
-  var Password;
+global.Login = "";
+global.Password = "";
 
-  const [message, setMessage] = useState("");
+export default class LoginScreen extends Component {
+  constructor() {
+    super()
+    this.state =
+    {
+      message: ''
+    }
+  }
 
-  const doLogin = async (event) => {
-    setMessage("Logging In");
-  };
-
-  const doPassReset = async (event) => {
-    setMessage("Resetting Password");
-  };
-
-  return (
-    <View style={styles.container}>
-      {/* Navigation Bar */}
-      <View style={styles.topbar}>
-        <TouchableOpacity
-          color="black"
-          style={styles.DrawerButton}
-          onPress={() => navigation.openDrawer()}
-        ></TouchableOpacity>
-        <Text style={styles.topbartext}> Hotel Knightro</Text>
-      </View>
-      <ImageBackground
-        style={styles.backgroundImage}
-        source={require("../images/testphoto.jpg")}
-      >
-        {/*Break*/}
-        <Text>{"\n"}</Text>
-        <View style={styles.blanck}>
-          <View>
-            <Text style={styles.title}> Login </Text>
-          </View>
-          {/*Break*/}
-          <Text>{"\n"}</Text>
-          {/* UserName */}
-          <View style={styles.login_pack}>
-            <Feather name="user" size={40} color="black" />
-            <TextInput
-              style={styles.login}
-              placeholder="UserName"
-              onChangeText={(val) => {
-                Login = val;
-              }}
-            />
-          </View>
-          {/*Break*/}
-          <Text>{"\n"}</Text>
-          {/* Password */}
-          <View style={styles.login_pack}>
-            <Feather name="eye-off" size={40} color="black" />
-            <TextInput
-              style={styles.password}
-              placeholder="Password"
-              secureTextEntry={true}
-              onChangeText={(val) => {
-                Password = val;
-              }}
-            />
-          </View>
-          {/*Break*/}
-          <Text>{"\n"}</Text>
-          <View>
-            <Text style={styles.status}>{message}</Text>
-          </View>
-          {/*Break*/}
-          <Text>{"\n"}</Text>
+  render() {
+    return (
+      <View style={styles.container}>
+        {/* Navigation Bar */}
+        <View style={styles.topbar}>
           <TouchableOpacity
             color="black"
-            title="LOGIN"
-            style={styles.button}
-            onPress={doLogin}
-          >
-            <View style={styles.button_pack}>
-              <Text style={styles.button}>Log In </Text>
-              <Feather name="log-in" size={40} color="black" />
-            </View>
-          </TouchableOpacity>
-          {/*Break*/}
-          <Text>{"\n"}</Text>
-          <TouchableOpacity
-            color="black"
-            title="PasswordRes"
-            style={styles.button}
-            onPress={doPassReset}
-          >
-            <Text style={styles.resetbutton}>Forgot Password ?</Text>
-          </TouchableOpacity>
+            style={styles.DrawerButton}
+            onPress={() => navigation.openDrawer()}
+          ></TouchableOpacity>
+          <Text style={styles.topbartext}> Hotel Knightro</Text>
         </View>
-      </ImageBackground>
-    </View>
-  );
+        <ImageBackground
+          style={styles.backgroundImage}
+          source={require("../images/testphoto.jpg")}
+        >
+          {/*Break*/}
+          <Text>{"\n"}</Text>
+          <View style={styles.blanck}>
+            <View>
+              <Text style={styles.title}> Login </Text>
+            </View>
+            {/*Break*/}
+            <Text>{"\n"}</Text>
+            {/* UserName */}
+            <View style={styles.login_pack}>
+              <Feather name="user" size={40} color="black" />
+              <TextInput
+                style={styles.login}
+                placeholder="UserName"
+                onChangeText={(val) => {
+                  this.changeLoginNameHandler(val)
+                }}
+              />
+            </View>
+            {/*Break*/}
+            <Text>{"\n"}</Text>
+            {/* Password */}
+            <View style={styles.login_pack}>
+              <Feather name="eye-off" size={40} color="black" />
+              <TextInput
+                style={styles.password}
+                placeholder="Password"
+                secureTextEntry={true}
+                onChangeText={(val) => {
+                  this.changePasswordHandler(val)
+                }}
+              />
+            </View>
+            {/*Break*/}
+            <Text>{"\n"}</Text>
+            <View>
+              <Text style={styles.status}>{this.state.message}</Text>
+            </View>
+            {/*Break*/}
+            <Text>{"\n"}</Text>
+            <TouchableOpacity
+              color="black"
+              title="LOGIN"
+              style={styles.button}
+              onPress={this.doLogin}
+            >
+              <View style={styles.button_pack}>
+                <Text style={styles.button}>Log In </Text>
+                <Feather name="log-in" size={40} color="black" />
+              </View>
+            </TouchableOpacity>
+            {/*Break*/}
+            <Text>{"\n"}</Text>
+            <TouchableOpacity
+              color="black"
+              title="PasswordRes"
+              style={styles.button}
+              onPress={this.doPassReset}
+            >
+              <Text style={styles.resetbutton}>Forgot Password ?</Text>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
+      </View>
+    );
+  }
+
+  doLogin = async () => {
+    this.setState({message:''});
+    //JSON OBJECT
+    var obj = { username: global.Login.trim(), password: global.Password.trim() };
+    var js = JSON.stringify(obj);
+    const url = bp.buildPath("api/account/login");
+    this.setState({message:' LogingIn.....'});
+    try {
+
+      const response = await fetch(url, { method: 'post', body: js, headers: { "Content-Type": "application/json"} });
+
+      var res = JSON.parse(await response.text());
+      if (res.err_code) {
+        //Error Message
+        this.setState({message:'Error '+ res.err_code +': ' + res.description});
+      } else {
+        
+        Storage.storeToken(res);
+        var Acc = res.role;
+
+        //Go to the user Window
+        if (Acc === 'guest') {
+          this.props.navigation.navigate('Guest');
+        }
+        if (Acc === 'employee') {
+          this.props.navigation.navigate('Employee');
+        }
+        if (Acc === 'admin') {
+          this.props.navigation.navigate('Admin');
+        }
+      }
+
+    } catch (e) {
+      this.setState({message:e.message});
+    }
+  }
+  doPassReset = async () => {
+
+  }
+  changeLoginNameHandler = async (val) => {
+    global.Login = val;
+  }
+  changePasswordHandler = async (val) => {
+    global.Password = val;
+  }
 }
 
 const styles = StyleSheet.create({
@@ -195,5 +242,3 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
-
-export default LoginScreen;
