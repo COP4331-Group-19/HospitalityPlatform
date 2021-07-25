@@ -38,7 +38,7 @@ const RegisterAccount = () => {
   const doRegister = async event => {
 
     if (Room === null || UserName === null || Password === null || FirstName === null || LastName === null || Email === null || PhoneNumber === null || Role === null || CID === null || COD === null) {
-      setMessage('Please ennter all information');
+      setMessage('Please enter all information');
     }
     else {
 

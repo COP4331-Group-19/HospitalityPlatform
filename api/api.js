@@ -244,6 +244,25 @@ exports.setApp = function (app, db_client) {
 
         let databaseIfy = backwardsAccountGen(body);
 
+        // Check if valid.
+        const doesItExistAlready = await
+            // search if username already exists
+            db.collection('Accounts').find({
+                $or: [
+                    { Login: body.username },
+                    { Email: body.email },
+                    { PhoneNumber: body.phone }
+                ]
+            }).toArray();
+        if (doesItExistAlready.length > 0) {
+            if (
+                (body.username && body.username === doesItExistAlready[0].Login)
+                || (body.phone && body.phone === doesItExistAlready[0].PhoneNumber)
+                || (body.email && body.email === doesItExistAlready[0].Email)
+            )
+                return res.status(400).json(errGen(400, "Username, Email, or Phone Number Taken"));
+        }
+
         await db_client.db().collection('Accounts').findOneAndUpdate({ Login: req.user.username }, { $set: databaseIfy });
         // Note: this is not as runtime-efficient as the inventory PATCH, just because of the extra DB call.
         // However, it's a lot more readable, so consider the trade-offs there.
