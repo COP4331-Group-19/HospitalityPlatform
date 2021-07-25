@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,14 +13,45 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import { DrawerItems } from "react-navigation-drawer";
 import { withTheme } from "react-native-elements";
+import Storage from '../tokenStorage.js';
+import bp from '../Path.js';
+import { Button } from "react-native-elements/dist/buttons/Button";
+import { render } from "react-dom";
+import { event } from "react-native-reanimated";
+
+
 
 //HomeScreen for Employee
 function HomeScreen({ navigation }) {
+  //Variables
+  const [Name, setName] = useState("");
+  var Token = Storage.retrieveToken()
+  const [message, setMessage] = useState(null);
+  const url = bp.buildPath("api/account");
+
+  //UserInfo
+  useEffect(async () => {
+
+    const response = await fetch(url, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+    //Get user info everytime we lode the page
+    try {
+
+      var ud = JSON.parse(await response.text());
+
+      //Getting info needed for this page
+      setName(ud.first_name + " " + ud.last_name);
+    } catch (e) {
+      setMessage(' ' + e.message);
+    }
+
+  }, []);
+
+
   return (
     <View style={styles.container}>
       <ImageBackground
         style={styles.backgroundImage}
-        // source={require("../images/testphoto.jpg")}
+      // source={require("../images/testphoto.jpg")}
       >
         {/* Navigation Bar */}
         <View style={styles.topbar}>
@@ -37,54 +68,9 @@ function HomeScreen({ navigation }) {
         <Text>{"\n"}</Text>
         {/* CheckIn */}
         <View style={styles.active}>
-          <Text style={styles.activetext}> Check in to start working....</Text>
-          <TouchableOpacity
-            onPress={() => navigation.openDrawer()}
-            style={styles.ActiveButton}
-          >
-            <Text style={styles.activebuttontext}>Check-In</Text>
-            <Feather name="clipboard" size={40} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.activetext}> Status </Text>
-        </View>
-      </ImageBackground>
-    </View>
-  );
-}
-
-//Settings Screen
-function SettingScreen({ navigation }) {
-  //Logout Method
-
-  return (
-    <View style={styles.container}>
-      <ImageBackground
-        style={styles.backgroundImage}
-        // source={require("../images/testphoto.jpg")}
-      >
-        {/* Navigation Bar */}
-        <View style={styles.topbar}>
-          <TouchableOpacity
-            color="black"
-            style={styles.DrawerButton}
-            onPress={() => navigation.openDrawer()}
-          >
-            <Feather name="align-justify" size={50} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.topbartext}> Settings</Text>
-        </View>
-        {/*Break*/}
-        <Text>{"\n"}</Text>
-        {/* LogOut */}
-        <View>
-          <TouchableOpacity
-            color="black"
-            style={styles.LogoutButton}
-            onPress={() => navigation.openDrawer()}
-          >
-            <Text style={styles.logouttext}>Log Out</Text>
-            <Feather name="log-out" size={35} color="black" />
-          </TouchableOpacity>
+          <Text style={styles.activetext}>Name : {Name}</Text>
+          <Text style={styles.activetext}>You're logged in! Let's get to work.</Text>
+          <Text style={styles.activetext}>{message}</Text>
         </View>
       </ImageBackground>
     </View>
@@ -93,11 +79,43 @@ function SettingScreen({ navigation }) {
 
 //Profile Screen
 function ProfileScreen({ navigation }) {
+  const [message, setMessage] = useState(null);
+  const [FirstName, setFName] = useState(null);
+  const [LastName, setLName] = useState(null);
+  const [PhoneNumber, setPNumber] = useState(null);
+  const [Email, setEmail] = useState(null);
+  const [UserName, setUName] = useState(null);
+  const [Password, setPass] = useState(null);
+  //Getting user Info
+  const urlA = bp.buildPath("api/account");
+
+  useEffect(async () => {
+    var Token = Storage.retrieveToken();
+
+    const response = await fetch(urlA, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+
+    //Get user info everytime we lode the page
+    try {
+
+      var ud = JSON.parse(await response.text());
+
+      //Getting info needed for this page
+      setFName(ud.first_name);
+      setLName(ud.last_name);
+      setPNumber(ud.phone);
+      setEmail(ud.email);
+      setUName(ud.username);
+      setPass(ud.password);
+    } catch (e) {
+      setMessage(' ' + e.message);
+    }
+  }, []);
+
   return (
     <View style={styles.container}>
       <ImageBackground
         style={styles.backgroundImage}
-        // source={require("../images/testphoto.jpg")}
+      // source={require("../images/testphoto.jpg")}
       >
         {/* Navigation Bar */}
         <View style={styles.topbar}>
@@ -113,40 +131,95 @@ function ProfileScreen({ navigation }) {
         {/*Break*/}
         <Text>{"\n"}</Text>
         <View style={styles.Profile}>
-          <Text style={styles.ProfileInfo}>Name: </Text>
-          <Text style={styles.ProfileInfo}>PhoneNumber: </Text>
-          <Text style={styles.ProfileInfo}>Email: </Text>
-          <View style={styles.ProfileButton}>
-            <TouchableOpacity
-              color="white"
-              style={styles.EditButton}
-              onPress={() => navigation.openDrawer()}
-            >
-              <Text style={styles.editbuttontext}>Edit</Text>
-              <Feather name="edit" size={40} color="black" />
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.ProfileInfo}>{message}</Text>
+          <Text style={styles.ProfileInfo}>FirstName: {FirstName}</Text>
+          <Text style={styles.ProfileInfo}>LastName: {LastName}</Text>
+          <Text style={styles.ProfileInfo}>PhoneNumber: {PhoneNumber}</Text>
+          <Text style={styles.ProfileInfo}>Email: {Email}</Text>
+          <Text style={styles.ProfileInfo}>UserName: {UserName}</Text>
+          <Text style={styles.ProfileInfo}>Password: {Password}</Text>
+          <Text style={{ color: "blue" }}>(*editing user info feature is only available for website)</Text>
         </View>
       </ImageBackground>
-    </View>
+    </View >
   );
 }
 
 //Task Screen
 function TaskScreen({ navigation }) {
-  const [people, setPeople] = useState([
-    { room: "101", order: "Tea", amount: "2", key: "1" },
-    { room: "102", order: "Soap", amount: "1", key: "2" },
-    { room: "104", order: "Sandwitch", amount: "5", key: "3" },
-    { room: "105", order: "Coffee", amount: "7", key: "4" },
-    { room: "123", order: "Beer", amount: "1", key: "5" },
-  ]);
+  const [UC, setUC] = useState([]);
+  var ItemsArray = [];
+  const [message, setMessage] = useState(null);
+
+  //Variables
+  var Token = Storage.retrieveToken()
+
+  //INVENTORY
+  const urlI = bp.buildPath("api/inventory");
+  useEffect(async () => {
+    const response = await fetch(urlI, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+    try {
+      var ud = JSON.parse(await response.text());
+      for (var i = 0; i < ud.length; i++) {
+        ItemsArray[i] = ud[i].name + '#' + ud[i].description + '#' + ud[i].img + '#' + ud[i].item_id;
+      }
+    } catch (e) {
+      setMessage(' ' + e.message);
+    }
+
+  }, []);
+  //UNCLAIMED ORDERS
+  const urlU = bp.buildPath("api/orders/unclaimed");
+  useEffect(async () => {
+    setUC([]);
+    const response = await fetch(urlI, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+    try {
+      var ud = JSON.parse(await response.text());
+      if (ud.err_code) {
+        setMessage(' ' + ud.description);
+      }
+      else {
+        for (var i = 0; i < ud.length; i++) {
+          for (let j = 0; j < ItemsArray.length; j++) {
+            if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
+              setUC(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id]);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      setMessage(' ' + e.message);
+    }
+
+  }, []);
+  const GuestList = (props) => {
+
+    const dothis = async event => {
+      setMessage('Claimed');
+    };
+
+    return (
+      <View style={styles.Tasks}>
+        <View style={styles.separator}>
+          <Text style={styles.taskinfo}>{" "}Room: {props.room}{" "}</Text>
+          <Text style={styles.taskinfo}>{" "}Order: {props.quantity} {props.name}{" "}</Text>
+          <TouchableOpacity
+            color="black"
+            style={styles.claimButton}
+            onPress={dothis}
+          >
+            <Text>Claim</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <ImageBackground
         style={styles.backgroundImage}
-        // source={require("../images/testphoto.jpg")}
+      // source={require("../images/testphoto.jpg")}
       >
         {/* Navigation Bar */}
         <View style={styles.topbar}>
@@ -161,36 +234,21 @@ function TaskScreen({ navigation }) {
         </View>
         {/*Break*/}
         <Text>{"\n"}</Text>
+
+        <Text style={{ color: 'red' }}>{message}</Text>
+
+        {/*Break*/}
+        <Text>{"\n"}</Text>
         {/* List of Tasks */}
         <View style={styles.listoftasks}>
-          <FlatList
-            data={people}
-            renderItem={({ item }) => (
-              <View style={styles.Tasks}>
-                <View style={styles.separator}>
-                  <Text style={styles.taskinfo}> Room: {item.room} </Text>
-                  <Text style={styles.taskinfo}>
-                    {" "}
-                    Order: {item.amount} {item.order}{" "}
-                  </Text>
-                </View>
-              </View>
-            )}
-          />
+          {
+            UC.map(itm =>
+              <GuestList name={itm.split('#')[0]} quantity={itm.split('#')[1]} room={itm.split('#')[2]} order={itm.split('#')[3]} />
+            )
+          }
         </View>
         {/*Break*/}
         <Text>{"\n"}</Text>
-        {/* Break Button */}
-        <View>
-          <TouchableOpacity
-            color="black"
-            style={styles.BreakButton}
-            onPress={() => navigation.openDrawer()}
-          >
-            <Text style={styles.breaktext}>Taking a Break </Text>
-            <Feather name="clock" size={35} color="black" />
-          </TouchableOpacity>
-        </View>
       </ImageBackground>
     </View>
   );
@@ -220,8 +278,8 @@ export default class EmployeeScreen extends Component {
         >
           <Drawer.Screen name="Home" component={HomeScreen} />
           <Drawer.Screen name="Profile" component={ProfileScreen} />
-          <Drawer.Screen name="Settings" component={SettingScreen} />
           <Drawer.Screen name="Tasks" component={TaskScreen} />
+          <Drawer.Screen name="Logout" component={this.handlerClick} />
         </Drawer.Navigator>
       </NavigationContainer>
     );
@@ -402,7 +460,7 @@ const styles = StyleSheet.create({
   separator: {
     flex: 1,
     borderWidth: 2,
-    borderColor: "#black",
+    borderColor: "black",
     shadowColor: "black",
     shadowOffset: {
       width: 0,
@@ -415,5 +473,18 @@ const styles = StyleSheet.create({
   },
   taskinfo: {
     fontSize: 30,
+  },
+  claimButton: {
+    backgroundColor: "#14CCA4",
+    padding: 10,
+    flexDirection: "row",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 5,
+    },
+    shadowOpacity: 0.36,
+    shadowRadius: 6.68,
+    elevation: 11,
   },
 });
