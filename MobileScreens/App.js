@@ -7,6 +7,8 @@ import { createAppContainer } from "react-navigation";
 import LoginScreen from './screens/LoginScreen';
 import EmployeeScreen from './screens/EmployeeScreen.js';
 import PasswordChange from './screens/PasswordChange';
+import AdminScreen from "./screens/AdminScreen";
+
 
 //The app function on react
 export default class App extends React.Component {
@@ -25,8 +27,10 @@ const AppNavigator = createStackNavigator({
   },
   PasswordChange:{
     screen: PasswordChange
-  }
-
+  },
+     Admin: {
+      screen: AdminScreen,
+    }
 },{
   initialRouteName: "PasswordChange"
 });
