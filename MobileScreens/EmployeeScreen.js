@@ -195,8 +195,20 @@ function TaskScreen({ navigation }) {
   }, []);
   const UCOrderList = (props) => {
 
-    const dothis = async event => {
-      setMessage('Claimed');
+    const ClaimOrd = async event => {
+
+      const urlCO = bp.buildPath("api/orders/claim/" + props.order);
+      try {
+        const response = await fetch(urlCO, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+        var check = JSON.parse(await response.text());
+        if (check.err_code) {
+          setMessage(' ' + check.description);
+        } else {
+          setMessage(' Order Claimed ');
+        }
+      } catch (e) {
+        setMessage(' ' + e.message);
+      }
     };
 
     return (
@@ -207,7 +219,7 @@ function TaskScreen({ navigation }) {
           <TouchableOpacity
             color="black"
             style={styles.claimButton}
-            onPress={dothis}
+            onPress={ClaimOrd}
           >
             <Text>Claim</Text>
           </TouchableOpacity>
@@ -241,9 +253,18 @@ function TaskScreen({ navigation }) {
   }, []);
   const COrderList = (props) => {
 
-    const dothis = async event => {
-      setMessage('Claimed');
-    };
+    const MarkOrder = async event => {
+      const urlMO = bp.buildPath("api/orders/fulfill/" + props.order);
+      try {
+        const response = await fetch(urlMO, { method: 'delete', headers: { "Content-Type": "application/json", "authorization": Token } });
+        var check = JSON.parse(await response.text());
+        if (check.err_code) {
+          setMessage(' ' + check.description);
+        }
+      } catch (e) {
+        setMessage(' ' + e.message);
+      }
+    }
 
     return (
       <View style={styles.Tasks}>
@@ -253,7 +274,7 @@ function TaskScreen({ navigation }) {
           <TouchableOpacity
             color="black"
             style={styles.claimButton}
-            onPress={dothis}
+            onPress={MarkOrder}
           >
             <Text>Mark</Text>
           </TouchableOpacity>
