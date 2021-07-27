@@ -7,15 +7,13 @@ import {
     FlatList,
     TextInput,
     TouchableOpacity,
+    ScrollView,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
-import { DrawerItems } from "react-navigation-drawer";
-import { withTheme } from "react-native-elements";
 import Storage from '../tokenStorage.js';
 import bp from '../Path.js';
-import { measure } from "react-native-reanimated";
 
 //HomeScreen for Admin
 function HomeScreen({ navigation }) {
@@ -34,7 +32,7 @@ function HomeScreen({ navigation }) {
     //         for(let i = 0; i < rooms.length; i++){
     //             setRoomP(items=> [...items, rooms[i]]);
     //         }
-            
+
     //     } 
     // }
     const urlAA = bp.buildPath("api/account/all");
@@ -59,14 +57,14 @@ function HomeScreen({ navigation }) {
                             setRooms(items => [...items, user[i].first_name + ' ' + user[i].last_name + '#' + room]);
                             check = 1;
                             continue;
-                        } 
+                        }
                     }
                 }
-                if(check === 0){
+                if (check === 0) {
                     setRooms(items => [...items, "-------" + '#' + room]);
                 }
                 check = 0;
-                
+
             }
         } catch (e) {
             setMessage(' ' + e.message);
@@ -107,7 +105,7 @@ function HomeScreen({ navigation }) {
                 <Text>{"\n"}</Text>
                 <Text>{message}</Text>
                 {/* List of Tasks */}
-                <View style={styles.listoftasks}>
+                <ScrollView style={styles.listoftasks}>
                     {/* <View style={{ flexDirection: 'row' }}>
                         <TextInput
                             style={styles.activetext}
@@ -130,7 +128,7 @@ function HomeScreen({ navigation }) {
                             )
                         }
                     </View>
-                </View>
+                </ScrollView>
                 {/*Break*/}
                 <Text>{"\n"}</Text>
             </ImageBackground>
@@ -227,6 +225,14 @@ export default class AdminScreen extends Component {
                     initialRouteName="Tasks"
                     drawerType="slide"
                     drawerStyle={styles.Drawer}
+                    drawerContent={props => {
+                        return (
+                            <DrawerContentScrollView {...props}>
+                                <DrawerItemList {...props} />
+                                <DrawerItem label="Logout" onPress={this.handlerClick} />
+                            </DrawerContentScrollView>
+                        )
+                    }}
                 >
                     <Drawer.Screen name="Home" component={HomeScreen} />
                     <Drawer.Screen name="Profile" component={ProfileScreen} />
@@ -235,13 +241,13 @@ export default class AdminScreen extends Component {
         );
     }
 
-    handlerClick = async () => {
+    handlerClick = () => {
         try {
-            this.props.navigation.navigate("Login");
+          window.location.href="Login";
         } catch (e) {
-            this.setState({ message: e.message });
+          this.setState({ message: e.message });
         }
-    };
+      };
 }
 
 const styles = StyleSheet.create({
@@ -251,6 +257,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#3D3D3D",
+
     },
     backgroundImage: {
         width: "100%",
@@ -414,7 +421,7 @@ const styles = StyleSheet.create({
     separator: {
         flex: 1,
         borderWidth: 2,
-        borderColor: "#black",
+        borderColor: "black",
         shadowColor: "black",
         shadowOffset: {
             width: 0,
