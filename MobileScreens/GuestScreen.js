@@ -1,6 +1,7 @@
 /* READ ThIS BEFORE EDITING
 
-     This is the profile and order page for guest mobile. Add to cart button is made but not functional. It just needs a couple if statements and a message screen*/
+     This is the profile and order page for guest mobile. Add to cart button is made but not functional. It just needs a couple if statements and a message screen* 
+     */
 
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
