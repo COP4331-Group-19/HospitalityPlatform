@@ -1,8 +1,14 @@
+/* READ ThIS BEFORE EDITING
+
+     This is the profile and order page for guest mobile. Add to cart button is made but not functional. It just needs a couple if statements and a message screen*/
+
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { ImageBackground,Button, TouchableOpacity, StyleSheet, Text, View } from 'react-native';
 import { Feather } from '@expo/vector-icons' ;
 /*import React, { Component } from "react";*/
+
+
 {/* guest profile info variables that are gonna be changed by database */}
 const name = "Guest_name";
 const phoneNumber = "3863835150";
@@ -92,10 +98,16 @@ export default class app extends React.Component {
     this.setState({
       item5_quantity: this.state.item5_quantity + 1,
       total_Taps: this.state.total_Taps + 1
-  ,
     })
   }
   decrement_item5_quantity = () => {
+    this.setState({
+      item5_quantity: this.state.item5_quantity - 1,
+      total_Taps: this.state.total_Taps + 1
+    })
+  }
+
+  addToCart = () => {
     this.setState({
       item5_quantity: this.state.item5_quantity - 1,
       total_Taps: this.state.total_Taps + 1
@@ -120,9 +132,8 @@ export default class app extends React.Component {
           <Text> {'\n'} details </Text>
         </ImageBackground>
       
-      
       {/* ORDER screen */}
-
+        <Text style = {{fontSize: 60, color: 'red', textAlign: 'left'}}> Order here </Text>
         {/* item1 item and button*/}
         <ImageBackground style = {styles.item1} source = {require ("../guest/images/item1.jpg")}>
           <Text style = {{ fontSize: 20, pading: 20, color: 'red'}}> {item11} </Text>
@@ -177,9 +188,14 @@ export default class app extends React.Component {
             <Button onPress = {this.increment_item5_quantity} title = "+" />
           </View>
         </ImageBackground>
+        <View style = {styles.addtoCart_button}> 
+          <Button  onPress = {this.addToCart} title = "Add to Cart" />
+          <Feather name = 'shopping-cart' size = {25} color = "red"
 
+/>
 
-
+        </View>
+  
       </View>
     );
   }
@@ -330,4 +346,19 @@ const styles = StyleSheet.create({
     backgroundcolor: 'red', 
     flexDirection: 'row'
   },
+
+  addtoCart_button: {
+    justifyContent: 'center',
+    
+    position: 'relative', 
+    right: -100, 
+    left: 0,
+    top: 70,
+    bottom: -50,
+    color: 'red', 
+    flexDirection: 'row'
+  },
+
+  
+  
 });
