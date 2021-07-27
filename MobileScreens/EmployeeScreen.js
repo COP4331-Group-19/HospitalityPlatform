@@ -7,19 +7,13 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
-import { DrawerItems } from "react-navigation-drawer";
-import { withTheme } from "react-native-elements";
 import Storage from '../tokenStorage.js';
 import bp from '../Path.js';
-import { Button } from "react-native-elements/dist/buttons/Button";
-import { render } from "react-dom";
-import { event } from "react-native-reanimated";
-
-
 
 //HomeScreen for Employee
 function HomeScreen({ navigation }) {
@@ -151,6 +145,8 @@ function TaskScreen({ navigation }) {
   const [C, setC] = useState([]);
   var ItemsArray = [];
   const [message, setMessage] = useState(null);
+  const [messageUC, setMessageUC] = useState(null);
+  const [messageC, setMessageC] = useState(null);
 
   //Variables
   var Token = Storage.retrieveToken()
@@ -169,15 +165,15 @@ function TaskScreen({ navigation }) {
     }
 
   }, []);
+
   //UNCLAIMED ORDERS
   const urlU = bp.buildPath("api/orders/unclaimed");
   useEffect(async () => {
-    setUC([]);
     const response = await fetch(urlU, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
     try {
       var ud = JSON.parse(await response.text());
       if (ud.err_code) {
-        setMessage(' ' + ud.description);
+        setMessageUC(' ' + ud.description);
       }
       else {
         for (var i = 0; i < ud.length; i++) {
@@ -189,7 +185,7 @@ function TaskScreen({ navigation }) {
         }
       }
     } catch (e) {
-      setMessage(' ' + e.message);
+      setMessageUC(' ' + e.message);
     }
 
   }, []);
@@ -202,13 +198,17 @@ function TaskScreen({ navigation }) {
         const response = await fetch(urlCO, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
         var check = JSON.parse(await response.text());
         if (check.err_code) {
-          setMessage(' ' + check.description);
+          setMessageUC(' ' + check.description);
         } else {
-          setMessage(' Order Claimed ');
+          setMessageUC(' Order Claimed ');
         }
       } catch (e) {
-        setMessage(' ' + e.message);
+        setMessageUC(' ' + e.message);
       }
+
+      //Removing the item from the useState
+      setC(UC.filter(items => items.order_id !== props.order));
+
     };
 
     return (
@@ -227,15 +227,16 @@ function TaskScreen({ navigation }) {
       </View>
     );
   }
+
   //TODO ORDERS
   const urlC = bp.buildPath("api/orders/my");
   useEffect(async () => {
-    setC([]);
+    //setC([]);
     const response = await fetch(urlC, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
     try {
       var ud = JSON.parse(await response.text());
       if (ud.err_code) {
-        setMessage(' ' + ud.description);
+        setMessageC(' ' + ud.description);
       }
       else {
         for (var i = 0; i < ud.length; i++) {
@@ -247,7 +248,7 @@ function TaskScreen({ navigation }) {
         }
       }
     } catch (e) {
-      setMessage(' ' + e.message);
+      setMessageC(' ' + e.message);
     }
 
   }, []);
@@ -259,11 +260,15 @@ function TaskScreen({ navigation }) {
         const response = await fetch(urlMO, { method: 'delete', headers: { "Content-Type": "application/json", "authorization": Token } });
         var check = JSON.parse(await response.text());
         if (check.err_code) {
-          setMessage(' ' + check.description);
+          setMessageC(' ' + check.description);
         }
       } catch (e) {
-        setMessage(' ' + e.message);
+        setMessageC(' ' + e.message);
       }
+
+      //Removing the item from the useState
+      setC(C.filter(items => items.order_id !== props.order));
+
     }
 
     return (
@@ -307,25 +312,25 @@ function TaskScreen({ navigation }) {
         <Text>{"\n"}</Text>
         {/* List of Tasks */}
         <View style={styles.listoftasks}>
-          <Text>UNCLAIMED ORDERS</Text>
-          <Text>{"\n"}</Text>
-          <View>
+          <Text style={styles.title}>UNCLAIMED ORDERS</Text>
+          <Text style={{ color: 'red' }}>{messageUC}</Text>
+          <ScrollView style={{ height: '45%' }}>
             {
               UC.map(itm =>
                 <UCOrderList name={itm.split('#')[0]} quantity={itm.split('#')[1]} room={itm.split('#')[2]} order={itm.split('#')[3]} />
               )
             }
-          </View>
-          <Text>TODO ORDERS</Text>
+          </ScrollView>
           <Text>{"\n"}</Text>
-          <View>
+          <Text style={styles.title}>TODO ORDERS</Text>
+          <Text style={{ color: 'red' }}>{messageC}</Text>
+          <ScrollView style={{ height: '45%' }}>
             {
               C.map(itm =>
                 <COrderList name={itm.split('#')[0]} quantity={itm.split('#')[1]} room={itm.split('#')[2]} order={itm.split('#')[3]} />
               )
             }
-          </View>
-
+          </ScrollView>
         </View>
         {/*Break*/}
         <Text>{"\n"}</Text>
@@ -355,19 +360,26 @@ export default class EmployeeScreen extends Component {
           initialRouteName="Tasks"
           drawerType="slide"
           drawerStyle={styles.Drawer}
+          drawerContent={props => {
+            return (
+              <DrawerContentScrollView {...props}>
+                <DrawerItemList {...props} />
+                <DrawerItem label="Logout" onPress={this.handlerClick} />
+              </DrawerContentScrollView>
+            )
+          }}
         >
           <Drawer.Screen name="Home" component={HomeScreen} />
           <Drawer.Screen name="Profile" component={ProfileScreen} />
           <Drawer.Screen name="Tasks" component={TaskScreen} />
-          <Drawer.Screen name="Logout" component={this.handlerClick} />
         </Drawer.Navigator>
       </NavigationContainer>
     );
   }
 
-  handlerClick = async () => {
+  handlerClick = () => {
     try {
-      this.props.navigation.navigate("Login");
+      window.location.href="Login";
     } catch (e) {
       this.setState({ message: e.message });
     }
@@ -567,4 +579,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6.68,
     elevation: 11,
   },
+  title: {
+    fontSize: 25,
+    color: 'green'
+  }
 });
