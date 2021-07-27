@@ -8,20 +8,49 @@ function PasswordChange() {
   const [message, setMessage] = useState("");
 
   const doPassReset = async (event) => {
-    setMessage("PasswordReset");
+
+    if (Email === null) {
+      setMessage("Please enter your information");
+    }
+    else {
+      const urlPR = bp.buildPath("api/account/letmein/" + Email);
+      try {
+        const response = await fetch(urlPR, { method: 'get', body: js, headers: { "Content-Type": "application/json" } });
+        var res = JSON.parse(await response.text());
+        if (res.err_code) {
+          setMessage(res.description);
+        }
+
+      } catch (e) {
+        setMessage(' ' + e.message);
+      }
+    }
+  };
+
+  const goBack = async (event) =>{
+    window.location.href='Login';
   };
 
   return (
     <View style={styles.container}>
       <ImageBackground
         style={styles.backgroundImage}
-        source={require("../images/gradient.PNG")}
+        source={require("../images/gradient.png")}
       >
         {/*Break*/}
         <Text>{"\n"}</Text>
         <View style={styles.blanck}>
-          <View>
+          <View style={{flexDirection:'row'}}>
             <Text style={styles.title}> Password Reset </Text>
+            <TouchableOpacity
+              color="black"
+              style={styles.button}
+              onPress={goBack}
+            >
+              <View style={styles.button_pack}>
+                <Text style={styles.button}>Back</Text>
+              </View>
+            </TouchableOpacity>
           </View>
           {/*Break*/}
           <Text>{"\n"}</Text>
@@ -85,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: "lightgrey",
     borderRadius: 5,
     height: 50,
-    maxWidth: "80%",
+    width: "80%",
   },
   button: {
     textAlign: "center",
