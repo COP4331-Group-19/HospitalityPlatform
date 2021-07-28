@@ -53,7 +53,7 @@ export const GuestContainer = styled.div`
   align-items: center;
   background: #2c2c2c;
   @media screen and (max-width: 768px) {
-    height: 1100px;
+    height: 2700px;
   }
   @media screen and (max-width: 480px) {
     height: 1300px;
