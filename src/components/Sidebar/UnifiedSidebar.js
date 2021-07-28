@@ -34,9 +34,9 @@ const UnifiedSidebar = ({ isOpen, toggle }) => {
             {
               localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <SidebarLink to="/registeraccount">Register Account</SidebarLink>  : null) : null
             }
-            {/* staff */}
+            {/* employee */}
             {
-              localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "staff" ? <SidebarLink to="/orders">Orders</SidebarLink>  : null) : null
+              localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "employee" ? <SidebarLink to="/orders">Orders</SidebarLink>  : null) : null
             }
             {/* guest */}
             {
@@ -44,20 +44,9 @@ const UnifiedSidebar = ({ isOpen, toggle }) => {
             }
             {/* All */}
             {
-              localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <SidebarLink onClick={toggle} to="/settings">Settings</SidebarLink>) : null
+              localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null : <SidebarLink to="/settings">Settings</SidebarLink>) : null
             }
-            {/* <SidebarLink
-            to='signup'
-            onClick={toggle}
-            smooth={true}
-            duration={500}
-            spy={true}
-            exact='true'
-            offset={-80}
-          >
-            Sign Up
-          </SidebarLink> */}
-          </SidebarMenu>
+           </SidebarMenu>
           <SideBtnWrap>
             {
               localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? <SidebarRoute to="/signin">Sign In</SidebarRoute>  : <SidebarRoute onClick={logOutPls} to="/">Sign Out</SidebarRoute>) : <SidebarRoute onClick={logOutPls} to="/signin">Sign In</SidebarRoute>
