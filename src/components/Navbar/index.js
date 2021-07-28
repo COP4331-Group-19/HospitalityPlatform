@@ -62,7 +62,7 @@ const Navbar = ({ toggle }) => {
               {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLinkAdmin to="/registeraccount">Register Account</NavBtnLinkAdmin>  : null) : null
               }
-              {/* staff */}
+              {/* employee */}
               {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "employee" ? <NavBtnLinkEmployee to="/orders">Orders</NavBtnLinkEmployee>  : null) : null
               }
