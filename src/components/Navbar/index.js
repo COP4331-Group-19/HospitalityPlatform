@@ -64,7 +64,7 @@ const Navbar = ({ toggle }) => {
               }
               {/* staff */}
               {
-                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "staff" ? <NavBtnLinkEmployee to="/orders">Orders</NavBtnLinkEmployee>  : null) : null
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "employee" ? <NavBtnLinkEmployee to="/orders">Orders</NavBtnLinkEmployee>  : null) : null
               }
               {/* guest */}
               {
@@ -72,7 +72,7 @@ const Navbar = ({ toggle }) => {
               }
               {/* All */}
               {
-                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <NavBtnLink onClick={logOutPls} to="/">Settings</NavBtnLink>) : null
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? null  : <NavBtnLink to="/settings">Settings</NavBtnLink>) : null
               }
               {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "none" ? <NavBtnLink to="/signin">Sign In</NavBtnLink>  : <NavBtnLink onClick={logOutPls} to="/">Sign Out</NavBtnLink>) : <NavBtnLink onClick={logOutPls} to="/signin">Sign In</NavBtnLink>
