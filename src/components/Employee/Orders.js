@@ -47,14 +47,6 @@ const Orders = () => {
     });
 
   }, []);
-  const EmployeeCardComponentIv = (props) => {
-    return (
-      <EmployeeCard style={{ backgroundImage: `url(${props.img})` }}>
-        <EmployeeH2>Item Number: {props.id}</EmployeeH2>
-        <EmployeeH2>Name: {props.name}</EmployeeH2>
-      </EmployeeCard>
-    );
-  };
 
   //GETTING UNCLAIMED ORDERS
   var configU = {
@@ -75,8 +67,8 @@ const Orders = () => {
       }
       else {
         for (var i = 0; i < ud.length; i++) {
-          for(let j = 0; j < ItemsArray.length; j++){
-            if(ud[i].item_id.toString() === ItemsArray[j].split('#')[3]){
+          for (let j = 0; j < ItemsArray.length; j++) {
+            if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
               setunClm(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id + '#' + ItemsArray[j].split('#')[2]]);
             }
           }
@@ -101,9 +93,20 @@ const Orders = () => {
 
       axios(configCO).then(function (response) {
         var check = response.data;
-        if(check.err_code){
+        if (check.err_code) {
           setMessageUC(' ' + check.description);
-          window.location.reload();
+        } else {
+          setMessageUC('Success');
+          //Makes it look like its working
+          let Aray = [...unClm];
+          var index = Aray.indexOf(props.name + '#' + props.qun + '#' + props.room + '#' + props.order + '#' + props.img);
+          if (index > -1) {
+            //Puts the item in to clm
+            setClm(items => [...items, Aray[index]]);
+            //Removes the item from unclm
+            Aray.splice(index, 1);
+          }
+          setunClm(Aray);
         }
       }).catch(function (error) {
         setMessageUC(' ' + error);
@@ -138,8 +141,8 @@ const Orders = () => {
       }
       else {
         for (var i = 0; i < ud.length; i++) {
-          for(let j = 0; j < ItemsArray.length; j++){
-            if(ud[i].item_id.toString() === ItemsArray[j].split('#')[3]){
+          for (let j = 0; j < ItemsArray.length; j++) {
+            if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
               setClm(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id + '#' + ItemsArray[j].split('#')[2]]);
             }
           }
@@ -163,11 +166,16 @@ const Orders = () => {
 
       axios(configMO).then(function (response) {
         var check = response.data;
-        if(check.err_code){
+        if (check.err_code) {
           setMessageC(' ' + check.description);
-        }else{
-          setMessageC('Success');
-          window.location.reload();
+          //Makes it look like its working
+          let Aray = [...Clm];
+          var index = Aray.indexOf(props.name + '#' + props.qun + '#' + props.room + '#' + props.order + '#' + props.img);
+          if (index > -1) {
+            //Removes the item from C
+            Aray.splice(index, 1);
+          }
+          setClm(Aray);
         }
       }).catch(function (error) {
         setMessageC(' ' + error);
@@ -185,21 +193,18 @@ const Orders = () => {
 
   return (
     <EmployeeContainer id="Employee">
-      <br /><br /><br /><br />
       <EmployeeH1>Active Orders</EmployeeH1>
-      <br /><br /><br /><br />
       <EmployeeH2>{messageC}</EmployeeH2>
       <EmployeeWrapper>
         {
-          Clm.map(ord => <EmployeeCardComponent name={ord.split('#')[0]} qun={ord.split('#')[1]} room={ord.split('#')[2]} order={ord.split('#')[3]} img={ord.split('#')[4]}/>)
+          Clm.map(ord => <EmployeeCardComponent name={ord.split('#')[0]} qun={ord.split('#')[1]} room={ord.split('#')[2]} order={ord.split('#')[3]} img={ord.split('#')[4]} />)
         }
       </EmployeeWrapper>
       <EmployeeH1>Unclaimed Orders</EmployeeH1>
-      <br /><br /><br /><br />
       <EmployeeH2>{messageUC}</EmployeeH2>
       <EmployeeWrapper>
         {
-          unClm.map(ord => <EmployeeCardComponentUn name={ord.split('#')[0]} qun={ord.split('#')[1]} room={ord.split('#')[2]} order={ord.split('#')[3]} img={ord.split('#')[4]}/>)
+          unClm.map(ord => <EmployeeCardComponentUn name={ord.split('#')[0]} qun={ord.split('#')[1]} room={ord.split('#')[2]} order={ord.split('#')[3]} img={ord.split('#')[4]} />)
         }
       </EmployeeWrapper>
     </EmployeeContainer>
