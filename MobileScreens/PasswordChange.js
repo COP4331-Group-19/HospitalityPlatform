@@ -1,13 +1,19 @@
 import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, Button, TextInput, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { render } from 'react-dom';
 
-function PasswordChange() {
-  var Email;
+export default class PasswordChange extends Component {
+  constructor() {
+    super()
+    this.state =
+    {
+      message: '',
+      Email: ''
+    }
+  }
 
-  const [message, setMessage] = useState("");
-
-  const doPassReset = async (event) => {
+  doPassReset = async () => {
 
     if (Email === null) {
       setMessage("Please enter your information");
@@ -27,70 +33,72 @@ function PasswordChange() {
     }
   };
 
-  const goBack = async (event) =>{
-    window.location.href='Login';
+  goBack = () => {
+    this.props.navigation.navigate('Login');
   };
 
-  return (
-    <View style={styles.container}>
-      <ImageBackground
-        style={styles.backgroundImage}
-        source={require("../images/gradient.png")}
-      >
-        {/*Break*/}
-        <Text>{"\n"}</Text>
-        <View style={styles.blanck}>
-          <View style={{flexDirection:'row'}}>
-            <Text style={styles.title}> Password Reset </Text>
+  render() {
+    return (
+      <View style={styles.container}>
+        <ImageBackground
+          style={styles.backgroundImage}
+          source={require("../images/gradient.png")}
+        >
+          {/*Break*/}
+          <Text>{"\n"}</Text>
+          <View style={styles.blanck}>
+            <View style={{ flexDirection: 'column' }}>
+              <Text style={styles.title}> Password Reset </Text>
+              <TouchableOpacity
+                color="black"
+                style={styles.button}
+                onPress={this.goBack}
+              >
+                <View style={styles.button_pack}>
+                  <Text style={styles.button}>Back</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            {/*Break*/}
+            <Text>{"\n"}</Text>
+
+            {/* Email */}
+            <View style={styles.email_pack}>
+              <Feather name="mail" size={30} color="black" />
+              <TextInput
+                style={styles.email}
+                placeholder="Enter Your Email"
+                onChangeText={(val) => {
+                  this.setState({Email:val});
+                }}
+              />
+            </View>
+            {/*Break*/}
+            <Text>{"\n"}</Text>
+
+            {/* Status */}
+            <View>
+              <Text style={styles.status}>{this.state.message}</Text>
+            </View>
+            {/*Break*/}
+            <Text>{"\n"}</Text>
+
+            {/* Reset */}
             <TouchableOpacity
               color="black"
+              title="LOGIN"
               style={styles.button}
-              onPress={goBack}
+              onPress={this.doPassReset}
             >
               <View style={styles.button_pack}>
-                <Text style={styles.button}>Back</Text>
+                <Text style={styles.button}>Reset</Text>
               </View>
             </TouchableOpacity>
           </View>
-          {/*Break*/}
-          <Text>{"\n"}</Text>
-
-          {/* Email */}
-          <View style={styles.email_pack}>
-            <Feather name="mail" size={30} color="black" />
-            <TextInput
-              style={styles.email}
-              placeholder="Enter Your Email"
-              onChangeText={(val) => {
-                Email = val;
-              }}
-            />
-          </View>
-          {/*Break*/}
-          <Text>{"\n"}</Text>
-
-          {/* Status */}
-          <View>
-            <Text style={styles.status}>{message}</Text>
-          </View>
-          {/*Break*/}
-          <Text>{"\n"}</Text>
-
-          {/* Reset */}
-          <TouchableOpacity
-            color="black"
-            title="LOGIN"
-            style={styles.button}
-            onPress={doPassReset}
-          >
-            <View style={styles.button_pack}>
-              <Text style={styles.button}>Reset</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
-    </View>
-  );
+        </ImageBackground>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -99,7 +107,7 @@ const styles = StyleSheet.create({
     fontFamily: "-apple-system, BlinkMacSystemFont Segoe UI",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#2C2C2C",
+    backgroundColor: "black",
   },
   backgroundImage: {
     width: "100%",
@@ -156,5 +164,3 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
-
-export default PasswordChange;
