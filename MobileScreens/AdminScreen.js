@@ -12,7 +12,7 @@ import {
 import { Feather } from "@expo/vector-icons";
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
-import Storage from '../tokenStorage.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import bp from '../Path.js';
 
 //HomeScreen for Admin
@@ -20,73 +20,59 @@ function HomeScreen({ navigation }) {
     //Room Details
     const [rooms, setRooms] = useState([]);
     const [message, setMessage] = useState(null);
-    const [roomP, setRoomP] = useState([]);
-    var Token = Storage.retrieveToken();
-    // var Search;
-
-    // const changeSearch = async (val) => {
-    //     Search = val;
-    // }
-    // const doSearch = async event => {
-    //     if(Search === ''){
-    //         for(let i = 0; i < rooms.length; i++){
-    //             setRoomP(items=> [...items, rooms[i]]);
-    //         }
-
-    //     } 
-    // }
     const urlAA = bp.buildPath("api/account/all");
-    useEffect(async () => {
-        try {
-            const response = await fetch(urlAA, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
-            var user = JSON.parse(await response.text());
+    useEffect(() => {
+        async function getAcc() {
+            try {
+                var Token = (await AsyncStorage.getItem('token_data')).toString();
+                const response = await fetch(urlAA, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+                var user = JSON.parse(await response.text());
 
-            var RPF = 4;
-            var TF = 3;
-            var room;
-            var int;
-            var check = 0;
+                var RPF = 4;
+                var TF = 3;
+                var room;
+                var int;
+                var check = 0;
 
-            for (let j = 0; j < (RPF * TF); j++) {
-                int = j / RPF;
-                int = parseInt(int) + 1;
-                room = (100 * int) + (j % RPF);
-                for (let i = 0; i < user.length; i++) {
-                    if (user[i].role === 'guest') {
-                        if (user[i].room === room.toString()) {
-                            setRooms(items => [...items, user[i].first_name + ' ' + user[i].last_name + '#' + room]);
-                            check = 1;
-                            continue;
+                for (let j = 0; j < (RPF * TF); j++) {
+                    int = j / RPF;
+                    int = parseInt(int) + 1;
+                    room = (100 * int) + (j % RPF);
+                    for (let i = 0; i < user.length; i++) {
+                        if (user[i].role === 'guest') {
+                            if (user[i].room === room.toString()) {
+                                setRooms(items => [...items, user[i].first_name + ' ' + user[i].last_name + '#' + room]);
+                                check = 1;
+                                continue;
+                            }
                         }
                     }
-                }
-                if (check === 0) {
-                    setRooms(items => [...items, "-------" + '#' + room]);
-                }
-                check = 0;
+                    if (check === 0) {
+                        setRooms(items => [...items, "-------" + '#' + room]);
+                    }
+                    check = 0;
 
+                }
+            } catch (e) {
+                setMessage(' ' + e.message);
             }
-        } catch (e) {
-            setMessage(' ' + e.message);
         }
+        getAcc();
     }, []);
     const RoomComponent = (props) => {
         return (
             <View style={styles.Tasks}>
                 <View style={styles.separator}>
                     <Text style={styles.taskinfo}> Room: {props.room} </Text>
-                    <Text style={styles.taskinfo}>{" "}Username: {props.username}{" "}</Text>
+                    <Text style={styles.taskinfo}>{" "}{props.username}{" "}</Text>
                 </View>
             </View>
         );
     }
-
-
     return (
         <View style={styles.container}>
             <ImageBackground
                 style={styles.backgroundImage}
-            // source={require("../images/testphoto.jpg")}
             >
                 {/* Navigation Bar */}
                 <View style={styles.topbar}>
@@ -99,32 +85,17 @@ function HomeScreen({ navigation }) {
                     </TouchableOpacity>
                     <Text style={styles.topbartext}> Home</Text>
                 </View>
-                {/*Break*/}
+                {/* Break */}
                 <Text>{"\n"}</Text>
-                <View style={styles.h1}> Room Availability</View>
+                <Text style={styles.h1}>Room Availability</Text>
                 <Text>{"\n"}</Text>
                 <Text>{message}</Text>
                 {/* List of Tasks */}
                 <ScrollView style={styles.listoftasks}>
-                    {/* <View style={{ flexDirection: 'row' }}>
-                        <TextInput
-                            style={styles.activetext}
-                            placeholder="Search"
-                            onChangeText={(val) => { changeSearch(val) }}
-                        />
-                        <TouchableOpacity
-                            color="black"
-                            title="LOGIN"
-                            onPress={doSearch}
-                            style={{ backgroundColor: 'white' }}
-                        >
-                            <Text>Search</Text>
-                        </TouchableOpacity>
-                    </View> */}
                     <View>
                         {
                             rooms.map(rm =>
-                                <RoomComponent room={rm.split('#')[0]} username={rm.split('#')[1]} />
+                                <RoomComponent key={rm.split('#')[1]} room={rm.split('#')[1]} username={rm.split('#')[0]} />
                             )
                         }
                     </View>
@@ -148,33 +119,33 @@ function ProfileScreen({ navigation }) {
     //Getting user Info
     const urlA = bp.buildPath("api/account");
 
-    useEffect(async () => {
-        var Token = Storage.retrieveToken();
+    useEffect( () => {
+        async function getUserData() {
+            var Token = (await AsyncStorage.getItem('token_data')).toString();
+            const response = await fetch(urlA, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+            //Get user info everytime we lode the page
+            try {
 
-        const response = await fetch(urlA, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+                var ud = JSON.parse(await response.text());
 
-        //Get user info everytime we lode the page
-        try {
-
-            var ud = JSON.parse(await response.text());
-
-            //Getting info needed for this page
-            setFName(ud.first_name);
-            setLName(ud.last_name);
-            setPNumber(ud.phone);
-            setEmail(ud.email);
-            setUName(ud.username);
-            setPass(ud.password);
-        } catch (e) {
-            setMessage(' ' + e.message);
+                //Getting info needed for this page
+                setFName(ud.first_name);
+                setLName(ud.last_name);
+                setPNumber(ud.phone);
+                setEmail(ud.email);
+                setUName(ud.username);
+                setPass(ud.password);
+            } catch (e) {
+                setMessage(' ' + e.message);
+            }
         }
+        getUserData();
     }, []);
 
     return (
         <View style={styles.container}>
             <ImageBackground
                 style={styles.backgroundImage}
-            // source={require("../images/testphoto.jpg")}
             >
                 {/* Navigation Bar */}
                 <View style={styles.topbar}>
@@ -189,15 +160,14 @@ function ProfileScreen({ navigation }) {
                 </View>
                 {/*Break*/}
                 <Text>{"\n"}</Text>
+                <Text style={styles.ProfileInfo}>{message}</Text>
                 <View style={styles.Profile}>
-                    <Text style={styles.ProfileInfo}>{message}</Text>
                     <Text style={styles.ProfileInfo}>FirstName: {FirstName}</Text>
                     <Text style={styles.ProfileInfo}>LastName: {LastName}</Text>
                     <Text style={styles.ProfileInfo}>PhoneNumber: {PhoneNumber}</Text>
                     <Text style={styles.ProfileInfo}>Email: {Email}</Text>
                     <Text style={styles.ProfileInfo}>UserName: {UserName}</Text>
                     <Text style={styles.ProfileInfo}>Password: {Password}</Text>
-                    <Text style={{ color: "blue" }}>(*editing user info feature is only available for website)</Text>
                 </View>
             </ImageBackground>
         </View >
@@ -222,7 +192,7 @@ export default class AdminScreen extends Component {
         return (
             <NavigationContainer>
                 <Drawer.Navigator
-                    initialRouteName="Tasks"
+                    initialRouteName="Home"
                     drawerType="slide"
                     drawerStyle={styles.Drawer}
                     drawerContent={props => {
@@ -231,7 +201,7 @@ export default class AdminScreen extends Component {
                                 <DrawerItemList {...props} />
                                 <DrawerItem label="Logout" onPress={this.handlerClick} />
                             </DrawerContentScrollView>
-                        )
+                        );
                     }}
                 >
                     <Drawer.Screen name="Home" component={HomeScreen} />
@@ -243,11 +213,11 @@ export default class AdminScreen extends Component {
 
     handlerClick = () => {
         try {
-          window.location.href="Login";
+            this.props.navigation.navigate('Login');
         } catch (e) {
-          this.setState({ message: e.message });
+            this.setState({ message: e.message });
         }
-      };
+    };
 }
 
 const styles = StyleSheet.create({
@@ -256,8 +226,7 @@ const styles = StyleSheet.create({
         fontFamily: "-apple-system, BlinkMacSystemFont Segoe UI",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#3D3D3D",
-
+        backgroundColor: "black",
     },
     backgroundImage: {
         width: "100%",
@@ -286,7 +255,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.36,
         shadowRadius: 6.68,
-
+        paddingTop: 20,
         elevation: 11,
     },
     topbartext: {
