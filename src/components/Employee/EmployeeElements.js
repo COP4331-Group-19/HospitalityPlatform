@@ -19,7 +19,7 @@ export const AccountSettingCard = styled.div`
   }
 `;
 export const AccountSettingWrapper = styled.div`
-  margin: 275px;
+  margin: 20px;
   display: grid;
   grid-template-columns: auto auto auto;
   align-items: center;

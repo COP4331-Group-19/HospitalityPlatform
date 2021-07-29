@@ -2,17 +2,22 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 
 export const FooterContainer = styled.footer`
+  display: flex;
   background-color: #6d7275;
+  flex-shrink: 0;
 `;
 
 export const FooterWrap = styled.div`
-  padding: 48px 24px;
   display: flex;
-  flex-direction: column;
+  padding: 24px;
   justify-content: center;
   align-items: center;
-  max-width: 1100px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
+  bottom: 0;
+  background-color: #6d7275;
+  height: 175px;
 `;
 
 export const FooterLinksContainer = styled.div`
