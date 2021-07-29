@@ -2,8 +2,7 @@ import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, Button, TextInput, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import bp from '../Path.js';
-import axios from 'axios';
-import Storage from '../tokenStorage.js';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 global.Login = "";
 global.Password = "";
@@ -117,17 +116,20 @@ export default class LoginScreen extends Component {
         this.setState({message:'Error '+ res.err_code +': ' + res.description});
       } else {
         
-        Storage.storeToken(res);
+        await AsyncStorage.setItem('token_data', res.token);
         var Acc = res.role;
 
         //Go to the user Window
         if (Acc === 'guest') {
+          this.setState({message:''});
           this.props.navigation.navigate('Guest');
         }
         if (Acc === 'employee') {
+          this.setState({message:''});
           this.props.navigation.navigate('Employee');
         }
         if (Acc === 'admin') {
+          this.setState({message:''});
           this.props.navigation.navigate('Admin');
         }
       }
@@ -137,12 +139,12 @@ export default class LoginScreen extends Component {
     }
   }
   doPassReset = async () => {
-
+    this.props.navigation.navigate("PassCha");
   }
-  changeLoginNameHandler = async (val) => {
+  changeLoginNameHandler = (val) => {
     global.Login = val;
   }
-  changePasswordHandler = async (val) => {
+  changePasswordHandler = (val) => {
     global.Password = val;
   }
 }
@@ -154,12 +156,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "black",
+    paddingTop:10
   },
   topbar: {
     flexDirection: "row",
     marginTop: 50,
     backgroundColor: "#14CCA4",
     width: "100%",
+    paddingTop:10
   },
   topbartext: {
     fontSize: 40,
