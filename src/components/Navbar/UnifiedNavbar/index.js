@@ -13,7 +13,6 @@ import {
   NavBtnLink,
   NavbarContainer,
 } from "./UnifiedNavbarElements";
-import {NavBtnLinkEmployee} from "../NavbarElements";
 
 const UnifiedNavbar = ({ toggle }) => {
   const [scrollNav, setScrollNav] = useState(false);
@@ -59,6 +58,12 @@ const UnifiedNavbar = ({ toggle }) => {
               }
               {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLink to="/registeraccount">Register Account</NavBtnLink>  : null) : null
+              }
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLink to="/inventory">Inventory</NavBtnLink>  : null) : null
+              }
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLink to="/checkout">CheckOut</NavBtnLink>  : null) : null
               }
               {/* employee */}
               {
