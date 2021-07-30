@@ -1,50 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import AdminCardComponent from "../Admin/AdminCardComponent";
-import AdminCardInventoryComponent from "../Admin/AdminCardInventoryComponent";
 import axios from "axios";
 import Storage from '../../tokenStorage.js';
 import {
-  AccountSettingWrapper,
   AdminContainer,
   AdminH1,
-  AdminWrapper,
-  InventoryWrapper,
-  AdminCard,
-  AdminIcon,
-  AdminH2,
-  AdminH3,
-  AdminP,
+  AdminWrapper
 } from "./AdminElements";
 
 import {
-  Container,
-  FormWrap,
-  Icon,
-  FormContent,
   Form,
   FormH1,
   FormLabel,
   FormInput,
   FormButton,
-  Text,
 } from "./AdminAddInventoryElements";
+import { AdminCard, AdminH2, AdminP, FormButtonDelete } from "./AdminAddInventoryElements";
 
 const Inventory = () => {
   const [message, setMessage] = useState(null);
+  const [messageI, setMessageI] = useState(null);
   var Name;
   var Description;
   var Img;
 
   //Variables
-  var Token = Storage.retrieveToken()
+  var Token = Storage.retrieveToken();
 
   //required files
   var bp = require("../Path.js");
 
   //Inventory list
   const [Inv, setInv] = useState([]);
-  const [check, setcheck] = useState(null);
 
   //Config for get account
   var configI = {
@@ -55,8 +41,6 @@ const Inventory = () => {
       "authorization": Token
     }
   };
-
-
   //UserInfo
   useEffect(async () => {
     setInv([]);
@@ -72,6 +56,53 @@ const Inventory = () => {
     });
 
   }, []);
+
+  const AdminCardComponent = (props) => {
+
+    //Delete Inventory Item
+    const delInv = async =>{
+      var configD = {
+        method: "delete",
+        url: bp.buildPath("api/inventory/" + props.id),
+        headers: {
+          "Content-Type": "application/json",
+          "authorization": Token
+        }
+      };
+
+      axios(configD).then(function (response) {
+
+        var ud = response.data;
+        if(ud.err_code){
+          setMessageI(' ' + ud.description);
+          
+          //Makes it look like its working
+          if(ud.err_code === 200){
+            var Aray = [...Inv];
+            var index = Aray.indexOf(props.items + '#' + props.des + '#' + props.img + '#' + props.id);
+            if(index > -1){
+              Aray.splice(index, 1);
+            }
+            setInv(Aray);
+          }
+        }
+      }).catch(function (error) {
+        setMessageI(' ' + error);
+      });
+
+    }
+
+    return (
+      <AdminCard style={{backgroundImage:`url(${props.img})`}}>
+        {/* <AdminIcon src={Icon1} /> */}
+        <AdminH2>{props.items}</AdminH2>
+        <AdminP>{props.des}</AdminP>
+        <FormButtonDelete type="submit" class="button" onClick={delInv}>
+          delete
+        </FormButtonDelete>
+      </AdminCard>
+    );
+  };
 
   const doAddInv = async event => {
     if (Name.value.localeCompare('') === 0 || Description.value.localeCompare('') === 0 || Img.value.localeCompare('') === 0) {
@@ -90,15 +121,15 @@ const Inventory = () => {
           "Content-Type": "application/json",
           "authorization": Token
         },
-        body: js,
+        data: js,
       };
 
       axios(config).then(function (response) {
         var res = response.data;
         if(res.err_Code){
-          setMessage(res.description);
+          setMessage('Error' + res.description);
         }else{
-          setMessage(res[0].item_id);
+          setMessage('New Item Added');
           //window.location.href = "/Inventory";
         }
       }).catch(function (error) {
@@ -121,10 +152,11 @@ const Inventory = () => {
         <FormButton type="submit" onClick={doAddInv} >Add</FormButton>
       </Form>
       <AdminH1>Inventory</AdminH1>
+      <FormLabel>{messageI}</FormLabel>
       <AdminWrapper>
         {
           Inv.map(itm =>
-            <AdminCardInventoryComponent items={itm.split("#")[0]} des={itm.split("#")[1]} img={itm.split("#")[2]} />
+            <AdminCardComponent items={itm.split("#")[0]} des={itm.split("#")[1]} img={itm.split("#")[2]} id={itm.split("#")[3]}/>
           )
         }
       </AdminWrapper>
