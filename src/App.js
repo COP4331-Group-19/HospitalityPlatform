@@ -16,6 +16,8 @@ import MyProfileEmployeePage from "./pages/myprofileemployee";
 import RegisterAccountPage from "./pages/registeraccount";
 import ResetByTokenPage from "./pages/letmein";
 import OnboardingPage from "./pages/onboarding";
+import Inventory from "./pages/Inventory";
+import CheckOut from "./pages/checkout";
 
 
 function App() {
@@ -44,7 +46,8 @@ function App() {
           exact
         />
         <Route path="/registeraccount" component={RegisterAccountPage} exact />
-
+        <Route path="/inventory" component={Inventory} exact />
+        <Route path="/checkout" component={CheckOut} exact />
       </Switch>
     </Router>
   );
