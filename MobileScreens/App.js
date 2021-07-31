@@ -8,6 +8,7 @@ import LoginScreen from './screens/LoginScreen';
 import EmployeeScreen from './screens/EmployeeScreen.js';
 import PasswordChange from './screens/PasswordChange';
 import AdminScreen from './screens/AdminScreen';
+import GuestScreen from './screens/GuestScreen';
 
 //The app function on react
 export default class App extends React.Component {
@@ -24,11 +25,14 @@ const AppNavigator = createStackNavigator({
   Employee: {
     screen: EmployeeScreen,
   },
-  PasswordChange:{
+  PassCha:{
     screen: PasswordChange,
   },
   Admin:{
     screen: AdminScreen,
+  },
+  Guest:{
+    screen: GuestScreen,
   }
 
 },{
