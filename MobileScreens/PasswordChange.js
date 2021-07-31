@@ -67,7 +67,7 @@ export default class PasswordChange extends Component {
               <Feather name="mail" size={30} color="black" />
               <TextInput
                 style={styles.email}
-                placeholder="Enter Your Email"
+                placeholder="Enter Your Phone Number"
                 onChangeText={(val) => {
                   this.setState({Email:val});
                 }}
