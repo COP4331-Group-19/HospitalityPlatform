@@ -10,6 +10,7 @@ import {
   FormLabel,
   FormInput,
   FormButton,
+  FormSelect
 } from "./RegisterElements.js";
 import Storage from "../../tokenStorage.js";
 
@@ -102,12 +103,18 @@ const RegisterAccount = () => {
               <FormInput type="phonenumber" ref={(c) => PhoneNumber = c} />
               <FormLabel htmlFor="for">Email</FormLabel>
               <FormInput type="email" ref={(c) => Email = c} />
-              <FormLabel htmlFor="for">UserName</FormLabel>
+              <FormLabel htmlFor="for">Username</FormLabel>
               <FormInput type="name" ref={(c) => UserName = c} />
               <FormLabel htmlFor="for">Password </FormLabel>
               <FormInput type="password" ref={(c) => Password = c} />
               <FormLabel htmlFor="for">Role </FormLabel>
-              <FormInput type="name" ref={(c) => Role = c} />
+              {/*<FormInput type="name" ref={(c) => Role = c} />*/}
+              <FormSelect ref={(c) => Role = c}>
+                    <option value="guest">Guest</option>
+                    <option value="staff">Staff Member</option>
+                    <option value="admin">Admin</option>
+              </FormSelect>
+              {/*Let's be honest: this data was never used.*/}
               <FormLabel htmlFor="for">CheckInDate </FormLabel>
               <FormInput type="name" ref={(c) => CID = c} />
               <FormLabel htmlFor="for">CheckOutDate </FormLabel>

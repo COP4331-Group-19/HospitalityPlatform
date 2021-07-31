@@ -17,6 +17,15 @@ export const Container = styled.div`
   );
 `;
 
+export const Button = styled.a`
+    font-size: 32px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    color: white;
+    padding: 20px;
+`;
+
 export const FormWrap = styled.div`
   height: 100%;
   display: flex;

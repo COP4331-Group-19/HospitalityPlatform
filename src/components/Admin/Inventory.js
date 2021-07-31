@@ -15,6 +15,7 @@ import {
   FormButton,
 } from "./AdminAddInventoryElements";
 import { AdminCard, AdminH2, AdminP, FormButtonDelete } from "./AdminAddInventoryElements";
+import {confirm} from "react-confirm-box";
 
 const Inventory = () => {
   const [message, setMessage] = useState(null);
@@ -58,9 +59,19 @@ const Inventory = () => {
   }, []);
 
   const AdminCardComponent = (props) => {
-
     //Delete Inventory Item
-    const delInv = async =>{
+    const delInv = async () => {
+
+      const result = await confirm(`Are you sure you would like to delete ${props.items}?`, {
+        labels: {
+          confirmable: "Delete",
+          cancellable: "Cancel"
+        }
+      });
+      if (!result) {
+        return;
+      }
+
       var configD = {
         method: "delete",
         url: bp.buildPath("api/inventory/" + props.id),
@@ -73,14 +84,14 @@ const Inventory = () => {
       axios(configD).then(function (response) {
 
         var ud = response.data;
-        if(ud.err_code){
+        if (ud.err_code) {
           setMessageI(' ' + ud.description);
-          
+
           //Makes it look like its working
-          if(ud.err_code === 200){
+          if (ud.err_code === 200) {
             var Aray = [...Inv];
             var index = Aray.indexOf(props.items + '#' + props.des + '#' + props.img + '#' + props.id);
-            if(index > -1){
+            if (index > -1) {
               Aray.splice(index, 1);
             }
             setInv(Aray);
@@ -98,7 +109,7 @@ const Inventory = () => {
         <AdminH2>{props.items}</AdminH2>
         <AdminP>{props.des}</AdminP>
         <FormButtonDelete type="submit" class="button" onClick={delInv}>
-          delete
+          Delete
         </FormButtonDelete>
       </AdminCard>
     );

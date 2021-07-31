@@ -62,6 +62,12 @@ const Navbar = ({ toggle }) => {
               {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLinkAdmin to="/registeraccount">Register Account</NavBtnLinkAdmin>  : null) : null
               }
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLink to="/inventory">Inventory</NavBtnLink>  : null) : null
+              }
+              {
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLink to="/checkout">Check Out</NavBtnLink>  : null) : null
+              }
               {/* employee */}
               {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "employee" ? <NavBtnLinkEmployee to="/orders">Orders</NavBtnLinkEmployee>  : null) : null

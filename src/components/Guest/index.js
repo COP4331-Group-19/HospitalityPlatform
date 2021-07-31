@@ -138,7 +138,7 @@ const Guest = () => {
     }
   };
   useEffect(async () => {
-    setWOrd([]);
+    // setWOrd([]);
     axios(configO).then(function (response) {
       if (response.data.err_code) {
         setMessage(' ' + response.data.description);

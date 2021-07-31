@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Storage from '../../tokenStorage.js';
+import { confirm } from "react-confirm-box";
 import {
     AdminContainer,
     AdminH1,
+    AdminH1_5,
     AdminWrapper,
 } from "./AdminElements";
 import {
@@ -12,8 +14,10 @@ import {
     FormLabel,
     FormInput,
     FormButton,
+    Button
 } from "./AdminAddInventoryElements";
 import { AdminCard, AdminH2, AdminP, FormButtonDelete } from "./AdminAddInventoryElements";
+import {GuestEmptyWarn} from "../Guest/GuestElements";
 
 const CheckOut = () => {
     var Search = '';
@@ -51,13 +55,18 @@ const CheckOut = () => {
         });
     });
 
+    const revert = async => {
+        // document.getElementById("formBox").style.display = "grid";
+        // document.getElementById("searchResults").style.display = "none";
+    }
+
     const doSearch = async => {
         if (Search.value === '') {
             setMessage("Input Room that needs to be searched...");
             setSR([]);
         }
         else {
-            setMessage('Getting User Information');
+            setMessage('Getting User Information...');
             setSR([]);
             //Set SR with correct user information
             for(let i = 0; i < Users.length; i++){
@@ -71,6 +80,10 @@ const CheckOut = () => {
             }
             if(SR.length < 1){
                 setMessage("Room is Empty");
+            } else {
+                setMessage("");
+                // document.getElementById("formBox").style.display = "none";
+                // document.getElementById("searchResults").style.display = "block";
             }
         }
     }
@@ -79,7 +92,14 @@ const CheckOut = () => {
     const AdminCardComponent = (props) => {
 
         const coGuest = async event => {
-            setMessageR('Working');
+            const result = await confirm(`Are you sure you would like to check out user ${props.name}?`, {labels: {
+                    confirmable: "Check Out",
+                    cancellable: "Cancel"
+                }});
+            if (result) {
+                console.log("You click yes!");
+                return;
+            }
         }
         return (
             <AdminCard>
@@ -91,7 +111,7 @@ const CheckOut = () => {
                 <AdminP>CheckInDate : {props.checkin}</AdminP>
                 <AdminP>CheckOutDate : {props.checkout}</AdminP>
                 <FormButtonDelete type="submit" class="button" onClick={coGuest}>
-                    delete
+                    Check Out
                 </FormButtonDelete>
             </AdminCard>
         );
@@ -99,23 +119,26 @@ const CheckOut = () => {
 
     return (
         <AdminContainer>
-            <Form action="#">
+            <Form action="#" id="formBox">
                 <FormH1>Check Out Guest</FormH1>
                 <FormLabel htmlFor="for">Search Room</FormLabel>
                 <FormInput type="name" ref={(c) => Search = c} />
                 <FormLabel>{message}</FormLabel>
                 <FormButton type="submit" onClick={doSearch}>Search</FormButton>
             </Form>
-            <AdminH1>Search Results</AdminH1>
-            <br /><br /><br /><br />
-            <AdminP>{messageR}</AdminP>
-            <AdminWrapper>
-                {
-                    SR.map(itm =>
-                        <AdminCardComponent name={itm.split('#')[0]} room={itm.split('#')[4]} username={itm.split('#')[3]} email={itm.split('#')[1]} phone={itm.split('#')[2]} checkin={itm.split('#')[6]} checkout={itm.split('#')[7]} id={itm.split('#')[5]} />
-                    )
-                }
-            </AdminWrapper>
+            <div id="searchResults">
+                <AdminH1_5>Search Results</AdminH1_5>
+                {/*<Button onClick={revert}>‹ Back</Button>*/}
+                <AdminP>{messageR}</AdminP>
+                { (SR.length === 0) ? <GuestEmptyWarn>No results.</GuestEmptyWarn> : null }
+                <AdminWrapper>
+                    {
+                        SR.map(itm =>
+                            <AdminCardComponent name={itm.split('#')[0]} room={itm.split('#')[4]} username={itm.split('#')[3]} email={itm.split('#')[1]} phone={itm.split('#')[2]} checkin={itm.split('#')[6]} checkout={itm.split('#')[7]} id={itm.split('#')[5]} />
+                        )
+                    }
+                </AdminWrapper>
+            </div>
         </AdminContainer>
     );
 };

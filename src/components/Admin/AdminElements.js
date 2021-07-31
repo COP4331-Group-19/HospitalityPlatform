@@ -147,6 +147,19 @@ export const AdminH1 = styled.h1`
   }
 `;
 
+export const AdminH1_5 = styled.h1`
+  font-size: 2.5rem;
+  color: #fff;
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: left;
+
+  @media screen and (max-width: 480px) {
+    font-size: 2rem;
+  }
+`;
+
 export const AdminH2 = styled.h2`
   font-size: 1rem;
   color: white;

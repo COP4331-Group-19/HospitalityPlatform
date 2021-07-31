@@ -36,7 +36,7 @@ const Sidebar = ({ isOpen, toggle }) => {
             localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <SidebarLink to="/inventory">Inventory</SidebarLink> : null) : null
           }
           {
-            localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <SidebarLink to="/checkout">CheckOut</SidebarLink> : null) : null
+            localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <SidebarLink to="/checkout">Checkout</SidebarLink> : null) : null
           }
           {/* employee */}
           {

@@ -34,6 +34,12 @@ const UnifiedSidebar = ({ isOpen, toggle }) => {
             {
               localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <SidebarLink to="/registeraccount">Register Account</SidebarLink>  : null) : null
             }
+          {
+              localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <SidebarLink to="/inventory">Inventory</SidebarLink> : null) : null
+          }
+          {
+              localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <SidebarLink to="/checkout">Checkout</SidebarLink> : null) : null
+          }
             {/* employee */}
             {
               localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "employee" ? <SidebarLink to="/orders">Orders</SidebarLink>  : null) : null

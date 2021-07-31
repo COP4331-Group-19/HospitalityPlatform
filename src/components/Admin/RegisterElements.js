@@ -108,6 +108,13 @@ export const FormInput = styled.input`
   border-radius: 4px;
 `;
 
+export const FormSelect = styled.select`
+  padding: 10px 10px;
+  margin-bottom: 32px;
+  border: none;
+  border-radius: 4px;
+`;
+
 export const FormButton = styled.button`
   background: #14cca4;
   padding: 16px 0;

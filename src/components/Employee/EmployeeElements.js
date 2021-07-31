@@ -54,7 +54,7 @@ export const EmployeeContainer = styled.div`
 
 export const EmployeeWrapper = styled.div`
   max-width: 1000px;
-  margin: 100px;
+  margin: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;

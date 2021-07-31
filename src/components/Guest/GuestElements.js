@@ -132,7 +132,7 @@ export const GuestEmptyWarn = styled.p`
   font-size: 24px;
   padding: 20px;
   text-align: center;
-  margin: auto;
+  margin: 0 auto;
 `;
 
 export const RockerButtons = styled.a`

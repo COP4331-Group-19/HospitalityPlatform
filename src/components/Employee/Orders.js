@@ -11,6 +11,7 @@ import {
   EmployeeP,
   Button,
 } from "./EmployeeElements";
+import {GuestEmptyWarn} from "../Guest/GuestElements";
 
 const Orders = () => {
   //UseState
@@ -21,6 +22,7 @@ const Orders = () => {
   const [messageC, setMessageC] = useState(null);
   var numINV = 0;
   var ItemsArray = [];
+  let ItemsDB = {}
 
   //Variables
   var Token = Storage.retrieveToken()
@@ -35,18 +37,6 @@ const Orders = () => {
       "authorization": Token
     }
   };
-  useEffect(async () => {
-    axios(config).then(function (response) {
-      var ud = response.data;
-      numINV = ud.length;
-      for (var i = 0; i < ud.length; i++) {
-        ItemsArray[i] = ud[i].name + '#' + ud[i].description + '#' + ud[i].img + '#' + ud[i].item_id;
-      }
-    }).catch(function (error) {
-      setMessage(' ' + error);
-    });
-
-  }, []);
 
   //GETTING UNCLAIMED ORDERS
   var configU = {
@@ -58,7 +48,23 @@ const Orders = () => {
     }
   };
   useEffect(async () => {
-    setunClm([]);
+    // #1
+    await axios(config).then(function (response) {
+      var ud = response.data;
+      numINV = ud.length;
+      for (var i = 0; i < ud.length; i++) {
+        ItemsArray[i] = ud[i].name + '#' + ud[i].description + '#' + ud[i].img + '#' + ud[i].item_id;
+        ItemsDB[ud[i].item_id.toString()] = {
+          "name": ud[i].name,
+          "desc": ud[i].description,
+          "img": ud[i].img
+        }
+      }
+    }).catch(function (error) {
+      setMessage(' ' + error);
+    });
+    // #2
+    await setunClm([]);
     axios(configU).then(function (response) {
 
       var ud = response.data;
@@ -66,18 +72,41 @@ const Orders = () => {
         setMessageUC(' ' + ud.description);
       }
       else {
+        let itemObj;
+        let itemID;
         for (var i = 0; i < ud.length; i++) {
-          for (let j = 0; j < ItemsArray.length; j++) {
-            if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
-              setunClm(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id + '#' + ItemsArray[j].split('#')[2]]);
-            }
-          }
+          console.warn("---")
+          itemID = ud[i].item_id.toString();
+          itemObj = ItemsDB[itemID];
+          // Deleted item = is invalid.
+          if (typeof itemObj === "undefined")
+            continue;
+          setunClm(item => [...item, itemObj.name + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id + '#' + itemObj.img]);
         }
       }
     }).catch(function (error) {
       setMessageUC(' ' + error);
     });
-
+    // #3
+    await setClm([]);
+    axios(configMy).then(function (response) {
+      var ud = response.data;
+      if (ud.err_code) {
+        setMessageC(' ' + ud.description);
+      }
+      // there's some race condition here, probably because this code is ugly and can break with a single #.
+      else {
+        for (var i = 0; i < ud.length; i++) {
+          for (let j = 0; j < ItemsArray.length; j++) {
+            if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
+              setClm(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id + '#' + ItemsArray[j].split('#')[2]]);
+            }
+          }
+        }
+      }
+    }).catch(function (error) {
+      setMessageC(' ' + error);
+    });
   }, []);
   const EmployeeCardComponentUn = (props) => {
 
@@ -96,7 +125,6 @@ const Orders = () => {
         if (check.err_code) {
           setMessageUC(' ' + check.description);
         } else {
-          setMessageUC('Success');
           //Makes it look like its working
           let Aray = [...unClm];
           var index = Aray.indexOf(props.name + '#' + props.qun + '#' + props.room + '#' + props.order + '#' + props.img);
@@ -131,28 +159,6 @@ const Orders = () => {
       "authorization": Token
     }
   };
-  useEffect(async () => {
-    setClm([]);
-    axios(configMy).then(function (response) {
-
-      var ud = response.data;
-      if (ud.err_code) {
-        setMessageC(' ' + ud.description);
-      }
-      else {
-        for (var i = 0; i < ud.length; i++) {
-          for (let j = 0; j < ItemsArray.length; j++) {
-            if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
-              setClm(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id + '#' + ItemsArray[j].split('#')[2]]);
-            }
-          }
-        }
-      }
-    }).catch(function (error) {
-      setMessageC(' ' + error);
-    });
-
-  }, []);
   const EmployeeCardComponent = (props) => {
     const markOrd = async event => {
       var configMO = {
@@ -186,7 +192,7 @@ const Orders = () => {
       <EmployeeCard style={{ backgroundImage: `url(${props.img})` }}>
         <EmployeeH2>{props.qun} {props.name}</EmployeeH2>
         <EmployeeP>RoomNo. {props.room}</EmployeeP>
-        <Button onClick={markOrd}>Mark Complete</Button>
+        <Button style={{"margin": "15px"}} onClick={markOrd}>Mark Complete</Button>
       </EmployeeCard>
     );
   };
@@ -195,6 +201,9 @@ const Orders = () => {
     <EmployeeContainer id="Employee">
       <EmployeeH1>Active Orders</EmployeeH1>
       <EmployeeH2>{messageC}</EmployeeH2>
+      {
+        (Clm.length === 0) ? <GuestEmptyWarn>No active orders.</GuestEmptyWarn> : null
+      }
       <EmployeeWrapper>
         {
           Clm.map(ord => <EmployeeCardComponent name={ord.split('#')[0]} qun={ord.split('#')[1]} room={ord.split('#')[2]} order={ord.split('#')[3]} img={ord.split('#')[4]} />)
@@ -202,11 +211,14 @@ const Orders = () => {
       </EmployeeWrapper>
       <EmployeeH1>Unclaimed Orders</EmployeeH1>
       <EmployeeH2>{messageUC}</EmployeeH2>
+      {
+        (unClm.length === 0) ? <GuestEmptyWarn>No pending orders.</GuestEmptyWarn> : null
+      }
       <EmployeeWrapper>
         {
           unClm.map(ord => <EmployeeCardComponentUn name={ord.split('#')[0]} qun={ord.split('#')[1]} room={ord.split('#')[2]} order={ord.split('#')[3]} img={ord.split('#')[4]} />)
         }
-      </EmployeeWrapper>
+      </EmployeeWrapper><br/>
     </EmployeeContainer>
   );
 };

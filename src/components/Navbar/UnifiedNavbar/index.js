@@ -63,7 +63,7 @@ const UnifiedNavbar = ({ toggle }) => {
                 localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLink to="/inventory">Inventory</NavBtnLink>  : null) : null
               }
               {
-                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLink to="/checkout">CheckOut</NavBtnLink>  : null) : null
+                localStorage.token_data ? (JSON.parse(atob(localStorage.token_data.split(".")[1])).role === "admin" ? <NavBtnLink to="/checkout">Check Out</NavBtnLink>  : null) : null
               }
               {/* employee */}
               {
