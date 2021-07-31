@@ -147,13 +147,14 @@ function ProfileScreen({ navigation }) {
 function PendingOrderScreen({ navigation }) {
 
     var ItemsArray = [];
+    let ItemsDB = {};
     const [message, setMessage] = useState(null);
+    const [WO, setWO] = useState([]);
 
-    var check = 0;
-
-    //INVENTORY
     const urlI = bp.buildPath("api/inventory");
+    const urlWO = bp.buildPath("api/room");
     useEffect(() => {
+        //Geting Ivnentory Items
         async function getInv() {
             var Token = (await AsyncStorage.getItem('token_data')).toString();
             const response = await fetch(urlI, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
@@ -161,13 +162,54 @@ function PendingOrderScreen({ navigation }) {
                 var ud = JSON.parse(await response.text());
                 for (var i = 0; i < ud.length; i++) {
                     ItemsArray[i] = ud[i].name + '#' + ud[i].description + '#' + ud[i].img + '#' + ud[i].item_id;
+                    ItemsDB[ud[i].item_id.toString()] = {
+                        "name": ud[i].name,
+                        "desc": ud[i].description,
+                        "img": ud[i].img
+                    }
                 }
             } catch (e) {
                 setMessage(' ' + e.message);
             }
         }
         getInv();
-    }, [check]);
+
+        //Getting Room orders
+        async function getWOrder() {
+            var Token = (await AsyncStorage.getItem('token_data')).toString();
+            const response = await fetch(urlWO, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+            try {
+                let itemID;
+                let itemObj;
+                var res = JSON.parse(await response.text());
+                var ud = res.orders;
+                for (let i = 0; i < ud.length; i++) {
+                    itemID = ud[i].item_id.toString();
+                    itemObj = ItemsDB[itemID];
+                    // Deleted item = is invalid.
+                    if (typeof itemObj === "undefined")
+                        continue;
+                    setWO(item => [...item, itemObj.name + '#' + ud[i].quantity + '#' + ud[i].order_id]);
+                }
+            } catch (e) {
+                setMessage(' ' + e.message);
+            }
+        }
+        getWOrder();
+
+    }, []);
+
+    const WOrderList = (props) => {
+
+        return (
+            <View style={styles.Tasks}>
+                <View style={styles.separator}>
+                    <Text style={styles.taskinfo}>{" "}Order: {props.quantity} {props.name}{" "}</Text>
+                </View>
+            </View>
+        );
+    }
+
 
     return (
         <View style={styles.container}>
@@ -185,9 +227,21 @@ function PendingOrderScreen({ navigation }) {
                         <Feather name="align-justify" size={50} color="black" />
                     </TouchableOpacity>
                     <Text style={styles.topbartext}> Pending Orders</Text>
+
                 </View>
                 {/*Break*/}
                 <Text>{"\n"}</Text>
+                <View style={styles.listoftasks}>
+                    <Text style={styles.title}>Orders You Are Waiting On...</Text>
+                    <Text style={{ color: 'red' }}>{message}</Text>
+                    <ScrollView style={{ height: '70%' }}>
+                        {
+                            WO.map(itm =>
+                                <WOrderList key={itm.split('#')[3]} name={itm.split('#')[0]} quantity={itm.split('#')[1]} order={itm.split('#')[3]} />
+                            )
+                        }
+                    </ScrollView>
+                </View>
             </ImageBackground>
 
         </View>
@@ -199,6 +253,7 @@ function ServicesScreen({ navigation }) {
     var ItemsArray = [];
     const [message, setMessage] = useState(null);
     const [Inv, setInv] = useState([]);
+    const [Ord, setOrd] = useState([]);
 
     var check = 0;
     //INVENTORY
@@ -236,20 +291,82 @@ function ServicesScreen({ navigation }) {
                 setOrd(item => [...item, props.items + "#" + props.des + "#" + props.img + "#" + props.id + '#' + value]);
             }
             else {
-                setOrdErr('You cant order Nothing');
+                setMessage('You cant order Nothing');
             }
-
         }
         return (
-            <View style={{ backgroundImage: `url(${props.img})`, backgroundPosition: "center" }}>
-                <Text>{props.items}</Text>
-                <Text>{props.des}</Text>
-                {/* <RockerButtons style={{ borderRadius: "8px 8px 0 0", marginTop: "5px" }} onClick={incIvn}>▲</RockerButtons><RockerMid>{value}</RockerMid><RockerButtons style={{ borderRadius: "0 0 8px 8px" }} onClick={decIvn}>▼</RockerButtons>
-                <Button onClick={AddToOrder}> Add to Cart</Button> */}
+            <View style={styles.Tasks}>
+
+                <View style={{ flexDirection: 'row' }}>
+                    <TouchableOpacity
+                        color="black"
+                        style={styles.claimButton}
+                        onPress={incIvn}
+                    >
+                        <Text style={styles.taskinfo}>+</Text>
+                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'column' }}>
+                        <Text style={styles.taskinfo}>{props.items}</Text>
+                        <Text style={styles.taskinfo}>{value}</Text>
+                    </View>
+                    <TouchableOpacity
+                        color="black"
+                        style={styles.claimButton}
+                        onPress={decIvn}
+                    >
+                        <Text style={styles.taskinfo}>-</Text>
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity
+                    color="black"
+                    style={styles.claimButton}
+                    onPress={AddToOrder}
+                >
+                    <Text style={styles.taskinfo}>Add To Cart</Text>
+                </TouchableOpacity>
             </View>
         );
     };
 
+    const GuestCardComponentOrd = (props) => {
+
+        return (
+            <View style={styles.Tasks}>
+                <View style={{ flexDirection: 'row' }}>
+                    <Text style={styles.taskinfo}>{" "}{props.quantity}{" "}</Text>
+                    <Text style={styles.taskinfo}>{props.items}</Text>
+                </View>
+            </View>
+        );
+    };
+
+    const Order = async => {
+        async function order() {
+            for (let i = 0; i < Ord.length; i++) {
+                var Token = (await AsyncStorage.getItem('token_data')).toString();
+                const urlO = bp.buildPath("api/inventory/" + Ord[i].split('#')[3] + "/" + Ord[i].split('#')[4])
+                try {
+                    const response = await fetch(urlO, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+                    var O = JSON.parse(await response.text());
+                    if (O.err_code) {
+                        setMessage(' ' + O.description);
+                        i = Ord.length;
+                    } else {
+                        setMessage("All Things Ordered");
+                        setOrd([]);
+                    }
+                } catch (e) {
+                    setMessage(' ' + e.message);
+                }
+            }
+        }
+        order();
+    }
+
+    const Cancel = async => {
+        setOrd([]);
+        setMessage('Cancel');
+    }
 
     return (
         <View style={styles.container}>
@@ -270,13 +387,40 @@ function ServicesScreen({ navigation }) {
                 </View>
                 {/*Break*/}
                 <Text>{"\n"}</Text>
-                <View>
-                    {
-                        Inv.map(itm =>
-                            <GuestCardComponentInv items={itm.split("#")[0]} des={itm.split("#")[1]} img={itm.split("#")[2]} id={itm.split('#')[3]} />
-                        )
-                    }
+                <View style={styles.listoftasks}>
+                    <Text style={{ color: 'red' }}>{message}</Text>
+                    <TouchableOpacity
+                        color="black"
+                        style={styles.EditButton}
+                        onPress={Order}
+                    >
+                        <Text>Order</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        color="black"
+                        style={styles.EditButton}
+                        onPress={Cancel}
+                    >
+                        <Text>Clear Cart</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.title}>Cart</Text>
+                    <ScrollView style={{ height: '30%' }}>
+                        {
+                            Ord.map(itm =>
+                                <GuestCardComponentOrd key={itm.split('#')[3]} items={itm.split("#")[0]} id={itm.split('#')[3]} quantity={itm.split('#')[4]} />
+                            )
+                        }
+                    </ScrollView>
+                    <Text style={styles.title}>Menu</Text>
+                    <ScrollView style={{ height: '70%' }}>
+                        {
+                            Inv.map(itm =>
+                                <GuestCardComponentInv key={itm.split('#')[3]} items={itm.split("#")[0]} id={itm.split('#')[3]} />
+                            )
+                        }
+                    </ScrollView>
                 </View>
+
             </ImageBackground>
 
         </View>
@@ -301,7 +445,7 @@ export default class GuestScreen extends Component {
         return (
             <NavigationContainer>
                 <Drawer.Navigator
-                    initialRouteName="Home"
+                    initialRouteName="Services"
                     drawerType="slide"
                     drawerStyle={styles.Drawer}
                     drawerContent={props => {
