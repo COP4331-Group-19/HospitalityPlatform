@@ -149,14 +149,15 @@ function TaskScreen({ navigation }) {
   const [UC, setUC] = useState([]);
   const [C, setC] = useState([]);
   var ItemsArray = [];
+  let ItemsDB = {};
   const [message, setMessage] = useState(null);
   const [messageUC, setMessageUC] = useState(null);
   const [messageC, setMessageC] = useState(null);
   var check = 0;
 
-  //INVENTORY
-  const urlI = bp.buildPath("api/inventory");
+  //Combined UseEffect
   useEffect(() => {
+    //#1
     async function getInv() {
       var Token = (await AsyncStorage.getItem('token_data')).toString();
       const response = await fetch(urlI, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
@@ -164,17 +165,19 @@ function TaskScreen({ navigation }) {
         var ud = JSON.parse(await response.text());
         for (var i = 0; i < ud.length; i++) {
           ItemsArray[i] = ud[i].name + '#' + ud[i].description + '#' + ud[i].img + '#' + ud[i].item_id;
+          ItemsDB[ud[i].item_id.toString()] = {
+            "name": ud[i].name,
+            "desc": ud[i].description,
+            "img": ud[i].img
+          }
         }
       } catch (e) {
         setMessage(' ' + e.message);
       }
     }
     getInv();
-  }, [check]);
 
-  //UNCLAIMED ORDERS
-  const urlU = bp.buildPath("api/orders/unclaimed");
-  useEffect(() => {
+    //#2
     async function getUC() {
       var Token = (await AsyncStorage.getItem('token_data')).toString();
       const response = await fetch(urlU, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
@@ -184,12 +187,15 @@ function TaskScreen({ navigation }) {
           setMessageUC(' ' + ud.description);
         }
         else {
+          let itemObj;
+          let itemID;
           for (var i = 0; i < ud.length; i++) {
-            for (let j = 0; j < ItemsArray.length; j++) {
-              if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
-                setUC(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id]);
-              }
-            }
+            itemID = ud[i].item_id.toString();
+            itemObj = ItemsDB[itemID];
+            // Deleted item = is invalid.
+            if (typeof itemObj === "undefined")
+              continue;
+            setUC(item => [...item, itemObj.name + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id + '#' + itemObj.img]);
           }
         }
       } catch (e) {
@@ -197,7 +203,37 @@ function TaskScreen({ navigation }) {
       }
     }
     getUC();
-  }, [check]);
+
+    //#3
+    async function getC() {
+      var Token = (await AsyncStorage.getItem('token_data')).toString();
+      const response = await fetch(urlC, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
+      try {
+        var ud = JSON.parse(await response.text());
+        if (ud.err_code) {
+          setMessageC(' ' + ud.description);
+        }
+        else {
+          for (var i = 0; i < ud.length; i++) {
+            for (let j = 0; j < ItemsArray.length; j++) {
+              if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
+                setC(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id]);
+              }
+            }
+          }
+        }
+      } catch (e) {
+        setMessageC(' ' + e.message);
+      }
+    }
+    getC();
+  }, []);
+
+  //INVENTORY
+  const urlI = bp.buildPath("api/inventory");
+
+  //UNCLAIMED ORDERS
+  const urlU = bp.buildPath("api/orders/unclaimed");
   const UCOrderList = (props) => {
 
     const ClaimOrd = async event => {
@@ -246,30 +282,6 @@ function TaskScreen({ navigation }) {
 
   //TODO ORDERS
   const urlC = bp.buildPath("api/orders/my");
-  useEffect(() => {
-    async function getC() {
-      var Token = (await AsyncStorage.getItem('token_data')).toString();
-      const response = await fetch(urlC, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
-      try {
-        var ud = JSON.parse(await response.text());
-        if (ud.err_code) {
-          setMessageC(' ' + ud.description);
-        }
-        else {
-          for (var i = 0; i < ud.length; i++) {
-            for (let j = 0; j < ItemsArray.length; j++) {
-              if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
-                setC(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id]);
-              }
-            }
-          }
-        }
-      } catch (e) {
-        setMessageC(' ' + e.message);
-      }
-    }
-    getC();
-  }, [check]);
   const COrderList = (props) => {
 
     const MarkOrder = async event => {
