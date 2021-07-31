@@ -47,23 +47,6 @@ const Guest = () => {
       "authorization": Token
     }
   };
-  useEffect(async () => {
-
-    //Get user info everytime we lode the page
-    axios(config).then(function (response) {
-
-      var ud = response.data;
-
-      //Getting info needed for this page
-      setFName(ud.first_name);
-      setLName(ud.last_name);
-      setRoom(ud.room);
-    }).catch(function (error) {
-      setMessage(' ' + error);
-    });
-
-  }, []);
-
   //GET INVENTORY ITEMS
   var configI = {
     method: "get",
@@ -73,21 +56,7 @@ const Guest = () => {
       "authorization": Token
     }
   };
-  useEffect(async () => {
-    setInv([]);
-    //Get user info everytime we lode the page
-    axios(configI).then(function (response) {
 
-      var ud = response.data;
-      for (var i = 0; i < ud.length; i++) {
-        ItemArray[i] = ud[i].name + "#" + ud[i].description + "#" + ud[i].img + "#" + ud[i].item_id;
-        setInv(item => [...item, ud[i].name + "#" + ud[i].description + "#" + ud[i].img + "#" + ud[i].item_id]);
-      }
-    }).catch(function (error) {
-      setMessage(' ' + error);
-    });
-
-  }, []);
   const GuestCardComponentInv = (props) => {
     const [value, setValue] = useState(0);
     const decIvn = async event => {
@@ -109,22 +78,22 @@ const Guest = () => {
 
     }
     return (
-      <GuestCard style={{ backgroundImage: `url(${props.img})`, backgroundPosition: "center" }}>
-        <GuestH2>{props.items}</GuestH2>
-        <GuestP>{props.des}</GuestP>
-        <RockerButtons style={{ borderRadius: "8px 8px 0 0", marginTop: "5px" }} onClick={incIvn}>▲</RockerButtons><RockerMid>{value}</RockerMid><RockerButtons style={{ borderRadius: "0 0 8px 8px"}} onClick={decIvn}>▼</RockerButtons>
-        <Button onClick={AddToOrder}> Add to Cart</Button>
-      </GuestCard>
+        <GuestCard style={{ backgroundImage: `url(${props.img})`, backgroundPosition: "center" }}>
+          <GuestH2>{props.items}</GuestH2>
+          <GuestP>{props.des}</GuestP>
+          <RockerButtons style={{ borderRadius: "8px 8px 0 0", marginTop: "5px" }} onClick={incIvn}>▲</RockerButtons><RockerMid>{value}</RockerMid><RockerButtons style={{ borderRadius: "0 0 8px 8px"}} onClick={decIvn}>▼</RockerButtons>
+          <Button onClick={AddToOrder}> Add to Cart</Button>
+        </GuestCard>
     );
   };
 
   //ORDERS CART FOR THIS ROOM
   const GuestCardComponentOrd = (props) => {
     return (
-      <GuestCard style={{ backgroundImage: `url(${props.img})` }}>
-        <GuestH2>{props.items}</GuestH2>
-        <GuestP>{props.des}</GuestP>
-      </GuestCard>
+        <GuestCard style={{ backgroundImage: `url(${props.img})` }}>
+          <GuestH2>{props.items}</GuestH2>
+          <GuestP>{props.des}</GuestP>
+        </GuestCard>
     );
   };
 
@@ -137,34 +106,12 @@ const Guest = () => {
       "authorization": Token
     }
   };
-  useEffect(async () => {
-    // setWOrd([]);
-    axios(configO).then(function (response) {
-      if (response.data.err_code) {
-        setMessage(' ' + response.data.description);
-      }
-      else {
-        var ud = response.data.orders;
-        if (ud.length > 0) {
-          for (var i = 0; i < ud.length; i++) {
-            for(let j = 0; j < ItemArray.length; j++){
-              if(ud[i].item_id.toString() === ItemArray[j].split('#')[3]){
-                setWOrd(item => [...item, ItemArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ItemArray[j].split('#')[2]]);
-              }
-            }
-          }
-        }
 
-      }
-    }).catch(function (error) {
-      setMessage(' ' + error);
-    })
-  }, []);
   const GuestCardComponentWOrd = (props) => {
     return (
-      <GuestCard style={{ backgroundImage: `url(${props.img})`}}>
-        <GuestH2>{props.qun} {props.id}</GuestH2>
-      </GuestCard>
+        <GuestCard style={{ backgroundImage: `url(${props.img})`}}>
+          <GuestH2>{props.qun} {props.id}</GuestH2>
+        </GuestCard>
     );
   };
 
@@ -201,6 +148,58 @@ const Guest = () => {
   const delOrder = async event => {
     setOrd([]);
   }
+
+
+  useEffect(async () => {
+    // #1
+    //Get user info everytime we lode the page
+    axios(config).then(function (response) {
+
+      var ud = response.data;
+
+      //Getting info needed for this page
+      setFName(ud.first_name);
+      setLName(ud.last_name);
+      setRoom(ud.room);
+    }).catch(function (error) {
+      setMessage(' ' + error);
+    });
+    // #2
+    setInv([]);
+    //Get user info everytime we lode the page
+    axios(configI).then(function (response) {
+
+      var ud = response.data;
+      for (var i = 0; i < ud.length; i++) {
+        ItemArray[i] = ud[i].name + "#" + ud[i].description + "#" + ud[i].img + "#" + ud[i].item_id;
+        setInv(item => [...item, ud[i].name + "#" + ud[i].description + "#" + ud[i].img + "#" + ud[i].item_id]);
+      }
+    }).catch(function (error) {
+      setMessage(' ' + error);
+    });
+    // 3
+    setWOrd([]);
+    axios(configO).then(function (response) {
+      if (response.data.err_code) {
+        setMessage(' ' + response.data.description);
+      }
+      else {
+        var ud = response.data.orders;
+        if (ud.length > 0) {
+          for (var i = 0; i < ud.length; i++) {
+            for(let j = 0; j < ItemArray.length; j++){
+              if(ud[i].item_id.toString() === ItemArray[j].split('#')[3]){
+                setWOrd(item => [...item, ItemArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ItemArray[j].split('#')[2]]);
+              }
+            }
+          }
+        }
+
+      }
+    }).catch(function (error) {
+      setMessage(' ' + error);
+    })
+  }, []);
 
   //Main Return
   return (
