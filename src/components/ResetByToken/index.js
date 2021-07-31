@@ -82,7 +82,7 @@ const ResetByToken = () => {
     <>
       <Container>
         <FormWrap>
-          <Icon to="/">CyberHotel</Icon>
+          <Icon to="/"><i>Account Recovery</i></Icon>
           <FormContent>
             <Form action="#">
               <FormH1>Reset Password</FormH1>

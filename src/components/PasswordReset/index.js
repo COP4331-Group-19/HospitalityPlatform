@@ -65,7 +65,7 @@ const ResetPassword = () => {
             <FormContent>
               <Form action="#">
                 <FormH1>Forgot Password</FormH1>
-                <FormLabel htmlFor="for">Phone Number "XXX-XXX-XXXX</FormLabel>
+                <FormLabel htmlFor="for">Phone Number</FormLabel>
                 <FormInput type="phone" required ref={(c) => PhoneNumber = c}/>
                 <FormLabel> {message} </FormLabel>
                 <FormButton type="submit" onClick={getPasswordReset}>Reset</FormButton>
