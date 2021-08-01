@@ -43,19 +43,21 @@ const RegisterAccount = () => {
     }
     else {
 
-      //JSON OBJECT
-      var obj = {
-        "room": Room.value,
+      const checkin = Number(new Date(CID.value))/1000;
+      const checkout = Number(new Date(COD.value))/1000
+      // Create JSON payload.
+      let obj = {
         "username": UserName.value,
-        "password": Password.value,
         "first_name": FirstName.value,
-        "last_name": LastName.value,
         "email": Email.value,
         "phone": PhoneNumber.value,
         "role": Role.value,
-        "checkin": CID.value,
-        "checkout": COD.value
+        "checkin": checkin ? checkin : -1,
+        "checkout": checkout ? checkout : -1
       };
+      if (Room.value) obj['room'] = Room.value;
+      if (Password.value) obj['password'] = Password.value;
+      if (LastName.value) obj['last_name'] = LastName.value;
 
       var js = JSON.stringify(obj);
 
@@ -80,7 +82,7 @@ const RegisterAccount = () => {
         })
         .catch(function (error) {
           //Error function to show error as console logs
-          setMessage(" " + error);
+          setMessage(String(error));
         });
     }
   }
@@ -94,7 +96,7 @@ const RegisterAccount = () => {
             <Form action="#">
               <FormH1>Register Account</FormH1>
               <FormLabel htmlFor="for">Room </FormLabel>
-              <FormInput type="name" ref={(c) => Room = c} />
+              <FormInput type="text" ref={(c) => Room = c} />
               <FormLabel htmlFor="for">First Name</FormLabel>
               <FormInput type="name" ref={(c) => FirstName = c} />
               <FormLabel htmlFor="for">Last Name</FormLabel>
@@ -104,8 +106,8 @@ const RegisterAccount = () => {
               <FormLabel htmlFor="for">Email</FormLabel>
               <FormInput type="email" ref={(c) => Email = c} />
               <FormLabel htmlFor="for">Username</FormLabel>
-              <FormInput type="name" ref={(c) => UserName = c} />
-              <FormLabel htmlFor="for">Password </FormLabel>
+              <FormInput type="text" ref={(c) => UserName = c} />
+              <FormLabel htmlFor="for">Password (optional)</FormLabel>
               <FormInput type="password" ref={(c) => Password = c} />
               <FormLabel htmlFor="for">Role </FormLabel>
               {/*<FormInput type="name" ref={(c) => Role = c} />*/}
@@ -115,10 +117,10 @@ const RegisterAccount = () => {
                     <option value="admin">Admin</option>
               </FormSelect>
               {/*Let's be honest: this data was never used.*/}
-              <FormLabel htmlFor="for">CheckInDate </FormLabel>
-              <FormInput type="name" ref={(c) => CID = c} />
-              <FormLabel htmlFor="for">CheckOutDate </FormLabel>
-              <FormInput type="name" ref={(c) => COD = c} />
+              <FormLabel htmlFor="for">Check-in Date </FormLabel>
+              <FormInput type="date" ref={(c) => CID = c} />
+              <FormLabel htmlFor="for">Check-out Date </FormLabel>
+              <FormInput type="date" ref={(c) => COD = c} />
               <FormLabel> {message} </FormLabel>
               <FormButton type="submit" class="button" onClick={doRegister}>Register User</FormButton>
             </Form>

@@ -131,6 +131,32 @@ exports.setApp = function (app, db_client) {
         return res.status(200).json(formatted);
     })
 
+    // List all accounts by search term.
+    app.post("/api/account/search", [authn.isAuthorized, authn.isAdmin], async (req, res, next) => {
+        let { query } = req.body;
+        console.log(query)
+        const db = db_client.db();
+        let regexQuery = new RegExp(`^${query}*`, "i");
+        const results = await
+            // db.collection('accounts').find({
+            //     $expr:{$eq:[/^Jeffrey*/i, {$concat:["FirstName", "LastName"]}]}
+            // }).toArray();
+            // db.collection('Accounts').find({FirstName: {$regex: "^Jeffrey*"}}).toArray();
+            db.collection('Accounts').find({
+                $or: [
+                    {FirstName: {$regex: regexQuery}},
+                    {LastName: {$regex: regexQuery}}
+                ]
+            }).toArray();
+        console.log(results);
+        let formatted = []
+        for (let i = 0; i < results.length; i++) {
+            formatted[i] = accountGen(results[i]);
+            delete formatted[i].password;
+        }
+        return res.status(200).json(formatted);
+    })
+
     // Login
     app.post("/api/account/login", async (req, res, next) => {
         // grab login and password from request
@@ -442,6 +468,22 @@ exports.setApp = function (app, db_client) {
         }
         else
             return res.status(404).json(errGen(404, "No Rooms on this Floor"));
+    })
+
+    // Get all rooms on all floors.
+    app.get("/api/floor/", [authn.isAuthorized, authn.isStaff], async (req, res, next) => {
+        const db = db_client.db();
+        const results = await
+            // search if there are rooms located on the floor
+            db.collection('Room').find({}).toArray();
+        if (results.length > 0) {
+            let floorData = [];
+            for (let i = 0; i < results.length; i++)
+                floorData[i] = roomGen(results[i]);
+            return res.status(200).json(floorData);
+        }
+        else
+            return res.status(404).json(errGen(404, "No rooms on any floors."));
     })
 
     // Add Item to Inventory
