@@ -206,7 +206,7 @@ function PendingOrderScreen({ navigation }) {
         return (
             <View style={styles.Tasks}>
                 <View style={styles.separator}>
-                    <Text style={styles.taskinfo}>{" "}Order: {props.quantity} {props.name}{" "}</Text>
+                    <Text style={styles.taskinfo}>{" "}{props.quantity} {props.name}{" "}</Text>
                 </View>
             </View>
         );
@@ -256,8 +256,6 @@ function ServicesScreen({ navigation }) {
     const [message, setMessage] = useState(null);
     const [Inv, setInv] = useState([]);
     const [Ord, setOrd] = useState([]);
-
-    var check = 0;
     //INVENTORY
     const urlI = bp.buildPath("api/inventory");
     useEffect(() => {
@@ -275,7 +273,7 @@ function ServicesScreen({ navigation }) {
             }
         }
         getInv();
-    }, [check]);
+    }, []);
 
     const GuestCardComponentInv = (props) => {
         const [value, setValue] = useState(0);
@@ -365,14 +363,14 @@ function ServicesScreen({ navigation }) {
 
     const Cancel = async => {
         setOrd([]);
-        setMessage('Cancel');
+        setMessage('Cart Cleared');
     }
 
     return (
         <View style={styles.container}>
             <ImageBackground
                 style={styles.backgroundImage}
-                source={require("../images/testphoto.jpg")}
+                //source={require("../images/testphoto.jpg")}
             >
                 {/* Navigation Bar */}
                 <View style={styles.topbar}>
@@ -392,7 +390,7 @@ function ServicesScreen({ navigation }) {
                     <Text style={{ color: 'red' }}>{message}</Text>
                     <TouchableOpacity
                         color="black"
-                        style={styles.EditButton}
+                        style={styles.OrdButton}
                         onPress={Order}
                     >
                         <Text style={styles.editbuttontext}>Order</Text>
@@ -400,13 +398,13 @@ function ServicesScreen({ navigation }) {
 
                     <TouchableOpacity
                         color="black"
-                        style={styles.EditButton}
+                        style={styles.ClrButton}
                         onPress={Cancel}
                     >
                     <Text style={styles.editbuttontext}>Clear All Orders</Text>
                     </TouchableOpacity>
                     <Text style={styles.title}>Your Cart</Text>
-                    <ScrollView style={{ height: '70%' }}>
+                    <ScrollView style={{ height: '100%' }}>
                         {
                             Ord.map(itm =>
                                 <GuestCardComponentOrd key={itm.split('#')[3]} items={itm.split("#")[0]} id={itm.split('#')[3]} quantity={itm.split('#')[4]} />
@@ -414,7 +412,7 @@ function ServicesScreen({ navigation }) {
                         }
                     </ScrollView>
                     <Text style={styles.title}>Menu</Text>
-                    <ScrollView>
+                    <ScrollView style={{ height: '200%' }}>
                         {
                             Inv.map(itm =>
                                 <GuestCardComponentInv key={itm.split('#')[3]} items={itm.split("#")[0]} id={itm.split('#')[3]} />
@@ -587,15 +585,34 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: "white",
     },
-    EditButton: {
+    OrdButton: {
         margin: 8,
         flexDirection: "row",
-        backgroundColor: "black",
+        backgroundColor: "green",
         alignContent: "center",
         justifyContent: "center",
-        width: "15%",
-        borderRadius: 50,
-        padding: 14,
+        width: "30%",
+        borderRadius: 5,
+        padding: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 0.36,
+        shadowRadius: 6.68,
+        elevation: 11,
+        alignItems: 'center'
+    },
+    ClrButton: {
+        margin: 8,
+        flexDirection: "row",
+        backgroundColor: "red",
+        alignContent: "center",
+        justifyContent: "center",
+        width: "30%",
+        borderRadius: 5,
+        padding: 10,
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -628,9 +645,16 @@ const styles = StyleSheet.create({
         fontSize: 30,
     },
     listoftasks: {
-        maxHeight: "70%",
+        maxHeight: "90%",
         width: "80%",
         alignItems: 'center'
+    },
+    Tasks: {
+        padding: 10,
+        borderRadius: 1,
+        backgroundColor: "white",
+        borderColor: "#6D7275",
+        borderWidth: 10,
     },
     menuContainer: {
         width: 225,
@@ -664,7 +688,7 @@ const styles = StyleSheet.create({
         elevation: 11,
     },
     taskinfo: {
-        fontSize: 30,
+        fontSize: 40,
         textAlign: "center"
     },
     AddToCartButton: {
