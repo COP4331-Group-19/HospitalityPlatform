@@ -42,16 +42,6 @@ if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 40) {
     console.error("[WARNING] The JWT secret defined is not secure enough! If the secret is guessable, you might as well not have passwords! Remedy this ASAP.");
 }
 
-// Note: make sure you authenticate correctly!
-    const MongoClient = require('mongodb').MongoClient;
-    const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.qaihg.mongodb.net/HotelManagement?retryWrites=true&w=majority`;
-    const db_client = new MongoClient(uri, { useNewUrlParser: true });
-    db_client.connect().then((client) => {
-        console.log("[HospitalityPlatform] MongoDB connected!");
-    });
-
-console.log(`[HospitalityPlatform] Server running on port ${port}`);
-
 // DB schema -> API schema converters.
 global.accountGen = (dbObj) => {
     return {
@@ -178,20 +168,30 @@ global.createShortlink = (long_url) => {
     }
 }
 
-let api = require('./api.js');
-api.setApp( app, db_client );
+// Note: make sure you authenticate correctly!
+const MongoClient = require('mongodb').MongoClient;
+const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.qaihg.mongodb.net/HotelManagement?retryWrites=true&w=majority`;
+const db_client = new MongoClient(uri, { useNewUrlParser: true });
+db_client.connect().then((client) => {
+    let api = require('./api.js');
+    api.setApp( app, db_client );
 
-// Web server stuff.
-app.all("*", (req, res) => {
-    const options = {
-        dotfiles: 'deny',
-        headers: {
-            'x-timestamp': Date.now(),
-            'x-sent': true
+    app.listen(port);
+    console.log("[HospitalityPlatform] MongoDB connected!");
+    console.log(`[HospitalityPlatform] Server running on port ${port}`);
+
+
+
+    // Web server stuff.
+    app.all("*", (req, res) => {
+        const options = {
+            dotfiles: 'deny',
+            headers: {
+                'x-timestamp': Date.now(),
+                'x-sent': true
+            }
         }
-    }
-    const file = path.resolve(__dirname, '..', 'build', 'index.html');
-    res.sendFile(file);
-})
-
-app.listen(port);
+        const file = path.resolve(__dirname, '..', 'build', 'index.html');
+        res.sendFile(file);
+    })
+});

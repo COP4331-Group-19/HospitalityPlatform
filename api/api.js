@@ -93,7 +93,7 @@ exports.setApp = function (app, db_client) {
                             });
                     }
                     if (global.sendgrid) {
-                        let html = `<html><head><style>* {font-family: "Ubuntu", sans-serif}</style></head><body><h1>${hotelInfo[0].Name}</h1><p>Hello, ${first_name}!</p><p>You are almost ready to stay at ${hotelInfo[0].name}!</p><p>Please click <a href="${url}">here</a> to create your account.</p></body></html>`;
+                        let html = `<html><head><style>* {font-family: "Ubuntu", sans-serif}</style></head><body><h1>${hotelInfo[0].Name}</h1><p>Hello, ${first_name}!</p><p>You are almost ready to stay at ${hotelInfo[0].Name}!</p><p>Please click <a href="${url}">here</a> to create your account.</p></body></html>`;
                         const payload = {
                             to: email, // Change to your recipient
                             from: process.env.NOREPLY_EMAIL, // Change to your verified sender

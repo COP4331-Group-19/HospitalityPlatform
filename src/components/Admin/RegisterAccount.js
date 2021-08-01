@@ -75,14 +75,20 @@ const RegisterAccount = () => {
       axios(config)
         .then(function (response) {
           if(response.data.err_code){
-            setMessage(" " + response.data.description)
+            if (response.data.err_code === 400)
+              setMessage("Username, Email, or Phone Number Taken");
+            else
+              setMessage(String(response.data.description))
           }else{
             setMessage("Account provisioned successfully.")
           }
         })
         .catch(function (error) {
           //Error function to show error as console logs
-          setMessage(String(error));
+          let errStr = String(error);
+          if (errStr.indexOf("400") !== -1)
+            errStr = "Username, Email, or Phone Number Taken";
+          setMessage(errStr);
         });
     }
   }
@@ -122,7 +128,7 @@ const RegisterAccount = () => {
               <FormLabel htmlFor="for">Check-out Date </FormLabel>
               <FormInput type="date" ref={(c) => COD = c} />
               <FormLabel> {message} </FormLabel>
-              <FormButton type="submit" class="button" onClick={doRegister}>Register User</FormButton>
+              <FormButton onClick={doRegister}>Register User</FormButton>
             </Form>
           </FormContent>
         </FormWrap>
