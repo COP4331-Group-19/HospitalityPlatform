@@ -195,7 +195,7 @@ function TaskScreen({ navigation }) {
             // Deleted item = is invalid.
             if (typeof itemObj === "undefined")
               continue;
-            setUC(item => [...item, itemObj.name + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id + '#' + itemObj.img]);
+            setUC(item => [...item, itemObj.name + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id]);
           }
         }
       } catch (e) {
@@ -214,12 +214,15 @@ function TaskScreen({ navigation }) {
           setMessageC(' ' + ud.description);
         }
         else {
+          let itemObj;
+          let itemID;
           for (var i = 0; i < ud.length; i++) {
-            for (let j = 0; j < ItemsArray.length; j++) {
-              if (ud[i].item_id.toString() === ItemsArray[j].split('#')[3]) {
-                setC(item => [...item, ItemsArray[j].split('#')[0] + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id]);
-              }
-            }
+            itemID = ud[i].item_id.toString();
+            itemObj = ItemsDB[itemID];
+            // Deleted item = is invalid.
+            if (typeof itemObj === "undefined")
+              continue;
+            setC(item => [...item, itemObj.name + '#' + ud[i].quantity + '#' + ud[i].room_id + '#' + ud[i].order_id]);
           }
         }
       } catch (e) {
