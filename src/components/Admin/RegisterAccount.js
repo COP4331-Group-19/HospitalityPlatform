@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Container,
@@ -17,6 +17,7 @@ import Storage from "../../tokenStorage.js";
 const RegisterAccount = () => {
   // useStates
   const [message, setMessage] = useState(null);
+  const [RoomList, setRoomList] = useState([]);
 
   //required files
   var bp = require("../Path.js");
@@ -25,16 +26,43 @@ const RegisterAccount = () => {
   var Token = Storage.retrieveToken();
 
   //variables
-  var FirstName;
-  var LastName;
-  var PhoneNumber;
-  var Email;
-  var Password;
-  var Role;
-  var UserName;
-  var Room;
-  var CID;
-  var COD;
+  let FirstName;
+  let LastName;
+  let PhoneNumber;
+  let Email;
+  let Password;
+  let Role;
+  let UserName;
+  let Room;
+  let CID;
+  let COD;
+  let RoomsOpen = [];
+
+  // Get open rooms.
+  useEffect(async () => {
+
+    // Get list of available rooms.
+    let configX = {
+      method: "get",
+      url: bp.buildPath("api/floor"),
+      headers: {
+        "Content-Type": "application/json",
+        "authorization": Token
+      }
+    }
+    axios(configX).then(function (response) {
+
+      const resp_rm = response.data;
+
+      for (let i = 0; i < resp_rm.length; i++) {
+        if (resp_rm[i].occupant === -1) {
+          RoomsOpen.push(resp_rm[i].room_id);
+        }
+      }
+      setRoomList(RoomsOpen);
+    });
+
+  }, []);
 
   const doRegister = async event => {
 
@@ -102,7 +130,14 @@ const RegisterAccount = () => {
             <Form action="#">
               <FormH1>Register Account</FormH1>
               <FormLabel htmlFor="for">Room </FormLabel>
-              <FormInput type="text" ref={(c) => Room = c} />
+              {/*<FormInput type="text" ref={(c) => Room = c} />*/}
+              <FormSelect ref={(c) => Room = c}>
+                {
+                  RoomList.map(itm =>
+                      <option value={itm}>{itm}</option>
+                  )
+                }
+              </FormSelect>
               <FormLabel htmlFor="for">First Name</FormLabel>
               <FormInput type="name" ref={(c) => FirstName = c} />
               <FormLabel htmlFor="for">Last Name</FormLabel>

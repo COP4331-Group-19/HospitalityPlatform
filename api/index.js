@@ -31,9 +31,11 @@ if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD || !process.env.JWT_SEC
     }
 }
 if (process.env.TWILIO_SID && process.env.TWILIO_TOKEN) {
+    console.info('[INFO] Loaded Twilio support.');
     global.twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 }
 if (process.env.SENDGRID_TOKEN) {
+    console.info('[INFO] Loaded SendGrid support.');
     global.sendgrid = require('@sendgrid/mail');
     global.sendgrid.setApiKey(process.env.SENDGRID_TOKEN);
 }
@@ -177,7 +179,7 @@ db_client.connect().then((client) => {
     api.setApp( app, db_client );
 
     app.listen(port);
-    console.log("[HospitalityPlatform] MongoDB connected!");
+    console.info("[INFO] MongoDB connected!");
     console.log(`[HospitalityPlatform] Server running on port ${port}`);
 
 

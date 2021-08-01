@@ -99,7 +99,8 @@ export const FormInput = styled.input`
   border-radius: 4px;
 `;
 
-export const FormButton = styled.button`
+export const FormButton = styled.a`
+  text-align: center;
   background: #14cca4;
   padding: 16px 0;
   border: none;

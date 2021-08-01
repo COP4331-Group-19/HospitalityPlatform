@@ -287,7 +287,8 @@ export const EditAccountBtnLink = styled(LinkR)`
   }
 `;
 
-export const FormButton = styled.button`
+export const FormButton = styled.a`
+  text-align: center;
   background: #c20114;
   padding: 16px 0;
   border: none;
