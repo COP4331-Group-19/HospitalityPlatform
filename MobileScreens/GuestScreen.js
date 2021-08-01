@@ -412,7 +412,7 @@ function ServicesScreen({ navigation }) {
                         }
                     </ScrollView>
                     <Text style={styles.title}>Menu</Text>
-                    <ScrollView style={{ height: '200%' }}>
+                    <ScrollView style={{ height: '150%' }}>
                         {
                             Inv.map(itm =>
                                 <GuestCardComponentInv key={itm.split('#')[3]} items={itm.split("#")[0]} id={itm.split('#')[3]} />
