@@ -161,11 +161,8 @@ function PendingOrderScreen({ navigation }) {
             try {
                 var ud = JSON.parse(await response.text());
                 for (var i = 0; i < ud.length; i++) {
-                    ItemsArray[i] = ud[i].name + '#' + ud[i].description + '#' + ud[i].img + '#' + ud[i].item_id;
                     ItemsDB[ud[i].item_id.toString()] = {
                         "name": ud[i].name,
-                        "desc": ud[i].description,
-                        "img": ud[i].img
                     }
                 }
             } catch (e) {
@@ -185,6 +182,11 @@ function PendingOrderScreen({ navigation }) {
                 var ud = res.orders;
                 for (let i = 0; i < ud.length; i++) {
                     itemID = ud[i].item_id.toString();
+                    let a = 0;
+                    if(itemID === -1){
+                        a++;
+                        setMessage(a);
+                    }
                     itemObj = ItemsDB[itemID];
                     // Deleted item = is invalid.
                     if (typeof itemObj === "undefined")
@@ -237,7 +239,7 @@ function PendingOrderScreen({ navigation }) {
                     <ScrollView style={{ height: '70%' }}>
                         {
                             WO.map(itm =>
-                                <WOrderList key={itm.split('#')[3]} name={itm.split('#')[0]} quantity={itm.split('#')[1]} order={itm.split('#')[3]} />
+                                <WOrderList key={itm.split('#')[2]} name={itm.split('#')[0]} quantity={itm.split('#')[1]} order={itm.split('#')[2]} />
                             )
                         }
                     </ScrollView>
