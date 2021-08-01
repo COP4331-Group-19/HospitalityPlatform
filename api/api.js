@@ -46,16 +46,35 @@ exports.setApp = function (app, db_client) {
             let createAction = await db.collection('Accounts').insertOne(newUser);
 
             // Send SMS to get user to create account.
-            if (global.twilio) {
+            if (global.twilio || global.sendgrid) {
                 const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
                 if (setPasswd !== "") {
                     let message = `Hello, ${first_name}! Your account at ${hotelInfo[0].Name} has been created! Visit ${INSTANCE_URL} to get started.`;
-                    global.twilio.messages
-                        .create({
-                            body: message,
-                            from: '+14073052775',
-                            to: '+1' + phone
+                    if (global.twilio) {
+                        global.twilio.messages
+                            .create({
+                                body: message,
+                                from: '+14073052775',
+                                to: '+1' + phone
+                            });
+                    }
+                    if (global.sendgrid) {
+                        let html = `<html><head><style>* {font-family: "Ubuntu", sans-serif}</style></head><body><h1>${hotelInfo[0].Name}</h1><p>${message}</p></body></html>`;
+                        const payload = {
+                            to: email, // Change to your recipient
+                            from: 'noreply@shuga.co', // Change to your verified sender
+                            name: first_name + " " + (last_name ? last_name : ""),
+                            subject: `Welcome to ${hotelInfo[0].Name}!`,
+                            text: message,
+                            html: html,
+                        }
+                        global.sendgrid.send(payload).then((response) => {
+                            console.log(response[0].statusCode)
+                            console.log(response[0].headers)
+                        }).catch((error) => {
+                            console.error(error)
                         });
+                    }
                 } else {
                     const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
                     // Create shortlink via Senko
@@ -65,12 +84,31 @@ exports.setApp = function (app, db_client) {
                     }
                     // Send the link
                     let message = `Hello, ${first_name}! You are almost ready to stay at ${hotelInfo[0].Name}! Please visit ${url} to create your account.`;
-                    global.twilio.messages
-                        .create({
-                            body: message,
-                            from: '+14073052775',
-                            to: '+1' + phone
+                    if (global.twilio) {
+                        global.twilio.messages
+                            .create({
+                                body: message,
+                                from: '+14073052775',
+                                to: '+1' + phone
+                            });
+                    }
+                    if (global.sendgrid) {
+                        let html = `<html><head><style>* {font-family: "Ubuntu", sans-serif}</style></head><body><h1>${hotelInfo[0].Name}</h1><p>Hello, ${first_name}!</p><p>You are almost ready to stay at ${hotelInfo[0].name}!</p><p>Please click <a href="${url}">here</a> to create your account.</p></body></html>`;
+                        const payload = {
+                            to: email, // Change to your recipient
+                            from: process.env.NOREPLY_EMAIL, // Change to your verified sender
+                            name: first_name + " " + (last_name ? last_name : ""),
+                            subject: `Welcome to ${hotelInfo[0].Name}!`,
+                            text: message,
+                            html: html,
+                        }
+                        global.sendgrid.send(payload).then((response) => {
+                            console.log(response[0].statusCode)
+                            console.log(response[0].headers)
+                        }).catch((error) => {
+                            console.error(error)
                         });
+                    }
                 }
             }
 
@@ -164,7 +202,7 @@ exports.setApp = function (app, db_client) {
     // Password reset.
     app.get("/api/account/letmein/:phone", async (req, res, next) => {
         // Send SMS to get user to create account.
-        if (global.twilio) {
+        if (global.twilio || global.sendgrid) {
             const db = db_client.db();
             const results = await
                 db.collection('Accounts').find({ PhoneNumber: req.params.phone.replace(/\D/g, '') }).toArray();
@@ -195,15 +233,35 @@ exports.setApp = function (app, db_client) {
 
             const hotelInfo = await db.collection('Hotel_Detail').find({}).toArray();
 
-            // Send the link
-            let message = `Hello, ${accountData.first_name}! We have received a password request for your account at ${hotelInfo[0].Name}. `
-                + `Visit ${url} in the next thirty minutes to reset it, or do nothing and your password will not be changed.`;
-            global.twilio.messages
-                .create({
-                    body: message,
-                    from: '+14073052775',
-                    to: '+1' + accountData.phone
+            if (global.twilio) {
+                // Send the link
+                let message = `Hello, ${accountData.first_name}! We have received a password request for your account at ${hotelInfo[0].Name}. `
+                    + `Visit ${url} in the next thirty minutes to reset it, or do nothing and your password will not be changed.`;
+                global.twilio.messages
+                    .create({
+                        body: message,
+                        from: '+14073052775',
+                        to: '+1' + accountData.phone
+                    });
+            }
+            if (global.sendgrid) {
+                let msg = `<html><head><style>* {font-family: "Ubuntu", sans-serif}</style></head><body><h1>${hotelInfo[0].Name}</h1><p>Hello ${accountData.first_name},</p><p>We have received a password reset request for your account. Please <a href="${url}">click here</a> in the next thirty minutes to reset it.</p><p>If you did not request a password reset, you can safely ignore this message.</p></body></html>`;
+                const payload = {
+                    to: accountData.email, // Change to your recipient
+                    from: process.env.NOREPLY_EMAIL, // Change to your verified sender
+                    name: accountData.first_name + " " + accountData.last_name,
+                    subject: `Password Reset at ${hotelInfo[0].Name}`,
+                    text: `Hello, ${accountData.first_name}! We have received a password request for your account at ${hotelInfo[0].Name}. `
+                        + `Visit ${url} in the next thirty minutes to reset it, or do nothing and your password will not be changed.`,
+                    html: msg,
+                }
+                global.sendgrid.send(payload).then((response) => {
+                    console.log(response[0].statusCode)
+                    console.log(response[0].headers)
+                }).catch((error) => {
+                    console.error(error)
                 });
+            }
         } else {
             return res.status(501).json("This server is not configured to allow password resets.");
         }

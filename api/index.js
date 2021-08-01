@@ -33,6 +33,10 @@ if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD || !process.env.JWT_SEC
 if (process.env.TWILIO_SID && process.env.TWILIO_TOKEN) {
     global.twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 }
+if (process.env.SENDGRID_TOKEN) {
+    global.sendgrid = require('@sendgrid/mail');
+    global.sendgrid.setApiKey(process.env.SENDGRID_TOKEN);
+}
 // security guard
 if (process.env.JWT_SECRET && process.env.JWT_SECRET.length < 40) {
     console.error("[WARNING] The JWT secret defined is not secure enough! If the secret is guessable, you might as well not have passwords! Remedy this ASAP.");
