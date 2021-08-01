@@ -254,8 +254,6 @@ function ServicesScreen({ navigation }) {
     const [message, setMessage] = useState(null);
     const [Inv, setInv] = useState([]);
     const [Ord, setOrd] = useState([]);
-
-    var check = 0;
     //INVENTORY
     const urlI = bp.buildPath("api/inventory");
     useEffect(() => {
@@ -273,7 +271,7 @@ function ServicesScreen({ navigation }) {
             }
         }
         getInv();
-    }, [check]);
+    }, []);
 
     const GuestCardComponentInv = (props) => {
         const [value, setValue] = useState(0);
@@ -445,7 +443,7 @@ export default class GuestScreen extends Component {
         return (
             <NavigationContainer>
                 <Drawer.Navigator
-                    initialRouteName="Services"
+                    initialRouteName="Home"
                     drawerType="slide"
                     drawerStyle={styles.Drawer}
                     drawerContent={props => {
