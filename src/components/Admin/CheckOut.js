@@ -139,7 +139,7 @@ const CheckOut = () => {
 
     return (
         <AdminContainer>
-            <Form action="#" id="formBox">
+            <Form id="formBox">
                 <FormH1>Check Out Guest</FormH1>
                 <FormLabel htmlFor="for">Search Room</FormLabel>
                 <FormInput type="name" ref={(c) => Search = c} />
