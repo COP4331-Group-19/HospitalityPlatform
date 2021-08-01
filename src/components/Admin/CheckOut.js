@@ -97,6 +97,26 @@ const CheckOut = () => {
                     cancellable: "Cancel"
                 }});
             if (result) {
+                
+                var configA = {
+                    method: "delete",
+                    url: bp.buildPath("api/account/" + props.id),
+                    headers: {
+                        "Content-Type": "application/json",
+                        "authorization": Token
+                    }
+                };
+
+                axios(configA).then(function (response) {
+                    var ud = response.data;
+                    if (ud.err_code) {
+                        setMessage(ud.description);
+                        setSR([]);
+                    } 
+                }).catch(function (error) {
+                    setMessage(' ' + error);
+                });
+
                 console.log("You click yes!");
                 return;
             }
@@ -110,7 +130,7 @@ const CheckOut = () => {
                 <AdminH2>UserName : {props.username}</AdminH2>
                 <AdminP>CheckInDate : {props.checkin}</AdminP>
                 <AdminP>CheckOutDate : {props.checkout}</AdminP>
-                <FormButtonDelete type="submit" class="button" onClick={coGuest}>
+                <FormButtonDelete class="button" onClick={coGuest}>
                     Check Out
                 </FormButtonDelete>
             </AdminCard>
@@ -124,7 +144,7 @@ const CheckOut = () => {
                 <FormLabel htmlFor="for">Search Room</FormLabel>
                 <FormInput type="name" ref={(c) => Search = c} />
                 <FormLabel>{message}</FormLabel>
-                <FormButton type="submit" onClick={doSearch}>Search</FormButton>
+                <FormButton onClick={doSearch}>Search</FormButton>
             </Form>
             <div id="searchResults">
                 <AdminH1_5>Search Results</AdminH1_5>
