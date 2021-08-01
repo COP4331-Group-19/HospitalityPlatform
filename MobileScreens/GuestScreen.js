@@ -161,11 +161,8 @@ function PendingOrderScreen({ navigation }) {
             try {
                 var ud = JSON.parse(await response.text());
                 for (var i = 0; i < ud.length; i++) {
-                    ItemsArray[i] = ud[i].name + '#' + ud[i].description + '#' + ud[i].img + '#' + ud[i].item_id;
                     ItemsDB[ud[i].item_id.toString()] = {
                         "name": ud[i].name,
-                        "desc": ud[i].description,
-                        "img": ud[i].img
                     }
                 }
             } catch (e) {
@@ -185,6 +182,11 @@ function PendingOrderScreen({ navigation }) {
                 var ud = res.orders;
                 for (let i = 0; i < ud.length; i++) {
                     itemID = ud[i].item_id.toString();
+                    let a = 0;
+                    if(itemID === -1){
+                        a++;
+                        setMessage(a);
+                    }
                     itemObj = ItemsDB[itemID];
                     // Deleted item = is invalid.
                     if (typeof itemObj === "undefined")
@@ -204,7 +206,7 @@ function PendingOrderScreen({ navigation }) {
         return (
             <View style={styles.Tasks}>
                 <View style={styles.separator}>
-                    <Text style={styles.taskinfo}>{" "}Order: {props.quantity} {props.name}{" "}</Text>
+                    <Text style={styles.taskinfo}>{" "}{props.quantity} {props.name}{" "}</Text>
                 </View>
             </View>
         );
@@ -237,7 +239,7 @@ function PendingOrderScreen({ navigation }) {
                     <ScrollView style={{ height: '70%' }}>
                         {
                             WO.map(itm =>
-                                <WOrderList key={itm.split('#')[3]} name={itm.split('#')[0]} quantity={itm.split('#')[1]} order={itm.split('#')[3]} />
+                                <WOrderList key={itm.split('#')[2]} name={itm.split('#')[0]} quantity={itm.split('#')[1]} order={itm.split('#')[2]} />
                             )
                         }
                     </ScrollView>
@@ -254,8 +256,6 @@ function ServicesScreen({ navigation }) {
     const [message, setMessage] = useState(null);
     const [Inv, setInv] = useState([]);
     const [Ord, setOrd] = useState([]);
-
-    var check = 0;
     //INVENTORY
     const urlI = bp.buildPath("api/inventory");
     useEffect(() => {
@@ -273,7 +273,7 @@ function ServicesScreen({ navigation }) {
             }
         }
         getInv();
-    }, [check]);
+    }, []);
 
     const GuestCardComponentInv = (props) => {
         const [value, setValue] = useState(0);
@@ -295,26 +295,25 @@ function ServicesScreen({ navigation }) {
             }
         }
         return (
-            <View style={styles.Tasks}>
-
-                <View style={{ flexDirection: 'row' }}>
-                    <TouchableOpacity
+            <View style={styles.menuContainer}>
+                 <View style={{ flexDirection: 'column' }}>
+                        <Text style={styles.taskinfo}>{props.items}</Text>
+                        <Text style={styles.taskinfo}>{" x"+value}</Text>
+                 </View>
+                <View style={styles.AddDelContainer}>
+                    <TouchableOpacity 
                         color="black"
                         style={styles.claimButton}
                         onPress={incIvn}
                     >
-                        <Text style={styles.taskinfo}>+</Text>
+                        <Text style={styles.AddDelText}>+</Text>
                     </TouchableOpacity>
-                    <View style={{ flexDirection: 'column' }}>
-                        <Text style={styles.taskinfo}>{props.items}</Text>
-                        <Text style={styles.taskinfo}>{value}</Text>
-                    </View>
-                    <TouchableOpacity
+                    <TouchableOpacity 
                         color="black"
                         style={styles.claimButton}
                         onPress={decIvn}
                     >
-                        <Text style={styles.taskinfo}>-</Text>
+                        <Text style={styles.AddDelText}>-</Text>
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity
@@ -322,14 +321,13 @@ function ServicesScreen({ navigation }) {
                     style={styles.claimButton}
                     onPress={AddToOrder}
                 >
-                    <Text style={styles.taskinfo}>Add To Cart</Text>
+                    <Text style={styles.AddToCartButton}>Add To Cart</Text>
                 </TouchableOpacity>
             </View>
         );
     };
 
     const GuestCardComponentOrd = (props) => {
-
         return (
             <View style={styles.Tasks}>
                 <View style={{ flexDirection: 'row' }}>
@@ -365,14 +363,14 @@ function ServicesScreen({ navigation }) {
 
     const Cancel = async => {
         setOrd([]);
-        setMessage('Cancel');
+        setMessage('Cart Cleared');
     }
 
     return (
         <View style={styles.container}>
             <ImageBackground
                 style={styles.backgroundImage}
-            // source={require("../images/testphoto.jpg")}
+                //source={require("../images/testphoto.jpg")}
             >
                 {/* Navigation Bar */}
                 <View style={styles.topbar}>
@@ -387,24 +385,26 @@ function ServicesScreen({ navigation }) {
                 </View>
                 {/*Break*/}
                 <Text>{"\n"}</Text>
+
                 <View style={styles.listoftasks}>
                     <Text style={{ color: 'red' }}>{message}</Text>
                     <TouchableOpacity
                         color="black"
-                        style={styles.EditButton}
+                        style={styles.OrdButton}
                         onPress={Order}
                     >
-                        <Text>Order</Text>
+                        <Text style={styles.editbuttontext}>Order</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity
                         color="black"
-                        style={styles.EditButton}
+                        style={styles.ClrButton}
                         onPress={Cancel}
                     >
-                        <Text>Clear Cart</Text>
+                    <Text style={styles.editbuttontext}>Clear All Orders</Text>
                     </TouchableOpacity>
-                    <Text style={styles.title}>Cart</Text>
-                    <ScrollView style={{ height: '30%' }}>
+                    <Text style={styles.title}>Your Cart</Text>
+                    <ScrollView style={{ height: '100%' }}>
                         {
                             Ord.map(itm =>
                                 <GuestCardComponentOrd key={itm.split('#')[3]} items={itm.split("#")[0]} id={itm.split('#')[3]} quantity={itm.split('#')[4]} />
@@ -412,7 +412,7 @@ function ServicesScreen({ navigation }) {
                         }
                     </ScrollView>
                     <Text style={styles.title}>Menu</Text>
-                    <ScrollView style={{ height: '70%' }}>
+                    <ScrollView style={{ height: '150%' }}>
                         {
                             Inv.map(itm =>
                                 <GuestCardComponentInv key={itm.split('#')[3]} items={itm.split("#")[0]} id={itm.split('#')[3]} />
@@ -420,13 +420,10 @@ function ServicesScreen({ navigation }) {
                         }
                     </ScrollView>
                 </View>
-
             </ImageBackground>
-
         </View>
     );
 }
-
 //Drawer
 const Drawer = createDrawerNavigator();
 
@@ -445,7 +442,7 @@ export default class GuestScreen extends Component {
         return (
             <NavigationContainer>
                 <Drawer.Navigator
-                    initialRouteName="Services"
+                    initialRouteName="Home"
                     drawerType="slide"
                     drawerStyle={styles.Drawer}
                     drawerContent={props => {
@@ -588,9 +585,10 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: "white",
     },
-    EditButton: {
+    OrdButton: {
+        margin: 8,
         flexDirection: "row",
-        backgroundColor: "#BC3908",
+        backgroundColor: "green",
         alignContent: "center",
         justifyContent: "center",
         width: "30%",
@@ -603,12 +601,31 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.36,
         shadowRadius: 6.68,
-
         elevation: 11,
+        alignItems: 'center'
+    },
+    ClrButton: {
+        margin: 8,
+        flexDirection: "row",
+        backgroundColor: "red",
+        alignContent: "center",
+        justifyContent: "center",
+        width: "30%",
+        borderRadius: 5,
+        padding: 10,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 5,
+        },
+        shadowOpacity: 0.36,
+        shadowRadius: 6.68,
+        elevation: 11,
+        alignItems: 'center'
     },
     editbuttontext: {
-        fontSize: 30,
-        color: "black",
+        fontSize: 15,
+        color: "white",
     },
     BreakButton: {
         backgroundColor: "#14CCA4",
@@ -628,15 +645,34 @@ const styles = StyleSheet.create({
         fontSize: 30,
     },
     listoftasks: {
-        maxHeight: "70%",
+        maxHeight: "90%",
         width: "80%",
+        alignItems: 'center'
     },
     Tasks: {
-        padding: 0,
+        padding: 10,
         borderRadius: 1,
         backgroundColor: "white",
         borderColor: "#6D7275",
         borderWidth: 10,
+    },
+    menuContainer: {
+        width: 225,
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: "#14CCA4",
+        borderColor: "black",
+        borderWidth: 5,
+        
+    },
+    pendingContainer: {
+        width: 300,
+        padding: 1,
+        borderRadius: 1,
+        backgroundColor: "#14CCA4",
+        borderColor: "#6D7275",
+        borderWidth: 10,
+        
     },
     separator: {
         flex: 1,
@@ -649,27 +685,43 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.36,
         shadowRadius: 6.68,
-
         elevation: 11,
     },
     taskinfo: {
+        fontSize: 40,
+        textAlign: "center"
+    },
+    AddToCartButton: {
+        backgroundColor: "black",
+        color: "white",
+        borderRadius: 30,
+        fontSize: 15,
+        padding: 15,
+        marginLeft: 40
+    },
+    AddDelText: {
+        backgroundColor: "black",
+        color: "white",
+        borderRadius: 30,
         fontSize: 30,
+        padding: 15,
+        shadowOpacity: 0,
+        marginLeft: 20
+
+    },
+    AddDelContainer: {
+        flexDirection: 'row',
+        
     },
     claimButton: {
-        backgroundColor: "#14CCA4",
         padding: 10,
         flexDirection: "row",
-        shadowColor: "black",
-        shadowOffset: {
-            width: 0,
-            height: 5,
-        },
-        shadowOpacity: 0.36,
-        shadowRadius: 6.68,
-        elevation: 11,
+       
     },
     title: {
+        textAlign: 'center',
+        fontWeight: 'bold',
         fontSize: 25,
-        color: 'green'
-    }
+        color: 'black'
+    },
 });
