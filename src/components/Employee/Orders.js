@@ -173,7 +173,7 @@ const Orders = () => {
       axios(configMO).then(function (response) {
         var check = response.data;
         if (check.err_code) {
-          setMessageC(' ' + check.description);
+          // setMessageC(' ' + check.description);
           //Makes it look like its working
           let Aray = [...Clm];
           var index = Aray.indexOf(props.name + '#' + props.qun + '#' + props.room + '#' + props.order + '#' + props.img);

@@ -4,20 +4,36 @@ import Storage from '../../tokenStorage.js';
 import { confirm } from "react-confirm-box";
 import {
     AdminContainer,
+    AdminP,
     AdminH1,
     AdminH1_5,
+    AdminH1_75,
+    AdminH2,
     AdminWrapper,
+    AdminWrapperDeux,
+    CheckoutCard
 } from "./AdminElements";
 import {
     Form,
     FormH1,
     FormLabel,
     FormInput,
+    CapInput,
     FormButton,
-    Button
+    Button,
+    CapButton
 } from "./AdminAddInventoryElements";
-import { AdminCard, AdminH2, AdminP, FormButtonDelete } from "./AdminAddInventoryElements";
+import { AdminCard, FormButtonDelete } from "./AdminAddInventoryElements";
 import {GuestEmptyWarn} from "../Guest/GuestElements";
+import Guest from "../Guest";
+
+const phoneNumberIfy = (str) => {
+    let num = str.replaceAll(/\D/g, "");
+    if (num.length === 10)
+        return `(${num.substring(0,3)}) ${num.substring(3,6)}-${num.substring(6)}`;
+    else
+        return str;
+}
 
 const CheckOut = () => {
     var Search = '';
@@ -32,29 +48,6 @@ const CheckOut = () => {
     //required files
     var bp = require("../Path.js");
 
-    //Get all user data
-    var config = {
-        method: "get",
-        url: bp.buildPath("api/account/all"),
-        headers: {
-            "Content-Type": "application/json",
-            "authorization": Token
-        }
-    };
-
-    useEffect(async () => {
-        axios(config).then(function (response) {
-            var ud = response.data;
-            if (ud.err_code) {
-                setMessage(ud.description);
-            } else {
-                Users = ud;
-            }
-        }).catch(function (error) {
-            setMessage(' ' + error);
-        });
-    });
-
     const revert = async => {
         // document.getElementById("formBox").style.display = "grid";
         // document.getElementById("searchResults").style.display = "none";
@@ -62,29 +55,62 @@ const CheckOut = () => {
 
     const doSearch = async => {
         if (Search.value === '') {
-            setMessage("Input Room that needs to be searched...");
+            setMessage("Input guest's name above.");
             setSR([]);
         }
         else {
-            setMessage('Getting User Information...');
-            setSR([]);
-            //Set SR with correct user information
-            for(let i = 0; i < Users.length; i++){
-                if(Users[i].room === Search.value){
-
-                    let dateI = new Date(Users[i].checkin);
-                    let dateO = new Date(Users[i].checkout);
-
-                    setSR([Users[i].first_name + Users[i].last_name + '#' + Users[i].email + '#' + Users[i].phone + '#' + Users[i].username + '#' + Users[i].room + '#' + Users[i].user_id + '#' + dateI + '#' + dateO]);
+            setMessage('Loading...');
+            // Do the Web request.
+            //Get all user data
+            var config = {
+                method: "post",
+                url: bp.buildPath("api/account/search"),
+                headers: {
+                    "Content-Type": "application/json",
+                    "authorization": Token
+                },
+                data: JSON.stringify({
+                    "query": Search.value
+                })
+            };
+            axios(config).then(function (response) {
+                var ud = response.data;
+                if (ud.err_code) {
+                    setMessage(ud.description);
+                } else {
+                    // We got the data. Set SR with correct user information
+                    setMessage("");
+                    setSR([]);
+                    for (let i = 0; i < ud.length; i++) {
+                        if (ud[i].role === "guest") {
+                            let dateI = new Date(ud[i].checkin);
+                            let dateO = new Date(ud[i].checkout);
+                            setSR(item => [...item,
+                                {
+                                    "name": `${ud[i].first_name} ${ud[i].last_name}`,
+                                    "room": ud[i].room,
+                                    "username": ud[i].username,
+                                    "email": ud[i].email,
+                                    "phone": ud[i].phone,
+                                    "cIn": dateI.toLocaleDateString(),
+                                    "cOut": dateO.toLocaleDateString(),
+                                    "id": ud[i].user_id
+                                }
+                            ])
+                        }
+                    }
                 }
-            }
-            if(SR.length < 1){
-                setMessage("Room is Empty");
-            } else {
-                setMessage("");
-                // document.getElementById("formBox").style.display = "none";
-                // document.getElementById("searchResults").style.display = "block";
-            }
+            }).catch(function (error) {
+                setMessage(' ' + error);
+            });
+
+            // if (SR.length < 1){
+            //     setMessage("Room is Empty");
+            // } else {
+            //     setMessage("");
+            //     // document.getElementById("formBox").style.display = "none";
+            //     // document.getElementById("searchResults").style.display = "block";
+            // }
         }
     }
 
@@ -97,7 +123,7 @@ const CheckOut = () => {
                     cancellable: "Cancel"
                 }});
             if (result) {
-                
+
                 var configA = {
                     method: "delete",
                     url: bp.buildPath("api/account/" + props.id),
@@ -112,7 +138,7 @@ const CheckOut = () => {
                     if (ud.err_code) {
                         setMessage(ud.description);
                         setSR([]);
-                    } 
+                    }
                 }).catch(function (error) {
                     setMessage(' ' + error);
                 });
@@ -122,42 +148,36 @@ const CheckOut = () => {
             }
         }
         return (
-            <AdminCard>
-                <AdminH2>Name : {props.name}</AdminH2>
-                <AdminH2>Room : {props.room}</AdminH2>
-                <AdminP>Email : {props.email}</AdminP>
-                <AdminP>Phone : {props.phone}</AdminP>
-                <AdminH2>UserName : {props.username}</AdminH2>
-                <AdminP>CheckInDate : {props.checkin}</AdminP>
-                <AdminP>CheckOutDate : {props.checkout}</AdminP>
+            <CheckoutCard>
+                <AdminH1_75>{props.name}</AdminH1_75>
+                <AdminH2>Username: {props.username}</AdminH2>
+                <AdminH2>Room {props.room}</AdminH2>
+                <AdminP>📧&#xFE0E; {props.email} | 📞&#xFE0E; {phoneNumberIfy(props.phone)}</AdminP>
+                <AdminP>Staying {props.checkin} - {props.checkout}</AdminP>
                 <FormButtonDelete class="button" onClick={coGuest}>
                     Check Out
                 </FormButtonDelete>
-            </AdminCard>
+            </CheckoutCard>
         );
     };
 
     return (
         <AdminContainer>
-            <Form action="#" id="formBox">
-                <FormH1>Check Out Guest</FormH1>
-                <FormLabel htmlFor="for">Search Room</FormLabel>
-                <FormInput type="name" ref={(c) => Search = c} />
-                <FormLabel>{message}</FormLabel>
-                <FormButton onClick={doSearch}>Search</FormButton>
-            </Form>
+            <AdminH1_5 style={{marginTop: "45px"}}>Check Out Guest</AdminH1_5>
+            <div style={{textAlign: "center", display: "block", margin: "12px auto"}}>
+                <CapInput placeholder="Enter name..." type="name" ref={(c) => Search = c} />
+                <CapButton onClick={doSearch}>🔍&#xFE0E;</CapButton>
+            </div>
+            { (message) ? <GuestEmptyWarn>{message}</GuestEmptyWarn> : (SR.length === 0) ? <GuestEmptyWarn>No results (yet!)</GuestEmptyWarn> : null }
             <div id="searchResults">
-                <AdminH1_5>Search Results</AdminH1_5>
-                {/*<Button onClick={revert}>‹ Back</Button>*/}
-                <AdminP>{messageR}</AdminP>
-                { (SR.length === 0) ? <GuestEmptyWarn>No results.</GuestEmptyWarn> : null }
-                <AdminWrapper>
+                <AdminWrapperDeux>
                     {
                         SR.map(itm =>
-                            <AdminCardComponent name={itm.split('#')[0]} room={itm.split('#')[4]} username={itm.split('#')[3]} email={itm.split('#')[1]} phone={itm.split('#')[2]} checkin={itm.split('#')[6]} checkout={itm.split('#')[7]} id={itm.split('#')[5]} />
+                                <AdminCardComponent name={itm.name} room={itm.room} username={itm.username} email={itm.email} phone={itm.phone} checkin={itm.cIn} checkout={itm.cOut} id={itm.id} />
+                            // <AdminCardComponent name={itm.split('#')[0]} room={itm.split('#')[4]} username={itm.split('#')[3]} email={itm.split('#')[1]} phone={itm.split('#')[2]} checkin={itm.split('#')[6]} checkout={itm.split('#')[7]} id={itm.split('#')[5]} />
                         )
                     }
-                </AdminWrapper>
+                </AdminWrapperDeux>
             </div>
         </AdminContainer>
     );

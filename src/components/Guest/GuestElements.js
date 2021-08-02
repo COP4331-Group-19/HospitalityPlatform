@@ -245,7 +245,7 @@ export const FormLittle = styled.form`
   }
 `;
 
-export const Button = styled(Link)`
+export const Button = styled.a`
   display: inline-block;
   margin: 8px;
   border-radius: 50px;
@@ -303,7 +303,7 @@ export const FormButton = styled.a`
   }
 `;
 
-export const IncDecButton = styled.button`
+export const IncDecButton = styled.a`
   cursor: pointer;
   display: flex;
   height 100%;

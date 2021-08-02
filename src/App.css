@@ -51,3 +51,6 @@ html, body {
 .confirm-box__overlay.confirm-box__overlay {
   background: rgba(0,0,0,0.7);
 }
+#stateAdd {
+  display: none;
+}

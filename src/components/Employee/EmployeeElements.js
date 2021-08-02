@@ -132,6 +132,7 @@ export const EmployeeH2 = styled.h2`
   font-family: Arial, Helvetica, sans-serif;
   color: black;
   margin-bottom: 10px;
+  text-shadow: 0 0 3px white;
 `;
 export const EmployeeH3 = styled.h3`
   font-size: 2rem;
@@ -149,7 +150,9 @@ export const EmployeeP = styled.p`
   font-size: 1rem;
   font-family: Arial, Helvetica, sans-serif;
   color: black;
+  text-shadow: 0 0 2px white;
   text-align: center;
+  margin: 3px;
 `;
 export const FormWrap = styled.div`
   height: 90%;

@@ -6,16 +6,18 @@ import {
   AdminH1,
   AdminWrapper
 } from "./AdminElements";
-
+import {GuestEmptyWarn} from "../Guest/GuestElements";
 import {
   Form,
   FormH1,
   FormLabel,
   FormInput,
   FormButton,
+  Button
 } from "./AdminAddInventoryElements";
 import { AdminCard, AdminH2, AdminP, FormButtonDelete } from "./AdminAddInventoryElements";
 import {confirm} from "react-confirm-box";
+import {HelpLink} from "../SignIn/SigninElements";
 
 const Inventory = () => {
   const [message, setMessage] = useState(null);
@@ -108,12 +110,22 @@ const Inventory = () => {
         {/* <AdminIcon src={Icon1} /> */}
         <AdminH2>{props.items}</AdminH2>
         <AdminP>{props.des}</AdminP>
-        <FormButtonDelete type="submit" class="button" onClick={delInv}>
-          Delete
-        </FormButtonDelete>
+        {
+          (!props.add) ? <FormButtonDelete type="submit" class="button" onClick={delInv}>Delete</FormButtonDelete> : <FormButtonDelete style={{background: "black"}} type="submit" class="button" onClick={navToAdd}>Add Item</FormButtonDelete>
+        }
       </AdminCard>
     );
   };
+
+  const navToInv = evt => {
+    document.getElementById("stateAdd").style.display = "none";
+    document.getElementById("stateList").style.display = "grid";
+  }
+
+  const navToAdd = evt => {
+    document.getElementById("stateList").style.display = "none";
+    document.getElementById("stateAdd").style.display = "grid";
+  }
 
   const doAddInv = async event => {
     if (Name.value.localeCompare('') === 0 || Description.value.localeCompare('') === 0 || Img.value.localeCompare('') === 0) {
@@ -141,7 +153,7 @@ const Inventory = () => {
           setMessage('Error' + res.description);
         }else{
           setMessage('New Item Added');
-          //window.location.href = "/Inventory";
+          window.location.reload();
         }
       }).catch(function (error) {
         setMessage(' ' + error);
@@ -151,7 +163,17 @@ const Inventory = () => {
 
   return (
     <AdminContainer>
-      <Form action="#">
+      <AdminH1>Inventory</AdminH1>
+      <GuestEmptyWarn>{messageI}</GuestEmptyWarn>
+      <AdminWrapper id="stateList">
+        {
+          Inv.map(itm =>
+            <AdminCardComponent items={itm.split("#")[0]} des={itm.split("#")[1]} img={itm.split("#")[2]} id={itm.split("#")[3]}/>
+          )
+        }
+        <AdminCardComponent onclick={navToAdd} items="New Item" des="Click here to add a new item" add />
+      </AdminWrapper>
+      <Form id="stateAdd" action="#">
         <FormH1>Add Inventory</FormH1>
         <FormLabel htmlFor="for">Name</FormLabel>
         <FormInput type="name" ref={(c) => Name = c} />
@@ -161,16 +183,10 @@ const Inventory = () => {
         <FormInput type="name" ref={(c) => Img = c} />
         <FormLabel>{message}</FormLabel>
         <FormButton type="submit" onClick={doAddInv} >Add</FormButton>
+        <p className="forgot-password text-right">
+          <HelpLink onClick={navToInv}>Cancel</HelpLink>
+        </p>
       </Form>
-      <AdminH1>Inventory</AdminH1>
-      <FormLabel>{messageI}</FormLabel>
-      <AdminWrapper>
-        {
-          Inv.map(itm =>
-            <AdminCardComponent items={itm.split("#")[0]} des={itm.split("#")[1]} img={itm.split("#")[2]} id={itm.split("#")[3]}/>
-          )
-        }
-      </AdminWrapper>
     </AdminContainer>
   );
 };

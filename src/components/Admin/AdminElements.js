@@ -64,21 +64,34 @@ export const FormButton = styled.a`
 `;
 
 export const AdminContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
   background: #2c2c2c;
 `;
 
 export const AdminWrapper = styled.div`
+  margin: 20px auto;
   max-width: 1000px;
-  margin: 100px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   align-items: center;
   grid-gap: 16px;
   padding: 0 50px;
+
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media screen and (max-width: 768px) {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+`;
+
+export const AdminWrapperDeux = styled.div`
+  max-width: 1000px;
+  margin: auto;
+  align-items: center;
+  padding: 30px;
 
   @media screen and (max-width: 1000px) {
     grid-template-columns: 1fr 1fr;
@@ -109,6 +122,27 @@ export const InventoryWrapper = styled.div`
   }
 `;
 
+export const CheckoutCard = styled.div`
+  background: #5c5c5c;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  border-radius: 10px;
+  max-height: 340px;
+  padding: 30px;
+  margin: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02);
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+  }
+`
+
 export const AdminCard = styled.div`
   background: #5c5c5c;
   display: flex;
@@ -138,7 +172,7 @@ export const AdminH1 = styled.h1`
   font-size: 2.5rem;
   color: #fff;
   margin-top: 100px;
-  margin-bottom: -60px;
+  margin-bottom: 10px;
   display: flex;
   justify-content: center;
   align-items: left;
@@ -158,6 +192,19 @@ export const AdminH1_5 = styled.h1`
 
   @media screen and (max-width: 480px) {
     font-size: 2rem;
+  }
+`;
+
+export const AdminH1_75 = styled.h1`
+  font-size: 1.25rem;
+  color: #fff;
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: left;
+
+  @media screen and (max-width: 480px) {
+    font-size: 0.75rem;
   }
 `;
 

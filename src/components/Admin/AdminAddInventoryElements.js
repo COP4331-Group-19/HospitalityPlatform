@@ -26,6 +26,24 @@ export const Button = styled.a`
     padding: 20px;
 `;
 
+export const CapButton = styled.a`
+  text-align: center;
+  background: #14cca4;
+  padding: 13px;
+  border: none;
+  border-radius: 0 4px 4px 0;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  width: 100px;
+
+  &:hover {
+    transition: all 0.2s ease-in-out;
+    background: #000;
+    color: #14cca4;
+  }
+`
+
 export const FormWrap = styled.div`
   height: 100%;
   display: flex;
@@ -65,11 +83,11 @@ export const FormContent = styled.div`
 export const Form = styled.form`
   background: #010101;
   max-width: 400px;
+  margin: 100px auto;
   height: auto;
   width: 100%;
   z-index: 1;
   display: grid;
-  margin: 100px;
   padding: 80px 32px;
   border-radius: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
@@ -97,6 +115,13 @@ export const FormInput = styled.input`
   margin-bottom: 32px;
   border: none;
   border-radius: 4px;
+`;
+export const CapInput = styled.input`
+  padding: 16px;
+  margin-bottom: 32px;
+  border: none;
+  border-radius: 4px 0 0 4px;
+  transform: translateY(-3px);
 `;
 
 export const FormButton = styled.a`
@@ -147,11 +172,13 @@ export const AdminH2 = styled.h2`
   color: black;
   font-family: Arial, Helvetica, sans-serif;
   margin-bottom: 10px;
+  text-shadow: 0 0 3px white;
 `;
 
 export const AdminP = styled.p`
   font-size: 1rem;
   color: black;
+  text-shadow: 0 0 2px white;
   font-family: Arial, Helvetica, sans-serif;
   text-align: center;
 `;
@@ -159,6 +186,7 @@ export const AdminP = styled.p`
 export const FormButtonDelete = styled.button`
   background: red;
   padding: 4px 10px;
+  margin: 8px;
   border: none;
   border-radius: 4px;
   color: #fff;

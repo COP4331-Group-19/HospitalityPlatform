@@ -136,7 +136,7 @@ const Guest = () => {
         } else {
           Ord[i].split('#')[1] = "ORDERED";
           setMessageO("All Things Ordered");
-          window.location.href="/guest";
+          window.location.reload();
         }
       }).catch(function (error) {
         setMessage(' ' + error);
