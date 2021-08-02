@@ -73,7 +73,7 @@ const Guest = () => {
         setOrd(item => [...item, props.items + "#" + props.des + "#" + props.img + "#" + props.id + '#' + value]);
       }
       else {
-        setOrdErr('You cant order Nothing');
+        setOrdErr('You can\'t order anything');
       }
 
     }
