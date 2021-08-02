@@ -35,7 +35,7 @@ const Footer = () => {
             <SocialLogo to="/" onClick={toggleHome}>
               Hotel Knightro
             </SocialLogo>
-            <WebsiteRights>Powered by HospitalityPlatform 1.0.0</WebsiteRights>
+            <WebsiteRights>Powered by Sunbay 1.0.0</WebsiteRights>
             <WebsiteRights>A COP4331 Group 19 Project.</WebsiteRights>
           </SocialMediaWrap>
         </SocialMedia>
