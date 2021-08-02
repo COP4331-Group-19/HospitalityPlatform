@@ -132,6 +132,7 @@ function ProfileScreen({ navigation }) {
         <Text>{"\n"}</Text>
         <Text style={styles.ProfileInfo}>{message}</Text>
         <View style={styles.Profile}>
+          <Feather name = 'user' size = {60} color = "turquoise"   />
           <Text style={styles.ProfileInfo}>FirstName: {FirstName}</Text>
           <Text style={styles.ProfileInfo}>LastName: {LastName}</Text>
           <Text style={styles.ProfileInfo}>PhoneNumber: {PhoneNumber}</Text>
@@ -439,7 +440,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    backgroundColor: "#3D3D3D",
+    backgroundColor: 'royalblue',
     opacity: 1,
   },
   Drawer: {
@@ -463,7 +464,7 @@ const styles = StyleSheet.create({
   },
   topbartext: {
     fontSize: 40,
-    color: "black",
+    color: "white",
   },
   LogoutButton: {
     alignItems: "center",
@@ -486,7 +487,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   active: {
-    backgroundColor: "#6D7275",
+    backgroundColor: 'sandybrown',
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
@@ -497,7 +498,7 @@ const styles = StyleSheet.create({
   },
   activetext: {
     fontSize: 30,
-    color: "white",
+    color: "darkblue",
   },
   ActiveButton: {
     backgroundColor: "#14CCA4",
@@ -521,8 +522,9 @@ const styles = StyleSheet.create({
     color: "black",
   },
   Profile: {
-    backgroundColor: "#6D7275",
+    backgroundColor: 'sandybrown',
     borderRadius: 5,
+    textAlign: 'center',
     padding: 10,
     width: "99%",
     opacity: 1,
@@ -538,7 +540,7 @@ const styles = StyleSheet.create({
   },
   ProfileInfo: {
     fontSize: 30,
-    color: "white",
+    color: "aqua",
   },
   EditButton: {
     flexDirection: "row",
