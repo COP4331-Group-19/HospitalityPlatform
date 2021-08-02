@@ -67,7 +67,7 @@ function HomeScreen({ navigation }) {
         <Text>{"\n"}</Text>
         {/* CheckIn */}
         <View style={styles.active}>
-          <Text style={styles.activetext}>Name : {Name}</Text>
+          <Text style={styles.activetext}>{Name}   </Text>
           <Text style={styles.activetext}>You're logged in! Let's get to work.</Text>
         </View>
         <Text style={styles.activetext}>{message}</Text>
@@ -103,7 +103,7 @@ function ProfileScreen({ navigation }) {
         setPNumber(ud.phone);
         setEmail(ud.email);
         setUName(ud.username);
-        setPass(ud.password);
+        setPass("*******");
       } catch (e) {
         setMessage(' ' + e.message);
       }
@@ -132,7 +132,7 @@ function ProfileScreen({ navigation }) {
         <Text>{"\n"}</Text>
         <Text style={styles.ProfileInfo}>{message}</Text>
         <View style={styles.Profile}>
-          <Feather name = 'user' size = {60} color = "turquoise"   />
+          <Feather name = 'user' size = {60} color = "orange"   />
           <Text style={styles.ProfileInfo}>FirstName: {FirstName}</Text>
           <Text style={styles.ProfileInfo}>LastName: {LastName}</Text>
           <Text style={styles.ProfileInfo}>PhoneNumber: {PhoneNumber}</Text>
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignItems: "center",
-    backgroundColor: 'royalblue',
+    backgroundColor: '#3D3D3D',
     opacity: 1,
   },
   Drawer: {
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   active: {
-    backgroundColor: 'sandybrown',
+    backgroundColor: '#6D7275',
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
@@ -495,12 +495,12 @@ const styles = StyleSheet.create({
     padding: 100,
     width: "99%",
     opacity: 1,
-  },
-  activetext: {
+},
+activetext: {
     fontSize: 30,
-    color: "darkblue",
-  },
-  ActiveButton: {
+    color: "white",
+},
+ActiveButton: {
     backgroundColor: "#14CCA4",
     borderRadius: 5,
     flexDirection: "row",
@@ -508,40 +508,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
-      height: 5,
+        width: 0,
+        height: 5,
     },
     shadowOpacity: 0.36,
     shadowRadius: 6.68,
 
     elevation: 11,
-  },
-  activebuttontext: {
+},
+activebuttontext: {
     fontSize: 30,
     padding: 5,
     color: "black",
-  },
+},
   Profile: {
-    backgroundColor: 'sandybrown',
-    borderRadius: 5,
+    backgroundColor: '#6D7275',
     textAlign: 'center',
+    borderRadius: 5,
     padding: 10,
     width: "99%",
     opacity: 1,
     shadowColor: "#000",
     shadowOffset: {
-      width: 0,
-      height: 5,
+        width: 0,
+        height: 5,
     },
     shadowOpacity: 0.36,
     shadowRadius: 6.68,
 
     elevation: 11,
-  },
-  ProfileInfo: {
-    fontSize: 30,
-    color: "aqua",
-  },
+},
+ProfileInfo: {
+    fontSize: 25,
+    color: "white",
+},
   EditButton: {
     flexDirection: "row",
     backgroundColor: "#BC3908",
