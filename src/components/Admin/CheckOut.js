@@ -83,8 +83,8 @@ const CheckOut = () => {
                     setSR([]);
                     for (let i = 0; i < ud.length; i++) {
                         if (ud[i].role === "guest") {
-                            let dateI = new Date(ud[i].checkin);
-                            let dateO = new Date(ud[i].checkout);
+                            let dateI = new Date(ud[i].checkin * 1000);
+                            let dateO = new Date(ud[i].checkout * 1000);
                             setSR(item => [...item,
                                 {
                                     "name": `${ud[i].first_name} ${ud[i].last_name}`,
