@@ -26,7 +26,7 @@ export default class LoginScreen extends Component {
             style={styles.DrawerButton}
             onPress={() => navigation.openDrawer()}
           ></TouchableOpacity>
-          <Text style={styles.topbartext}> Hotel Knightro</Text>
+          <Text style={styles.topbartext}> SunBay Solutions</Text>
         </View>
         <ImageBackground
           style={styles.backgroundImage}

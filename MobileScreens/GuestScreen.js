@@ -14,6 +14,9 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerI
 import { NavigationContainer } from "@react-navigation/native";
 import bp from '../Path.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Moment from 'react-moment';
+
+
 
 //HomeScreen for Guest
 function HomeScreen({ navigation }) {
@@ -48,10 +51,7 @@ function HomeScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <ImageBackground
-                style={styles.backgroundImage}
-            // source={require("../images/testphoto.jpg")}
-            >
+            <ImageBackground style={styles.backgroundImage}>
                 {/* Navigation Bar */}
                 <View style={styles.topbar}>
                     <TouchableOpacity
@@ -84,9 +84,12 @@ function ProfileScreen({ navigation }) {
     const [Email, setEmail] = useState(null);
     const [UserName, setUName] = useState(null);
     const [Password, setPass] = useState(null);
+    const [Room, setRoom] = useState(null);
+    const [CheckIn, setCheckIn] = useState(null);
+    const [CheckOut, setCheckOut] = useState(null);
     //Getting user Info
     const urlA = bp.buildPath("api/account");
-
+    
     useEffect(() => {
         async function getUserData() {
             var Token = (await AsyncStorage.getItem('token_data')).toString();
@@ -103,6 +106,11 @@ function ProfileScreen({ navigation }) {
                 setEmail(ud.email);
                 setUName(ud.username);
                 setPass(ud.password);
+                setRoom(ud.room);
+                setCheckIn(ud.checkin);
+                setCheckOut(ud.checkout);
+                let dateIn = new Date(CheckIn);
+                let dateOut = new Date(CheckOut);
             } catch (e) {
                 setMessage(' ' + e.message);
             }
@@ -112,10 +120,7 @@ function ProfileScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <ImageBackground
-                style={styles.backgroundImage}
-            // source={require("../images/testphoto.jpg")}
-            >
+            <ImageBackground style={styles.backgroundImage}>
                 {/* Navigation Bar */}
                 <View style={styles.topbar}>
                     <TouchableOpacity
@@ -131,12 +136,16 @@ function ProfileScreen({ navigation }) {
                 <Text>{"\n"}</Text>
                 <Text style={styles.ProfileInfo}>{message}</Text>
                 <View style={styles.Profile}>
+                    <Feather name = 'user' size = {60} color = "blue"   />
                     <Text style={styles.ProfileInfo}>First Name: {FirstName}</Text>
                     <Text style={styles.ProfileInfo}>Last Name: {LastName}</Text>
                     <Text style={styles.ProfileInfo}>Phone Number: {PhoneNumber}</Text>
                     <Text style={styles.ProfileInfo}>Email: {Email}</Text>
                     <Text style={styles.ProfileInfo}>Username: {UserName}</Text>
                     <Text style={styles.ProfileInfo}>Password: {Password}</Text>
+                    <Text style={styles.ProfileInfo}>Room#: {Room}</Text>
+                    <Text style={styles.ProfileInfo}>CheckIn: {CheckIn}</Text>
+                    <Text style={styles.ProfileInfo}>CheckOut: {CheckOut}</Text>
                 </View>
             </ImageBackground>
         </View >
@@ -204,9 +213,9 @@ function PendingOrderScreen({ navigation }) {
     const WOrderList = (props) => {
 
         return (
-            <View style={styles.Tasks}>
+            <View style={styles.items}>
                 <View style={styles.separator}>
-                    <Text style={styles.taskinfo}>{" "}{props.quantity} {props.name}{" "}</Text>
+                    <Text style={styles.pendingitemInfo}>{" "}{props.quantity} {props.name}{" "}</Text>
                 </View>
             </View>
         );
@@ -215,10 +224,7 @@ function PendingOrderScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <ImageBackground
-                style={styles.backgroundImage}
-            // source={require("../images/testphoto.jpg")}
-            >
+            <ImageBackground style={styles.backgroundImage}>
                 {/* Navigation Bar */}
                 <View style={styles.topbar}>
                     <TouchableOpacity
@@ -233,7 +239,7 @@ function PendingOrderScreen({ navigation }) {
                 </View>
                 {/*Break*/}
                 <Text>{"\n"}</Text>
-                <View style={styles.listoftasks}>
+                <View style={styles.orderList}>
                     <Text style={styles.title}>Orders You Are Waiting On...</Text>
                     <Text style={{ color: 'red' }}>{message}</Text>
                     <ScrollView style={{ height: '70%' }}>
@@ -297,8 +303,8 @@ function ServicesScreen({ navigation }) {
         return (
             <View style={styles.menuContainer}>
                  <View style={{ flexDirection: 'column' }}>
-                        <Text style={styles.taskinfo}>{props.items}</Text>
-                        <Text style={styles.taskinfo}>{" x"+value}</Text>
+                        <Text style={styles.itemInfo}>{props.items}</Text>
+                        <Text style={styles.itemInfo}>{" "+value}</Text>
                  </View>
                 <View style={styles.AddDelContainer}>
                     <TouchableOpacity 
@@ -329,10 +335,10 @@ function ServicesScreen({ navigation }) {
 
     const GuestCardComponentOrd = (props) => {
         return (
-            <View style={styles.Tasks}>
+            <View style={styles.items}>
                 <View style={{ flexDirection: 'row' }}>
-                    <Text style={styles.taskinfo}>{" "}{props.quantity}{" "}</Text>
-                    <Text style={styles.taskinfo}>{props.items}</Text>
+                    <Text style={styles.itemInfo}>{" "}{props.quantity}{" "}</Text>
+                    <Text style={styles.itemInfo}>{props.items}</Text>
                 </View>
             </View>
         );
@@ -350,7 +356,7 @@ function ServicesScreen({ navigation }) {
                         setMessage(' ' + O.description);
                         i = Ord.length;
                     } else {
-                        setMessage("All Things Ordered");
+                        setMessage("All Things Ordered, a staff member will get it for you shortly");
                         setOrd([]);
                     }
                 } catch (e) {
@@ -368,10 +374,7 @@ function ServicesScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <ImageBackground
-                style={styles.backgroundImage}
-                //source={require("../images/testphoto.jpg")}
-            >
+            <ImageBackground style={styles.backgroundImage}>
                 {/* Navigation Bar */}
                 <View style={styles.topbar}>
                     <TouchableOpacity
@@ -381,12 +384,12 @@ function ServicesScreen({ navigation }) {
                     >
                         <Feather name="align-justify" size={50} color="black" />
                     </TouchableOpacity>
-                    <Text style={styles.topbartext}> Services</Text>
+                    <Text style={styles.topbartext}> Order</Text>
                 </View>
                 {/*Break*/}
                 <Text>{"\n"}</Text>
 
-                <View style={styles.listoftasks}>
+                <View style={styles.orderList}>
                     <Text style={{ color: 'red' }}>{message}</Text>
                     <TouchableOpacity
                         color="black"
@@ -484,7 +487,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         alignItems: "center",
-        backgroundColor: "#3D3D3D",
+        backgroundColor: 'darksalmon',
         opacity: 1,
     },
     Drawer: {
@@ -508,7 +511,8 @@ const styles = StyleSheet.create({
     },
     topbartext: {
         fontSize: 40,
-        color: "black",
+        color: "white",
+        fontweight: 'bold   ',
     },
     LogoutButton: {
         alignItems: "center",
@@ -531,7 +535,7 @@ const styles = StyleSheet.create({
         fontSize: 25,
     },
     active: {
-        backgroundColor: "#6D7275",
+        backgroundColor: 'cornsilk',
         justifyContent: "center",
         alignItems: "center",
         elevation: 5,
@@ -542,7 +546,7 @@ const styles = StyleSheet.create({
     },
     activetext: {
         fontSize: 30,
-        color: "white",
+        color: "purple",
     },
     ActiveButton: {
         backgroundColor: "#14CCA4",
@@ -566,7 +570,8 @@ const styles = StyleSheet.create({
         color: "black",
     },
     Profile: {
-        backgroundColor: "#6D7275",
+        backgroundColor: 'cornsilk',
+        textAlign: 'center',
         borderRadius: 5,
         padding: 10,
         width: "99%",
@@ -582,8 +587,8 @@ const styles = StyleSheet.create({
         elevation: 11,
     },
     ProfileInfo: {
-        fontSize: 30,
-        color: "white",
+        fontSize: 25,
+        color: "purple",
     },
     OrdButton: {
         margin: 8,
@@ -644,18 +649,20 @@ const styles = StyleSheet.create({
     breaktext: {
         fontSize: 30,
     },
-    listoftasks: {
+    orderList: {
         maxHeight: "90%",
         width: "80%",
         alignItems: 'center'
     },
-    Tasks: {
+    items: {
         padding: 10,
         borderRadius: 1,
         backgroundColor: "white",
         borderColor: "#6D7275",
         borderWidth: 10,
     },
+
+
     menuContainer: {
         width: 225,
         padding: 10,
@@ -687,9 +694,14 @@ const styles = StyleSheet.create({
         shadowRadius: 6.68,
         elevation: 11,
     },
-    taskinfo: {
-        fontSize: 40,
+    pendingitemInfo: {
+        fontSize: 30,
         textAlign: "center"
+    },
+    itemInfo: {
+        fontSize: 30,
+        textAlign: "center",
+        color: 'black',
     },
     AddToCartButton: {
         backgroundColor: "black",
@@ -721,7 +733,7 @@ const styles = StyleSheet.create({
     title: {
         textAlign: 'center',
         fontWeight: 'bold',
-        fontSize: 25,
-        color: 'black'
+        fontSize: 30,
+        color: 'gold'
     },
 });

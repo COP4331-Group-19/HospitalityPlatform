@@ -4,8 +4,6 @@ import {
     Text,
     View,
     ImageBackground,
-    FlatList,
-    TextInput,
     TouchableOpacity,
     ScrollView,
 } from "react-native";
@@ -119,7 +117,7 @@ function ProfileScreen({ navigation }) {
     //Getting user Info
     const urlA = bp.buildPath("api/account");
 
-    useEffect( () => {
+    useEffect(() => {
         async function getUserData() {
             var Token = (await AsyncStorage.getItem('token_data')).toString();
             const response = await fetch(urlA, { method: 'get', headers: { "Content-Type": "application/json", "authorization": Token } });
@@ -134,7 +132,7 @@ function ProfileScreen({ navigation }) {
                 setPNumber(ud.phone);
                 setEmail(ud.email);
                 setUName(ud.username);
-                setPass(ud.password);
+                setPass("*******");
             } catch (e) {
                 setMessage(' ' + e.message);
             }
@@ -162,6 +160,7 @@ function ProfileScreen({ navigation }) {
                 <Text>{"\n"}</Text>
                 <Text style={styles.ProfileInfo}>{message}</Text>
                 <View style={styles.Profile}>
+                    <Feather name='user' size={60} color="red" />
                     <Text style={styles.ProfileInfo}>FirstName: {FirstName}</Text>
                     <Text style={styles.ProfileInfo}>LastName: {LastName}</Text>
                     <Text style={styles.ProfileInfo}>PhoneNumber: {PhoneNumber}</Text>
