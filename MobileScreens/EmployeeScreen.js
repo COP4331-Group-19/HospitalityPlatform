@@ -59,7 +59,7 @@ function HomeScreen({ navigation }) {
             style={styles.DrawerButton}
             onPress={() => navigation.openDrawer()}
           >
-            <Feather name="align-justify" size={50} color="black" />
+            <Feather name="align-justify" size={50} color="white" />
           </TouchableOpacity>
           <Text style={styles.topbartext}> Home</Text>
         </View>
@@ -124,7 +124,7 @@ function ProfileScreen({ navigation }) {
             style={styles.DrawerButton}
             onPress={() => navigation.openDrawer()}
           >
-            <Feather name="align-justify" size={50} color="black" />
+            <Feather name="align-justify" size={50} color="white" />
           </TouchableOpacity>
           <Text style={styles.topbartext}> Profile</Text>
         </View>
@@ -343,7 +343,7 @@ function TaskScreen({ navigation }) {
             style={styles.DrawerButton}
             onPress={() => navigation.openDrawer()}
           >
-            <Feather name="align-justify" size={50} color="black" />
+            <Feather name="align-justify" size={50} color="white" />
           </TouchableOpacity>
           <Text style={styles.topbartext}> Orders</Text>
         </View>

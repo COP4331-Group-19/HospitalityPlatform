@@ -105,7 +105,7 @@ export default class LoginScreen extends Component {
     var obj = { username: global.Login.trim(), password: global.Password.trim() };
     var js = JSON.stringify(obj);
     const url = bp.buildPath("api/account/login");
-    this.setState({message:' LogingIn.....'});
+    this.setState({message:' Logging In.....'});
     try {
 
       const response = await fetch(url, { method: 'post', body: js, headers: { "Content-Type": "application/json"} });
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   },
   topbartext: {
     fontSize: 40,
-    color: "black",
+    color: "white",
   },
   backgroundImage: {
     width: "100%",

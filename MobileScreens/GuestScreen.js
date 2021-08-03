@@ -58,7 +58,7 @@ function HomeScreen({ navigation }) {
                         style={styles.DrawerButton}
                         onPress={() => navigation.openDrawer()}
                     >
-                        <Feather name="align-justify" size={50} color="black" />
+                        <Feather name="align-justify" size={50} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.topbartext}> Home</Text>
                 </View>
@@ -129,7 +129,7 @@ function ProfileScreen({ navigation }) {
                         style={styles.DrawerButton}
                         onPress={() => navigation.openDrawer()}
                     >
-                        <Feather name="align-justify" size={50} color="black" />
+                        <Feather name="align-justify" size={50} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.topbartext}> Profile</Text>
                 </View>
@@ -233,7 +233,7 @@ function PendingOrderScreen({ navigation }) {
                         style={styles.DrawerButton}
                         onPress={() => navigation.openDrawer()}
                     >
-                        <Feather name="align-justify" size={50} color="black" />
+                        <Feather name="align-justify" size={50} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.topbartext}> Pending Orders</Text>
 
@@ -383,7 +383,7 @@ function ServicesScreen({ navigation }) {
                         style={styles.DrawerButton}
                         onPress={() => navigation.openDrawer()}
                     >
-                        <Feather name="align-justify" size={50} color="black" />
+                        <Feather name="align-justify" size={50} color="white" />
                     </TouchableOpacity>
                     <Text style={styles.topbartext}> Order</Text>
                 </View>
@@ -460,7 +460,7 @@ export default class GuestScreen extends Component {
                 >
                     <Drawer.Screen name="Home" component={HomeScreen} />
                     <Drawer.Screen name="Profile" component={ProfileScreen} />
-                    <Drawer.Screen name="Services" component={ServicesScreen} />
+                    <Drawer.Screen name="Order" component={ServicesScreen} />
                     <Drawer.Screen name="Pending Orders" component={PendingOrderScreen} />
                 </Drawer.Navigator>
             </NavigationContainer>
