@@ -12,6 +12,7 @@ import {
   FormH1,
   FormLabel,
   FormInput,
+  FileInput,
   FormButton,
   Button
 } from "./AdminAddInventoryElements";
@@ -127,14 +128,25 @@ const Inventory = () => {
     document.getElementById("stateAdd").style.display = "grid";
   }
 
+  const createUrl = obj => {
+    Img.setAttribute("base64", "");
+    let el = obj.target;
+    console.log(el);
+    const reader = new FileReader();
+    reader.readAsDataURL(el.files[0]);
+    reader.addEventListener("load", () => {
+      Img.setAttribute("base64", reader.result);
+    }, false);
+  }
+
   const doAddInv = async event => {
-    if (Name.value.localeCompare('') === 0 || Description.value.localeCompare('') === 0 || Img.value.localeCompare('') === 0) {
+    if (Name.value.localeCompare('') === 0 || Description.value.localeCompare('') === 0 || (Img.getAttribute("base64") && Img.getAttribute("base64").localeCompare('') === 0) ) {
       setMessage('All fields need to be filled');
     }
     else {
 
       //JSON OBJECT
-      var obj = {name: Name.value, description: Description.value, img: Img.value};
+      var obj = {name: Name.value, description: Description.value, img: Img.getAttribute("base64")};
       var js = JSON.stringify(obj);
 
       var config = {
@@ -180,7 +192,7 @@ const Inventory = () => {
         <FormLabel htmlFor="for">Description</FormLabel>
         <FormInput type="name" ref={(c) => Description = c} />
         <FormLabel htmlFor="for">Image</FormLabel>
-        <FormInput type="name" ref={(c) => Img = c} />
+        <FileInput type="file" onChange={createUrl} ref={(c) => Img = c} />
         <FormLabel>{message}</FormLabel>
         <FormButton type="submit" onClick={doAddInv} >Add</FormButton>
         <p className="forgot-password text-right">

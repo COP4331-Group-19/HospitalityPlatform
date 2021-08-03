@@ -116,6 +116,27 @@ export const FormInput = styled.input`
   border: none;
   border-radius: 4px;
 `;
+export const FileInput = styled.input`
+  height: 48px;
+  border-radius: 4px;
+  background: white;
+  color: black;
+  margin-bottom: 10px;
+  &::file-selector-button {
+      cursor: pointer;
+      padding: 16px 16px;
+      margin-bottom: 32px;
+      border: none;
+      border-radius: 4px 0 0 4px;
+      background: #14cca4;
+      color: white;
+      transition: all 0.2s ease-in-out;
+  }
+  &::file-selector-button:hover {
+    background: #fff;
+    color: #14cca4;
+  }
+`;
 export const CapInput = styled.input`
   padding: 16px;
   margin-bottom: 32px;
