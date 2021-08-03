@@ -14,7 +14,6 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerI
 import { NavigationContainer } from "@react-navigation/native";
 import bp from '../Path.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Moment from 'react-moment';
 
 
 
@@ -105,10 +104,12 @@ function ProfileScreen({ navigation }) {
                 setPNumber(ud.phone);
                 setEmail(ud.email);
                 setUName(ud.username);
-                setPass(ud.password);
+                setPass("*********");
                 setRoom(ud.room);
-                setCheckIn(ud.checkin);
-                setCheckOut(ud.checkout);
+                let date = new Date(ud.checkin * 1000);
+                setCheckIn(date.toLocaleDateString());
+                let date2 = new Date(ud.checkout * 1000);
+                setCheckOut(date2.toLocaleDateString());
                 let dateIn = new Date(CheckIn);
                 let dateOut = new Date(CheckOut);
             } catch (e) {
@@ -487,7 +488,7 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         alignItems: "center",
-        backgroundColor: 'darksalmon',
+        backgroundColor: '#3D3D3D',
         opacity: 1,
     },
     Drawer: {
@@ -512,7 +513,7 @@ const styles = StyleSheet.create({
     topbartext: {
         fontSize: 40,
         color: "white",
-        fontweight: 'bold   ',
+        fontWeight: 'bold',
     },
     LogoutButton: {
         alignItems: "center",
@@ -535,7 +536,7 @@ const styles = StyleSheet.create({
         fontSize: 25,
     },
     active: {
-        backgroundColor: 'cornsilk',
+        backgroundColor: '#6D7275',
         justifyContent: "center",
         alignItems: "center",
         elevation: 5,
@@ -546,7 +547,7 @@ const styles = StyleSheet.create({
     },
     activetext: {
         fontSize: 30,
-        color: "purple",
+        color: "white",
     },
     ActiveButton: {
         backgroundColor: "#14CCA4",
@@ -570,7 +571,7 @@ const styles = StyleSheet.create({
         color: "black",
     },
     Profile: {
-        backgroundColor: 'cornsilk',
+        backgroundColor: '#6D7275',
         textAlign: 'center',
         borderRadius: 5,
         padding: 10,
@@ -588,7 +589,7 @@ const styles = StyleSheet.create({
     },
     ProfileInfo: {
         fontSize: 25,
-        color: "purple",
+        color: "white",
     },
     OrdButton: {
         margin: 8,
