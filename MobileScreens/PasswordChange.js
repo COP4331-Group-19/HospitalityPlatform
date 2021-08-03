@@ -2,6 +2,7 @@ import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, ImageBackground, Button, TextInput, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { render } from 'react-dom';
+import bp from '../Path.js';
 
 export default class PasswordChange extends Component {
   constructor() {
@@ -15,20 +16,20 @@ export default class PasswordChange extends Component {
 
   doPassReset = async () => {
 
-    if (Email === null) {
-      setMessage("Please enter your information");
+    if (this.state.Email === '') {
+      this.setState({message:"Please enter your information"});
     }
     else {
-      const urlPR = bp.buildPath("api/account/letmein/" + Email);
+      const urlPR = bp.buildPath("api/account/letmein/" + this.state.Email);
       try {
-        const response = await fetch(urlPR, { method: 'get', body: js, headers: { "Content-Type": "application/json" } });
+        const response = await fetch(urlPR, { method: 'get', headers: { "Content-Type": "application/json" } });
         var res = JSON.parse(await response.text());
         if (res.err_code) {
-          setMessage(res.description);
+          this.setState({message: res.description});
         }
 
       } catch (e) {
-        setMessage(' ' + e.message);
+        this.setState({message: ' ' + e.message});
       }
     }
   };
@@ -64,7 +65,7 @@ export default class PasswordChange extends Component {
 
             {/* Email */}
             <View style={styles.email_pack}>
-              <Feather name="mail" size={30} color="black" />
+              <Feather name="smartphone" size={30} color="black" />
               <TextInput
                 style={styles.email}
                 placeholder="Enter Your Phone Number"
