@@ -259,7 +259,8 @@ const styles = StyleSheet.create({
     },
     topbartext: {
         fontSize: 40,
-        color: "black",
+        color: "white",
+        fontWeight: 'bold',
     },
     LogoutButton: {
         alignItems: "center",
